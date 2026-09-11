@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chirag Singal — Data Science Portfolio</title>
+<meta name="description" content="Selected data science and machine learning work by Chirag Singal: fraud detection, churn prediction, text-to-SQL, and open projects.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <nav class="nav">
+    <a class="home" href="./">Chirag Singal</a>
+    <a href="#projects">Projects</a>
+    <a href="#foundations">Foundations</a>
+    <a href="#other">Other builds</a>
+    <a href="https://github.com/lagnis337">GitHub</a>
+    <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a>
+  </nav>
+
+  <h1>Chirag Singal</h1>
+  <p class="lede">Data scientist in Bangalore, currently at Razorpay. I've spent four years shipping ML and analytics systems in fintech and ride-hailing — fraud detection, churn prediction, LLM-based analyst tools — and I'm applying to MS programs in Data Science and Machine Learning to build the formal foundations beneath that experience.</p>
+  <p class="meta">This page collects the work I can show. Industry projects are described as write-ups (code is proprietary); open projects link to their repositories.</p>
+
+  <h2 id="projects">Selected projects</h2>
+  <div class="cards">
+    <a class="card" href="projects/fraud-detection.html">
+      <h3>Real-time payment fraud detection</h3>
+      <p>Classifier that auto-blocks and reverses suspicious payments on $100M+ GMV at 98% precision / 80% recall, cutting response time from days to hours.</p>
+      <div class="tags"><span class="tag">Razorpay</span><span class="tag">Classification</span><span class="tag">Real-time</span><span class="tag">Write-up</span></div>
+    </a>
+    <a class="card" href="projects/driver-churn.html">
+      <h3>Driver churn prediction</h3>
+      <p>Gradient-boosting and random-forest ensemble on 36 features to surface at-risk drivers; churn fell from 42% to 30% with targeted retention.</p>
+      <div class="tags"><span class="tag">Namma Yatri</span><span class="tag">Ensembles</span><span class="tag">Retention</span><span class="tag">Write-up</span></div>
+    </a>
+    <a class="card" href="projects/text-to-sql-analyst.html">
+      <h3>Slack-native AI analyst (text-to-SQL)</h3>
+      <p>Semantic layer over 2k+ team documents plus schema-grounded text-to-SQL; 96% accuracy, used daily by 40% of a 127-person team.</p>
+      <div class="tags"><span class="tag">Razorpay</span><span class="tag">LLMs</span><span class="tag">Retrieval</span><span class="tag">Write-up</span></div>
+    </a>
+    <a class="card" href="projects/fpl-player-models.html">
+      <h3>Fantasy Premier League player-performance models</h3>
+      <p>Predicting per-gameweek player points from public FPL data; the models behind a top-12% finish among 6M+ players.</p>
+      <div class="tags"><span class="tag">Personal</span><span class="tag">Regression</span><span class="tag">Backtesting</span><span class="tag code">Code</span></div>
+    </a>
+  </div>
+
+  <h2 id="foundations">Foundations</h2>
+  <p>Coursework and self-study I've completed to build the mathematical base for graduate work. Assignments with code are linked.</p>
+  <div class="cards">
+    <a class="card" href="foundations.html">
+      <h3>Linear Algebra for Machine Learning — UC San Diego Extended Studies</h3>
+      <p>CSE X412.87, Summer 2026, grade A+. Matrix decompositions, eigentheory, SVD, PCA. Assignments: face-image compression with PCA; linear regression via gradient descent.</p>
+      <div class="tags"><span class="tag">Credit-bearing</span><span class="tag">A+</span><span class="tag code">Code</span></div>
+    </a>
+  </div>
+
+  <h2 id="other">Other builds</h2>
+  <p>Smaller things built out of curiosity.</p>
+  <div class="cards">
+    <a class="card" href="https://github.com/lagnis337/logs_ingestor">
+      <h3>Log Ingestor</h3>
+      <p>Node/Express service that ingests JSON logs into PostgreSQL and exposes an 11-filter search.</p>
+      <div class="tags"><span class="tag">Node.js</span><span class="tag">PostgreSQL</span><span class="tag code">Code</span></div>
+    </a>
+    <a class="card" href="https://github.com/lagnis337/Lift_Simulator">
+      <h3>Lift Simulator</h3>
+      <p>Browser simulation of multi-lift dispatch and queueing in vanilla JavaScript. <span style="color:var(--accent)">Live demo →</span></p>
+      <div class="tags"><span class="tag">JavaScript</span><span class="tag">DOM</span><span class="tag code">Code</span></div>
+    </a>
+  </div>
+
+  <footer>
+    chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a>
+  </footer>
+</main>
+</body>
+</html>
