@@ -20,10 +20,24 @@
   <h2>Credit-bearing coursework</h2>
   <h3>Linear Algebra for Machine Learning — UC San Diego, Division of Extended Studies</h3>
   <p class="meta">CSE X412.87 · 3 quarter units · Summer 2026 · Grade: A+ (4.0)</p>
-  <p>Matrix algebra, linear systems, vector spaces, eigentheory, matrix decompositions, SVD, covariance and PCA, with applications to regression and dimensionality reduction. 100% across all quizzes and the final exam.</p>
+  <p>100% across all five quizzes and the final exam; both coding assignments at or above full marks. Syllabus, by week:</p>
+  <div class="table-wrap"><table>
+    <tbody>
+      <tr><td>1–2</td><td>Vectors, matrices, tensors; matrix operations, inverse, determinants</td></tr>
+      <tr><td>3</td><td>Linear systems — column/row/null spaces, rank, Gaussian elimination, RREF, pseudoinverse, condition number</td></tr>
+      <tr><td>4</td><td>Vector spaces — norms, orthogonality, projection, span, basis, linear transformations</td></tr>
+      <tr><td>5</td><td>Gram–Schmidt, QR and LU decomposition, eigenvalues and eigendecomposition</td></tr>
+      <tr><td>6</td><td>Singular value decomposition, low-rank approximation, four fundamental subspaces</td></tr>
+      <tr><td>7</td><td>Principal component analysis — assignment: face-image compression</td></tr>
+      <tr><td>8</td><td>Quadratic forms and gradient descent — assignment: linear regression, GD vs. the normal equation</td></tr>
+      <tr><td>9</td><td>Neural-network frameworks (PyTorch / TensorFlow demos)</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Assignments</h3>
+  <p>Code, data, and figures for both are in <a href="https://github.com/lagnis337/linear-algebra-for-ml-coursework">lagnis337/linear-algebra-for-ml-coursework</a>; every number below reproduces from the scripts there.</p>
   <div class="cards">
-    <a class="card" href="#"><h3>Face-image compression with PCA</h3><p>Assignment — <em>repository to be added</em></p><div class="tags"><span class="tag">NumPy</span><span class="tag">SVD</span></div></a>
-    <a class="card" href="#"><h3>Linear regression via gradient descent</h3><p>Assignment — <em>repository to be added</em></p><div class="tags"><span class="tag">NumPy</span><span class="tag">Optimisation</span></div></a>
+    <a class="card" href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/pca-face-compression"><h3>Face-image compression with PCA</h3><p>PCA via SVD on 400 Olivetti faces; reconstruction from K components. MSE 0.0077 at K=10, 0.0022 at K=100 (~41:1 compression). Plus a sweep of K showing diminishing returns. <strong>10/10</strong></p><div class="tags"><span class="tag">NumPy</span><span class="tag">scikit-learn</span><span class="tag">SVD</span></div></a>
+    <a class="card" href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/linear-regression-gradient-descent"><h3>Linear regression: gradient descent vs. normal equation</h3><p>Derived the MSE gradient and implemented batch GD with feature standardisation; closed-form solution for comparison. Both predict $293,237 for a 1,650 sq ft house. Bonus: GD trajectory on the cost surface and a learning-rate sweep showing convergence, oscillation, and divergence. <strong>12/10</strong></p><div class="tags"><span class="tag">Octave</span><span class="tag">NumPy</span><span class="tag">Optimisation</span></div></a>
   </div>
 
   <h2>In progress</h2>
