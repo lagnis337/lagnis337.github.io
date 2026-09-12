@@ -53,7 +53,7 @@
   </table></div>
 
   <h2>Approach</h2>
-  <figure>
+  <figure class="flow">
     <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
       <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
       <g fill="#fff" stroke="#999" stroke-width="1.2">
@@ -102,6 +102,16 @@
   </table>
   </div>
   <p class="stat-row">The 42% → 30% figure is a before/after comparison on the whole driver base, so it includes everything else that changed in the quarter — including the product change below.</p>
+
+  <figure class="chart">
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+      <text x="10" y="20" fill="#222" font-size="13" font-weight="600">Cohort retention before and after the model went live (illustrative shape; M1 points are measured)</text>
+<g stroke="#999" stroke-width="1" fill="none"><path d="M60 40V200H740"/></g>
+<text x="400" y="234" fill="#666" text-anchor="middle">Months since the cohort's first month</text>
+<text x="20" y="120" fill="#666" text-anchor="middle" transform="rotate(-90 20 120)">Share of cohort still active</text><text x="60" y="216" fill="#666" text-anchor="middle">M0</text><text x="287" y="216" fill="#666" text-anchor="middle">M1</text><text x="513" y="216" fill="#666" text-anchor="middle">M2</text><text x="740" y="216" fill="#666" text-anchor="middle">M3</text><text x="54" y="164" fill="#666" text-anchor="end" font-size="11">25%</text><text x="54" y="124" fill="#666" text-anchor="end" font-size="11">50%</text><text x="54" y="84" fill="#666" text-anchor="end" font-size="11">75%</text><text x="54" y="44" fill="#666" text-anchor="end" font-size="11">100%</text><path d="M60.0 40.0 L82.7 51.8 L105.3 60.7 L128.0 68.4 L150.7 75.4 L173.3 81.7 L196.0 87.6 L218.7 93.0 L241.3 98.0 L264.0 102.8 L286.7 107.2 L309.3 111.4 L332.0 115.3 L354.7 119.0 L377.3 122.5 L400.0 125.8 L422.7 129.0 L445.3 132.0 L468.0 134.8 L490.7 137.5 L513.3 140.1 L536.0 142.5 L558.7 144.8 L581.3 147.0 L604.0 149.2 L626.7 151.2 L649.3 153.1 L672.0 154.9 L694.7 156.7 L717.3 158.4 L740.0 160.0" fill="none" stroke="#999" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="5 4"/><path d="M60.0 40.0 L82.7 47.9 L105.3 53.9 L128.0 59.2 L150.7 64.2 L173.3 68.7 L196.0 73.0 L218.7 77.0 L241.3 80.9 L264.0 84.5 L286.7 88.0 L309.3 91.3 L332.0 94.5 L354.7 97.5 L377.3 100.5 L400.0 103.3 L422.7 106.0 L445.3 108.6 L468.0 111.1 L490.7 113.5 L513.3 115.9 L536.0 118.1 L558.7 120.3 L581.3 122.4 L604.0 124.5 L626.7 126.4 L649.3 128.4 L672.0 130.2 L694.7 132.0 L717.3 133.7 L740.0 135.4" fill="none" stroke="#1f6f78" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="287" cy="107" r="5" fill="#999"/><text x="730" y="178" fill="#999" font-weight="600" text-anchor="end">before: 42% churned by M1</text><circle cx="287" cy="88" r="5" fill="#1f6f78"/><text x="730" y="108" fill="#1f6f78" font-weight="600" text-anchor="end">after: 30% churned by M1</text>
+    </svg>
+    <figcaption>Each month's new active drivers followed as a cohort. Before, 42% had stopped riding by the end of their second month; after three months with the model and outreach loop live, 30%. The curve shapes are illustrative; the M1 points are the measured figures.</figcaption>
+  </figure>
   <div class="insight">
     <strong>Key insight</strong>
     Drivers working evenings wanted their last rides to end near home, and were declining trips or logging off rather than head the wrong way. That became <em>"Go Home" mode</em> — switch it on and you receive requests whose drop-off is near your house. Other tagged reasons fed changes to pricing and driver–rider matching. The model decided who to call; the calls changed the product; the product changed churn.
@@ -124,5 +134,6 @@
   <div class="pager"><a href="../#projects">← All projects</a><a href="text-to-sql-analyst.html">Next: Slack-native AI analyst →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
 </main>
+<script src="../assets/anim.js"></script>
 </body>
 </html>

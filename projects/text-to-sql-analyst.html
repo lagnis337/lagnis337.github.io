@@ -57,7 +57,7 @@
   </table></div>
 
   <h2>Approach</h2>
-  <figure>
+  <figure class="flow">
     <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
       <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
       <g fill="#fff" stroke="#999" stroke-width="1.2">
@@ -111,6 +111,16 @@
   </div>
   <p class="stat-row">96% is a satisfaction rate, not execution accuracy — askers rate whether the answer looked right and was useful, and a plausible wrong answer can earn a 👍. Its value is as a trend and as the trigger for the maintenance loop.</p>
 
+  <figure class="chart">
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+      <text x="10" y="20" fill="#222" font-size="13" font-weight="600">Weekly distinct askers as a share of the team (illustrative shape; endpoint and growth rate are measured)</text>
+<g stroke="#999" stroke-width="1" fill="none"><path d="M60 40V200H740"/></g>
+<text x="400" y="234" fill="#666" text-anchor="middle">Weeks after launch</text>
+<text x="20" y="120" fill="#666" text-anchor="middle" transform="rotate(-90 20 120)">Share of team asking weekly</text><text x="54" y="168" fill="#666" text-anchor="end" font-size="11">10%</text><text x="54" y="133" fill="#666" text-anchor="end" font-size="11">20%</text><text x="54" y="97" fill="#666" text-anchor="end" font-size="11">30%</text><text x="54" y="62" fill="#666" text-anchor="end" font-size="11">40%</text><text x="60" y="216" fill="#666" text-anchor="middle">0</text><text x="230" y="216" fill="#666" text-anchor="middle">5</text><text x="400" y="216" fill="#666" text-anchor="middle">10</text><text x="570" y="216" fill="#666" text-anchor="middle">15</text><text x="740" y="216" fill="#666" text-anchor="middle">20</text><path d="M60.0 197.0 L68.5 196.7 L77.0 196.4 L85.5 196.1 L94.0 195.7 L102.5 195.3 L111.0 194.8 L119.5 194.3 L128.0 193.7 L136.5 193.1 L145.0 192.5 L153.5 191.8 L162.0 191.0 L170.5 190.1 L179.0 189.2 L187.5 188.2 L196.0 187.1 L204.5 186.0 L213.0 184.7 L221.5 183.3 L230.0 181.9 L238.5 180.3 L247.0 178.6 L255.5 176.8 L264.0 174.9 L272.5 172.8 L281.0 170.6 L289.5 168.3 L298.0 165.9 L306.5 163.3 L315.0 160.7 L323.5 157.9 L332.0 155.0 L340.5 152.0 L349.0 148.9 L357.5 145.7 L366.0 142.4 L374.5 139.1 L383.0 135.7 L391.5 132.3 L400.0 128.9 L408.5 125.5 L417.0 122.1 L425.5 118.7 L434.0 115.4 L442.5 112.1 L451.0 108.9 L459.5 105.8 L468.0 102.8 L476.5 99.9 L485.0 97.1 L493.5 94.4 L502.0 91.9 L510.5 89.5 L519.0 87.1 L527.5 85.0 L536.0 82.9 L544.5 81.0 L553.0 79.2 L561.5 77.5 L570.0 75.9 L578.5 74.4 L587.0 73.1 L595.5 71.8 L604.0 70.6 L612.5 69.6 L621.0 68.6 L629.5 67.6 L638.0 66.8 L646.5 66.0 L655.0 65.3 L663.5 64.6 L672.0 64.0 L680.5 63.5 L689.0 63.0 L697.5 62.5 L706.0 62.1 L714.5 61.7 L723.0 61.4 L731.5 61.0 L740.0 60.8" fill="none" stroke="#1f6f78" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="740" cy="58" r="5" fill="#1f6f78"/><text x="730" y="96" fill="#1f6f78" text-anchor="end" font-weight="600">~40% of a 127-person team, daily</text><text x="536" y="172" fill="#666" font-size="11" text-anchor="middle">≈10% more askers week on week</text>
+    </svg>
+    <figcaption>Adoption compounded at roughly 10% more distinct askers each week and levelled out near 40% of the team. The curve is an illustrative shape through the measured growth rate and endpoint.</figcaption>
+  </figure>
+
   <h2>What I'd do differently</h2>
   <div class="cards small">
     <div class="card"><h3>A real evaluation set</h3><p>Fixed questions with reference SQL and results on a frozen snapshot → execution accuracy that can't be flattered by polite thumbs-ups, and ablations (with vs. without playbooks, with vs. without clarifying questions).</p></div>
@@ -128,5 +138,6 @@
   <div class="pager"><a href="../#projects">← All projects</a><a href="fpl-player-models.html">Next: FPL player models →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
 </main>
+<script src="../assets/anim.js"></script>
 </body>
 </html>

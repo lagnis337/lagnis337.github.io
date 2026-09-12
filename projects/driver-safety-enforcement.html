@@ -53,8 +53,16 @@
     </tbody>
   </table></div>
 
+  <figure class="chart">
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+      <text x="10" y="20" fill="#222" font-size="13" font-weight="600">Severity picks the lever; the window scales with it</text>
+<text x="170" y="66" fill="#222" text-anchor="end" font-weight="600">5 · Conduct</text><rect x="185" y="50" width="72" height="22" rx="5" fill="#1f6f78" opacity="0.48"/><text x="267" y="66" fill="#1f6f78" font-size="11">deprioritised — short window</text><text x="170" y="100" fill="#222" text-anchor="end" font-weight="600">4 · Extortion</text><rect x="185" y="84" width="144" height="22" rx="5" fill="#1f6f78" opacity="0.61"/><text x="339" y="100" fill="#1f6f78" font-size="11">deprioritised — longer window</text><text x="170" y="134" fill="#222" text-anchor="end" font-weight="600">3 · Unsafe driving</text><rect x="185" y="118" width="216" height="22" rx="5" fill="#b5462b" opacity="0.74"/><text x="411" y="134" fill="#b5462b" font-size="11">short block · human-confirmed</text><text x="170" y="168" fill="#222" text-anchor="end" font-weight="600">2 · Harassment</text><rect x="185" y="152" width="288" height="22" rx="5" fill="#b5462b" opacity="0.87"/><text x="483" y="168" fill="#b5462b" font-size="11">long block · human-confirmed</text><text x="170" y="202" fill="#222" text-anchor="end" font-weight="600">1 · Physical safety</text><rect x="185" y="186" width="360" height="22" rx="5" fill="#b5462b" opacity="1.00"/><text x="555" y="202" fill="#b5462b" font-size="11">permanent block · human-confirmed</text><text x="185" y="240" fill="#666" font-size="11">← lighter</text><text x="545" y="240" fill="#666" font-size="11" text-anchor="end">heavier consequence, longer window →</text>
+    </svg>
+    <figcaption>Two levers, five rungs. The lower buckets cost a driver ride volume for a while; the upper ones remove them, for a period that grows with severity, and only after a person has looked at the case.</figcaption>
+  </figure>
+
   <h2>Approach</h2>
-  <figure>
+  <figure class="flow">
     <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
       <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
       <text x="10" y="18" fill="#222" font-size="13" font-weight="600">Daily batch: text → severity → proportionate action, with humans on the serious end</text>
@@ -70,8 +78,8 @@
         <text x="70" y="104">Rider feedback</text><text x="70" y="122" fill="#666" font-size="11">comments, tickets</text>
         <text x="235" y="104">Sarvam translate</text><text x="235" y="122" fill="#666" font-size="11">Kannada, Hindi, mixed → English</text>
         <text x="415" y="104">TF-IDF + linear</text><text x="415" y="122" fill="#666" font-size="11">severity bucket per item</text>
-        <text x="635" y="61">Buckets 4–5</text><text x="635" y="79" fill="#666" font-size="11">deprioritise in matching — automatic</text>
-        <text x="635" y="147">Buckets 1–3</text><text x="635" y="165" fill="#666" font-size="11">block queue — ops confirm, then block</text>
+        <text x="555" y="61">Buckets 4–5</text><text x="555" y="79" fill="#666" font-size="11">deprioritise in matching — automatic</text>
+        <text x="555" y="147">Buckets 1–3</text><text x="555" y="165" fill="#666" font-size="11">block queue — ops confirm, then block</text>
         <text x="545" y="233">Reviewed cases → new labels</text><text x="545" y="251" fill="#666" font-size="11">overturned decisions correct the model</text>
       </g>
       <g stroke="#666" stroke-width="1.4" fill="none" marker-end="url(#a)">
@@ -132,5 +140,6 @@
   <div class="pager"><a href="../#projects">← All projects</a><a href="text-to-sql-analyst.html">Next: Slack-native AI analyst →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
 </main>
+<script src="../assets/anim.js"></script>
 </body>
 </html>
