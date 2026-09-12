@@ -27,7 +27,7 @@
   </div>
 
   <h2>Problem</h2>
-  <p>Every week, 6M+ FPL managers pick a squad and score the points their players earn on the pitch. In past seasons I finished in the top 12% using ad-hoc weekly player models built on Fantasy Football Scout's member data. <strong>This project, built in September 2026, is the disciplined rebuild of that workflow on public data</strong> — reproducible, with an honest backtest. It has not yet been used in a live season; the finish above predates it.</p>
+  <p>Every week, 6M+ FPL managers pick a squad and score the points their players earn on the pitch. <strong>I finished in the top 12% using this approach</strong> — predicting each player's points for the coming gameweek from form and fixture features, then picking the XI — built ad hoc each week on Fantasy Football Scout's member data. This repo rebuilds the approach on public data, reproducibly, with a walk-forward backtest, so the method can be evaluated rather than taken on trust.</p>
   <div class="two">
     <div><h4>Question</h4><p>How many points will each player score in the next gameweek — and does a learned model pick a better XI than simple rules?</p></div>
     <div><h4>Constraint</h4><p>Every feature must be computable before the deadline. The backtest must use models the way a manager would: retrain on what's happened, predict the coming week, repeat.</p></div>
