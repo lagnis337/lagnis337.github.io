@@ -18,7 +18,7 @@
 
   <h1>Adaptive payment-gateway router</h1>
   <p class="meta">Razorpay · 2026 · Owner: framing, simulator, agent, benchmark, shadow-mode and rollout measurement; platform engineering owned production integration</p>
-  <p class="notice">Industry project at a payments company. Code and data are proprietary; this is a methods write-up. Production volumes, traffic shares, gateway identities, incident details and revenue figures are deliberately omitted; every number shown is from the synthetic benchmark.</p>
+  <p class="notice">Industry project at a payments company. Code and data are proprietary; this is a methods write-up. All figures are from the synthetic benchmark.</p>
 
   <div class="glance">
     <div><b>Observe → act</b><span>learn to respond to failures, not predict them</span></div>
@@ -120,7 +120,7 @@
   <dl class="dl">
     <dt>Shadow mode</dt><dd>Ran alongside production, logging the recommended gateway per transaction without executing it.</dd>
     <dt>Rollout</dt><dd>Then live traffic, behind guardrails that roll back automatically if success rate or latency regresses against control. Success rate on the routed traffic was higher than the control.</dd>
-    <dt>Measurement</dt><dd>I owned the measurement. A production figure isn't reported here; the benchmark above was the basis for the rollout decision.</dd>
+    <dt>Measurement</dt><dd>I owned the measurement. The benchmark above was the basis for the rollout decision; live performance is tracked against the control.</dd>
   </dl>
 
   <h2>What I'd do differently</h2>
