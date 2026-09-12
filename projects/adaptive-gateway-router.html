@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Real-time payment fraud detection — Chirag Singal</title>
-<meta name="description" content="A classifier that auto-blocks and reverses suspicious payments in near real time.">
+<title>Adaptive payment-gateway router — Chirag Singal</title>
+<meta name="description" content="An RL router that moves payment traffic away from degrading gateways: PPO pre-trained in simulation, online UCB exploration, safety constraints.">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -16,12 +16,12 @@
     <a href="https://github.com/lagnis337">GitHub</a>
   </nav>
 
-  <h1>Real-time payment fraud detection</h1>
-  <p class="meta">Razorpay · Loyalty &amp; Rewards → Global Payments · 2025–2026 · Owner, end to end</p>
+  <h1>Adaptive payment-gateway router</h1>
+  <p class="meta">Razorpay · Global Payments · 2026 · Owner: problem framing, simulator, agent, benchmark</p>
   <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up using only publicly stated figures.</p><p class="notice">Draft — this write-up is being finalised.</p>
 
   <h2>Problem</h2>
-  <p><em>To be written.</em></p>
+  <p>Payment traffic is routed across several gateways whose reliability changes without warning. When a gateway degrades, static routing rules keep sending it traffic until someone notices — failed payments, lost revenue, and a detection time measured in hours. The task was routing that adapts on its own: detect degradation from observed outcomes and shift traffic, without needing to predict failures in advance.</p>
 
   <h2>Data</h2>
   <p><em>To be written.</em></p>
