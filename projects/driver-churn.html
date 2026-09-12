@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Driver churn prediction — Chirag Singal</title>
-<meta name="description" content="An ensemble model to surface at-risk ride-hailing drivers and drive targeted retention.">
+<meta name="description" content="A daily-scored ensemble model that identified at-risk ride-hailing drivers for targeted retention; monthly churn fell from 42% to 30%.">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -18,35 +18,76 @@
 
   <h1>Driver churn prediction</h1>
   <p class="meta">Namma Yatri · Central data team · 2024–2025 · Owner, end to end</p>
-  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up using only publicly stated figures.</p><p class="notice">Draft — this write-up is being finalised.</p>
+  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up using only publicly stated figures.</p>
 
   <h2>Problem</h2>
-  <p><em>To be written.</em></p>
+  <p>Namma Yatri is a zero-commission ride-hailing platform: drivers pay a subscription rather than a per-ride cut, so driver retention is both the supply side of the marketplace and a direct revenue line. Around <strong>42% of active drivers were churning</strong>, where churn meant no completed rides for 30 days.</p>
+  <p>Retention effort — ops calls and in-app coin incentives — was being spent broadly, or after a driver had already gone quiet. The goal was to identify drivers <em>likely</em> to churn early enough for an intervention to matter, and to give ops and customer success a ranked list of who to reach each day.</p>
 
   <h2>Data</h2>
-  <p><em>To be written.</em></p>
+  <p>One row per driver. Features were rebuilt from platform activity every day and the model <strong>scored roughly 150,000 active drivers daily</strong>.</p>
+  <p><strong>Label.</strong> Whether the driver went 30 days without a completed ride after the scoring date. The label is only known a month later, so the training set always lagged production by 30 days and every live prediction was unverified for that long — a constraint that shaped how impact was measured (below).</p>
+  <p><strong>36 features</strong>, in five families:</p>
+  <ul>
+    <li><em>Supply behaviour</em> — hours online, days active, day vs. night rides</li>
+    <li><em>Demand funnel</em> — ride requests received → accepted → completed; cancellation rate</li>
+    <li><em>Earnings</em> — average fare, average trip distance, earnings per active hour</li>
+    <li><em>Feedback</em> — rider ratings and complaint signals</li>
+    <li><em>Context</em> — city and geo-zone, tenure on the platform, and change in activity relative to the driver's own recent baseline</li>
+  </ul>
 
   <h2>Approach</h2>
   <figure>
-    <em>To be written.</em>
-    <figcaption><em>To be written.</em></figcaption>
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
+      <g fill="#fff" stroke="#999" stroke-width="1.2">
+        <rect x="10" y="70" width="130" height="58" rx="8"/>
+        <rect x="170" y="70" width="140" height="58" rx="8"/>
+        <rect x="340" y="70" width="150" height="58" rx="8"/>
+        <rect x="520" y="70" width="130" height="58" rx="8"/>
+        <rect x="380" y="170" width="270" height="58" rx="8" stroke-dasharray="5 4"/>
+      </g>
+      <g fill="#222" text-anchor="middle">
+        <text x="75" y="94">Driver activity</text><text x="75" y="112" fill="#666" font-size="11">rides, hours, ratings…</text>
+        <text x="240" y="94">Daily feature build</text><text x="240" y="112" fill="#666" font-size="11">36 features / driver</text>
+        <text x="415" y="94">GBM + RF ensemble</text><text x="415" y="112" fill="#666" font-size="11">averaged churn-risk score</text>
+        <text x="585" y="94">Ranked list</text><text x="585" y="112" fill="#666" font-size="11">~150k drivers / day</text>
+        <text x="515" y="194">Ops calls · coin incentives</text><text x="515" y="212" fill="#666" font-size="11">product &amp; customer success act on the list</text>
+      </g>
+      <g stroke="#666" stroke-width="1.4" fill="none" marker-end="url(#a)">
+        <path d="M140 99H168"/><path d="M310 99H338"/><path d="M490 99H518"/>
+        <path d="M585 128V168"/>
+        <path d="M380 199H300Q240 199 240 160V130" stroke-dasharray="5 4"/>
+      </g>
+      <text x="230" y="160" fill="#666" font-size="11" text-anchor="end">qualitative feedback →</text>
+      <text x="230" y="174" fill="#666" font-size="11" text-anchor="end">pricing, matching, features</text>
+      <text x="10" y="30" fill="#222" font-size="13" font-weight="600">Daily scoring pipeline with a human feedback loop</text>
+    </svg>
+    <figcaption>Drivers are scored every day; flagged drivers are contacted by ops, and what they say flows back into product decisions as well as the model.</figcaption>
   </figure>
-  <p><em>To be written.</em></p>
+  <p><strong>Model.</strong> An ensemble of a gradient-boosted tree model and a random forest, with the two scores averaged. Neither model alone was consistently better across months; the average was more stable, which mattered for a list that ops teams acted on every day — a model whose top-ranked drivers changed sharply from one day to the next would have been hard to work with.</p>
+  <p><strong>Output.</strong> A churn-risk score per driver, produced daily and handed to product and customer-success teams as a ranked list.</p>
+  <p><strong>Action layer.</strong> Flagged drivers were routed to two interventions: a call from the ops team to understand why they were dissatisfied, and coin incentives in the app. The calls turned out to be as valuable as the model — see below.</p>
 
   <h2>Results</h2>
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
-    <tbody><em>To be written.</em></tbody>
+    <thead><tr><th>Metric</th><th>Before</th><th>After 3 months live</th></tr></thead>
+    <tbody>
+      <tr><td>Monthly driver churn (no rides in 30 days)</td><td>~42%</td><td><strong>~30%</strong></td></tr>
+      <tr><td>Drivers scored per day</td><td>—</td><td>~150,000</td></tr>
+      <tr><td>Retention outreach</td><td>Broad / reactive</td><td>Targeted, daily ranked list</td></tr>
+    </tbody>
   </table>
   </div>
-  <p><em>To be written.</em></p>
+  <p>Churn was tracked as <strong>monthly cohorts</strong> — for each month's active drivers, what share had churned at M0, M1, M2, M3 — rather than a single rolling rate, so the effect could be read cohort by cohort as the system ran. Over three months in production the monthly churn rate fell from roughly 42% to 30%.</p>
+  <p>The number that doesn't fit in a table: the ops calls became a <strong>real-time channel for driver feedback</strong>. Reasons drivers gave for leaving fed directly into changes to pricing, the driver–rider matching algorithm, and new product features. The model's job was to decide who to call; the calls then improved the product the model was trying to retain drivers on.</p>
 
   <h2>What I'd do differently</h2>
-  <p><em>To be written.</em></p>
+  <p>The before/after cohort comparison shows the system worked, but it can't separate the model's contribution from the interventions' — some flagged drivers would have stayed regardless of a call, and some left despite one. A held-out group of at-risk drivers who were deliberately <em>not</em> contacted would have measured the true lift, and reframing the problem as <strong>uplift modelling</strong> (who changes behaviour when contacted) rather than risk scoring would have targeted incentive spend better. I'd also replace the 30-day binary label with a <strong>time-to-churn</strong> (survival) formulation, which uses the information in <em>when</em> a driver stops rather than just whether they crossed a threshold.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p><em>To be written.</em></p>
+  <p>Proprietary to Namma Yatri. The modelling stack was Python (pandas, scikit-learn, gradient boosting) with daily batch scoring.</p>
 
   <div class="pager"><a href="../#projects">← All projects</a><a href="text-to-sql-analyst.html">Next: Slack-native AI analyst →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
