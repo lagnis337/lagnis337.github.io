@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Slack-native AI analyst — Chirag Singal</title>
-<meta name="description" content="A compiled, human-curated data wiki plus a Claude-based agent that answers metric questions in Slack with schema-grounded SQL.">
+<meta name="description" content="A compiled, human-curated data wiki plus a model-agnostic Slack agent that answers metric questions with schema-grounded SQL.">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -31,7 +31,7 @@
     <thead><tr><th>Element</th><th>What it does</th></tr></thead>
     <tbody>
       <tr><td><code>index.md</code></td><td>Catalogue of every page with a one-line summary. The agent reads it first on every query and opens only the pages it needs — <strong>index-first navigation, no embeddings</strong>. Frontmatter (type, tags, status) is what makes this navigable.</td></tr>
-      <tr><td><code>rules.md</code></td><td>Agent instructions: page templates, frontmatter conventions, how to ingest a source, how to answer a question, how to propose a change.</td></tr>
+      <tr><td><code>rules.md</code> and the reading skill</td><td>Page templates, frontmatter conventions, how to ingest a source, how to propose a change — and a well-defined <strong>skill</strong> that tells any model how the repository is to be read when answering a question. The skill, not the model, carries the method.</td></tr>
       <tr><td><code>log.md</code></td><td>Append-only record of every change, with date and author.</td></tr>
       <tr><td>Page <code>status</code></td><td>Every page is <code>draft</code> until a human ratifies it; the agent answers only from <code>active</code> pages. Drafts exist, but they can't produce answers.</td></tr>
       <tr><td>Table and metric pages</td><td>Schema, grain, join paths, caveats; metric definitions with canonical SQL. This is what "schema-grounded" means here — the model sees curated pages, not raw DDL.</td></tr>
@@ -71,7 +71,7 @@
     </svg>
     <figcaption>Answers come from ratified wiki pages; thumbs-downs become proposed wiki changes, which a human validates and ratifies. The wiki compounds; the model doesn't.</figcaption>
   </figure>
-  <p><strong>Model.</strong> Claude frontier models (Anthropic), run as an agent that can read the repository, clarify, write SQL and execute it through a constrained connection.</p>
+  <p><strong>Model.</strong> Deliberately none in particular. The Slack agent <strong>selects the model at run time</strong>, and the repository is structured so that any capable, popular model can navigate it — the reading skill and the wiki's conventions do the work that would otherwise be baked into prompts for one vendor's model. Claude frontier models were used most, but the system doesn't depend on them.</p>
   <p><strong>Query path.</strong> The agent is instructed to think like a data analyst rather than a search engine: if the question is ambiguous ("revenue" for which product, which date basis?) it asks <strong>one clarifying question</strong> before reading anything. Then it reads <code>index.md</code>, opens only the metric and table pages the question needs, checks for a matching playbook, and either fills the playbook's parameters or writes new SQL grounded on the pages' schema and join paths.</p>
   <p><strong>Guardrails.</strong> The bot's warehouse service account can only <code>SELECT</code> on the curated schema, and results are capped at <strong>10,000 rows</strong>. It cannot see raw event tables and cannot write.</p>
   <p><strong>Showing its work.</strong> Every answer carries a footnote: the SQL that ran, the wiki pages traversed, and the time taken at each step — repository access, navigation, query execution. Askers can check the definition it used; I could see where the time went.</p>
@@ -90,7 +90,7 @@
   </table>
   </div>
   <p>The 96% is a satisfaction rate, not an execution-accuracy figure: askers rate whether the answer looked right and was useful, and a plausible wrong answer can earn a 👍. Its value is as a trend and as the trigger for the loop below. The most common cause of a 👎 was <strong>incomplete wiki context</strong> — a metric or table the wiki didn't yet cover — which is the expected failure mode of a knowledge base designed to grow with use, and exactly what the loop fixes.</p>
-  <p><strong>The maintenance loop.</strong> A scheduled skill runs daily: it scrapes the day's responses from Slack — the thumbs-downs in particular — works out what the wiki was missing or wrong, drafts the change (a new metric page, a corrected join path, a new playbook) and pushes it to the repository as a pending proposal. I validate it against live data and ratify or reject. The wiki gets better every day; the model is the same model it was on day one.</p>
+  <p><strong>The maintenance loop.</strong> A scheduled skill runs daily: it scrapes the day's responses from Slack — the thumbs-downs in particular — works out what the wiki was missing or wrong, drafts the change (a new metric page, a corrected join path, a new playbook) and pushes it to the repository as a pending proposal. I validate it against live data and ratify or reject. The wiki gets better every day; the models come and go underneath it.</p>
 
   <h2>What I'd do differently</h2>
   <ul>
@@ -104,7 +104,7 @@
   <p><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">LLM Wiki</a> (Karpathy) — the pattern of an LLM incrementally compiling and maintaining a persistent markdown wiki, with <code>index.md</code>, <code>log.md</code>, a schema file, and answers filed back, rather than re-retrieving from raw sources on every query. <a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing">Open Knowledge Format</a> (Google) — the layout of that wiki for data: one markdown page per dataset / table / metric with YAML frontmatter, schema tables and join paths, curated like code. This project applied both to a live warehouse and put a Slack agent, guardrails and a human-ratification loop on top.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p>Proprietary to Razorpay. Stack: markdown wiki in git with YAML frontmatter and page status; Claude frontier models as the agent; Slack app; SELECT-only warehouse service account; a daily scheduled review skill that proposes wiki changes for human ratification.</p>
+  <p>Proprietary to Razorpay. Stack: markdown wiki in git with YAML frontmatter and page status; a model-agnostic Slack agent with run-time model selection and a defined reading skill; SELECT-only warehouse service account; a daily scheduled review skill that proposes wiki changes for human ratification.</p>
 
   <div class="pager"><a href="../#projects">← All projects</a><a href="fpl-player-models.html">Next: FPL player models →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
