@@ -44,7 +44,8 @@ h3 { font-size: 1.15rem; margin: 26px 0 8px; }
 p { margin: 0 0 14px; }
 .lede { font-family: var(--serif); font-size: 1.28rem; line-height: 1.45; color: var(--fg); margin-bottom: 18px; max-width: 700px; }
 .nav { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.92rem; margin-bottom: 44px; font-weight: 500; }
-.nav a { color: var(--muted); }
+.nav a { color: var(--muted); display: inline-flex; align-items: center; gap: 5px; }
+.nav a svg { width: 14px; height: 14px; fill: currentColor; }
 .nav a.home { color: var(--fg); font-family: var(--serif); font-size: 1.05rem; font-weight: 600; }
 
 /* numbered section eyebrows on case-study pages */
@@ -54,8 +55,11 @@ p { margin: 0 0 14px; }
 
 /* cards */
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
-.card { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0; color: inherit; overflow: hidden; transition: transform .15s ease, box-shadow .15s ease; }
-a.card:hover { text-decoration: none; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.card { position: relative; display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0; color: inherit; overflow: hidden; transition: transform .15s ease, box-shadow .15s ease; }
+a.card:hover, .card.linked:hover { text-decoration: none; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.card.linked h3 a { color: inherit; text-decoration: none; }
+.card.linked h3 a::after { content: ""; position: absolute; inset: 0; }
+.card .tags a.tag { position: relative; z-index: 1; text-decoration: none; }
 .card .cover { height: 110px; background: var(--tag); border-bottom: 1px solid var(--line); }
 .card .cover svg { width: 100%; height: 100%; display: block; }
 .card .body { padding: 16px 18px 16px; }
@@ -65,6 +69,11 @@ a.card:hover { text-decoration: none; transform: translateY(-2px); box-shadow: 0
 .tag { font-size: 0.74rem; font-weight: 500; background: var(--tag); border-radius: 999px; padding: 3px 9px; color: var(--muted); display: inline-flex; align-items: center; gap: 5px; }
 .tag svg { width: 13px; height: 13px; fill: currentColor; flex: none; }
 .tag.code { background: var(--accent-soft); color: var(--accent); }
+a.tag.code:hover { background: var(--accent); color: #fff; }
+.tag.demo { background: var(--accent2-soft); color: var(--accent2); }
+a.tag.demo:hover { background: var(--accent2); color: #fff; }
+.ghlink { display: inline-flex; align-items: center; gap: 5px; }
+.ghlink svg { width: 14px; height: 14px; fill: currentColor; }
 .tag.org { background: var(--accent2-soft); color: var(--accent2); }
 .card .links { margin: 12px 0 0; font-size: 0.9rem; }
 .card .links a { margin-right: 14px; font-weight: 600; }
