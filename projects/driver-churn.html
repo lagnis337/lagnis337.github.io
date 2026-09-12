@@ -23,7 +23,7 @@
   <div class="glance">
     <div><b>~150k</b><span>drivers scored every morning</span></div>
     <div><b>XGB + RF</b><span>averaged & calibrated, 36 features</span></div>
-    <div><b>AUC ~0.80</b><span>held-out later month</span></div>
+    <div><b>AUC ~0.80</b><span>area under the ROC curve, held-out later month</span></div>
     <div><b>42% → 30%</b><span>monthly churn, 3 months in production</span></div>
   </div>
 
@@ -38,7 +38,7 @@
   <dl class="dl">
     <dt>Unit</dt><dd>Driver-day; ~150,000 active drivers scored each morning. Drivers below a minimum tenure excluded from training.</dd>
     <dt>Label</dt><dd><code>churn_30d = 1</code> if no completed rides in the 30 days after the scoring date. Known only a month later, so the latest month is never labelled and impact is measured on cohorts, not on the model's own predictions.</dd>
-    <dt>Features</dt><dd>36, most over weekly and monthly windows, all computed strictly before the scoring date. Structured on RFM (recency, frequency, monetary) plus feedback and context.</dd>
+    <dt>Features</dt><dd>36, most over weekly and monthly windows, all computed strictly before the scoring date. Structured on the RFM framework (recency, frequency, monetary value) plus feedback and context.</dd>
     <dt>Leakage</dt><dd>The recency features — days since last trip, time since last active — encode the label if computed after the scoring date. Every window is pinned to it.</dd>
   </dl>
   <div class="table-wrap"><table>
@@ -65,7 +65,7 @@
       </g>
       <g fill="#222" text-anchor="middle">
         <text x="75" y="94">Driver activity</text><text x="75" y="112" fill="#666" font-size="11">rides, hours, ratings…</text>
-        <text x="240" y="94">Nightly Airflow DAG</text><text x="240" y="112" fill="#666" font-size="11">36 features / driver</text>
+        <text x="240" y="94">Nightly Airflow job</text><text x="240" y="112" fill="#666" font-size="11">36 features / driver</text>
         <text x="415" y="94">XGBoost + RF</text><text x="415" y="112" fill="#666" font-size="11">averaged, calibrated p(churn)</text>
         <text x="585" y="94">Ranked sheet</text><text x="585" y="112" fill="#666" font-size="11">~150k drivers / day</text>
         <text x="515" y="194">~100 ops calls/day · coin offers</text><text x="515" y="212" fill="#666" font-size="11">product &amp; customer success act on the list</text>
@@ -82,9 +82,9 @@
     <figcaption>Features are rebuilt nightly; the top of the list goes to ops calls, the next band to in-app incentives; what drivers say on the calls flows back into the product and the model.</figcaption>
   </figure>
   <ol class="steps">
-    <li><b>Two models, one score</b><p><strong>XGBoost</strong> — the stronger model alone; captures interactions such as high online hours <em>and</em> falling acceptance rate. <strong>Random forest</strong> (scikit-learn) — weaker alone, but its errors are less correlated with the boosted model's. Equal-weight average of the two probabilities, then calibrated so the score reads as a probability. The average was <strong>more stable month to month</strong> than either model — which matters more than a marginally higher AUC for a list ops act on daily.</p></li>
+    <li><b>Two models, one score</b><p><strong>XGBoost</strong> (gradient-boosted decision trees) — the stronger model alone; captures interactions such as high online hours <em>and</em> falling acceptance rate. <strong>Random forest</strong> (scikit-learn) — weaker alone, but its errors are less correlated with the boosted model's. Equal-weight average of the two probabilities, then calibrated so the score reads as a probability. The average was <strong>more stable month to month</strong> than either model — which matters more than a marginally higher AUC for a list ops act on daily.</p></li>
     <li><b>Split by time, never at random</b><p>Train on earlier months, validate on a later held-out month. Churn drifts with incentive schemes and seasonality, and a random split leaks the same driver's rows across train and test. Retrained monthly on a rolling window as each month's labels matured.</p></li>
-    <li><b>Decision rule sized to capacity</b><p>Top of the list — around <strong>100 drivers a day</strong> — gets an ops call; the next band gets an in-app coin incentive. Cut-offs set by what teams can act on, not by a probability threshold. The nightly DAG writes the list to a shared sheet that product and customer success work from.</p></li>
+    <li><b>Decision rule sized to capacity</b><p>Top of the list — around <strong>100 drivers a day</strong> — gets an ops call; the next band gets an in-app coin incentive. Cut-offs set by what teams can act on, not by a probability threshold. The nightly Airflow job (a scheduled pipeline) writes the list to a shared sheet that product and customer success work from.</p></li>
     <li><b>Close the loop</b><p>Ops tag the reasons drivers give on calls; the categories go to product and, as a <em>contacted recently</em> feature, back into the model.</p></li>
   </ol>
 
@@ -93,8 +93,8 @@
   <table>
     <thead><tr><th>Metric</th><th>Value</th><th>How measured</th></tr></thead>
     <tbody>
-      <tr><td>AUC</td><td><strong>~0.80</strong></td><td>Held-out later month</td></tr>
-      <tr><td>Monthly driver churn</td><td><strong>~42% → ~30%</strong></td><td>Monthly cohorts (M0, M1, M2, M3…), before vs. after three months in production</td></tr>
+      <tr><td>AUC (area under the ROC curve; 0.5 = random, 1.0 = perfect ranking)</td><td><strong>~0.80</strong></td><td>Held-out later month</td></tr>
+      <tr><td>Monthly driver churn</td><td><strong>~42% → ~30%</strong></td><td>Monthly cohorts (share of each month's active drivers churned after 0, 1, 2, 3… months), before vs. after three months in production</td></tr>
       <tr><td>Drivers scored / day</td><td>~150,000</td><td>—</td></tr>
       <tr><td>Retention outreach</td><td>~100 model-ranked calls/day + incentive tier</td><td>Previously: manual review of drivers inactive &gt; 7 days</td></tr>
       <tr><td>Top features</td><td>Utilisation and completed-trip metrics</td><td>Feature importance; own-baseline trend among the strongest</td></tr>
@@ -110,8 +110,8 @@
   <h2>What I'd do differently</h2>
   <div class="cards small">
     <div class="card"><h3>A holdout group</h3><p>Deliberately not contacting a random slice of high-risk drivers would separate the call's effect from selection and from concurrent changes like Go Home.</p></div>
-    <div class="card"><h3>Uplift, not risk</h3><p>Model who <em>changes behaviour</em> when contacted, so the ~100 daily calls go to drivers a call can actually keep.</p></div>
-    <div class="card"><h3>Time-to-churn</h3><p>A survival formulation uses <em>when</em> a driver stops, not just whether they crossed a 30-day threshold.</p></div>
+    <div class="card"><h3>Uplift, not risk</h3><p>Uplift modelling — predicting who <em>changes behaviour</em> when contacted rather than who is at risk — so the ~100 daily calls go to drivers a call can actually keep.</p></div>
+    <div class="card"><h3>Time-to-churn</h3><p>A survival-analysis formulation (modelling <em>when</em> an event happens) uses <em>when</em> a driver stops, not just whether they crossed a 30-day threshold.</p></div>
     <div class="card"><h3>Drift monitoring</h3><p>Weekly checks on the top features, so an incentive change shows up in the model's metrics the week it happens.</p></div>
   </div>
 
@@ -119,7 +119,7 @@
   <p>Framing adapted from <a href="https://medium.com/@ttah.hongtran/customer-churn-prediction-and-analysis-for-uber-ride-hailing-service-fbf1dc75a848">Tran (2021)</a> — RFM-based, non-contractual churn prediction for <em>riders</em> on a public Uber dataset of ~1,400 users (<a href="https://link.springer.com/chapter/10.1007/978-3-030-97610-1_24">ICABDE 2021</a>). This project moved it to the supply side — drivers, whose churn removes capacity — at ~150,000 drivers scored daily in production, with an action loop attached.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p>Proprietary to Namma Yatri. Stack: SQL feature build orchestrated nightly with Airflow; Python with pandas, XGBoost and scikit-learn; scores delivered daily to a shared sheet.</p>
+  <p>Proprietary to Namma Yatri. Stack: SQL feature build orchestrated nightly with Apache Airflow; Python with pandas, XGBoost and scikit-learn; scores delivered daily to a shared sheet.</p>
 
   <div class="pager"><a href="../#projects">← All projects</a><a href="text-to-sql-analyst.html">Next: Slack-native AI analyst →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>

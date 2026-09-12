@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adaptive payment-gateway router — Chirag Singal</title>
-<meta name="description" content="An RL router that moves payment traffic away from degrading gateways: PPO pre-trained in simulation, online UCB exploration, safety constraints.">
+<meta name="description" content="An online-learning router that shifts payment traffic away from degrading gateways: UCB exploration with drift detection, benchmarked in a turbulence simulator and deployed.">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -17,36 +17,129 @@
   </nav>
 
   <h1>Adaptive payment-gateway router</h1>
-  <p class="meta">Razorpay · Global Payments · 2026 · Owner: problem framing, simulator, agent, benchmark</p>
-  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up using only publicly stated figures.</p><p class="notice">Draft — this write-up is being finalised.</p>
+  <p class="meta">Razorpay · Global Payments · 2026 · Owner: framing, simulator, agent, benchmark, shadow-mode and rollout measurement; platform engineering owned production integration</p>
+  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up. Production volumes, gateway identities and revenue figures are deliberately omitted; the numbers shown are from the synthetic benchmark.</p>
+
+  <div class="glance">
+    <div><b>Observe → act</b><span>learn to respond to failures, not predict them</span></div>
+    <div><b>UCB + drift</b><span>upper-confidence-bound bandit with drift detection, 8 observed features per gateway</span></div>
+    <div><b>96% vs 43%</b><span>success rate, adaptive vs. rule-based, 10-million-transaction simulation</span></div>
+    <div><b>Deployed</b><span>1 week shadow mode → live traffic</span></div>
+  </div>
 
   <h2>Problem</h2>
-  <p>Payment traffic is routed across several gateways whose reliability changes without warning. When a gateway degrades, static routing rules keep sending it traffic until someone notices — failed payments, lost revenue, and a detection time measured in hours. The task was routing that adapts on its own: detect degradation from observed outcomes and shift traffic, without needing to predict failures in advance.</p>
+  <p>A payments platform routes each transaction to one of several gateways. Gateways degrade suddenly, partially and temporarily, and static routing rules keep sending traffic to a degraded gateway until someone notices and re-weights by hand. In one production incident, a gateway whose success rate had collapsed kept receiving about half of all traffic for most of a day while healthier alternatives sat under-used — the detection time was hours, and every hour was failed payments.</p>
+  <div class="two">
+    <div><h4>Rejected: predict</h4><p>Forecast each gateway's success rate and route to the best forecast. Fails exactly when it matters: gateway failures are non-stationary, rare in training data, and by the time a forecast updates the damage is done.</p></div>
+    <div><h4>Chosen: respond</h4><p>An agent that observes only the outcomes of transactions it routes — success, failure, latency — and shifts traffic away from a gateway the moment its observed health drops. No forecasting; the skill being learned is <em>adaptation</em>.</p></div>
+  </div>
+  <div class="insight">
+    <strong>Key insight</strong>
+    Gateway failures are close to unpredictable, but reacting to them fast is tractable. Framed as a non-stationary <em>multi-armed bandit</em> (a sequential decision problem where each choice reveals only its own outcome, and the best choice changes over time) — explore enough to notice a gateway has recovered, exploit enough not to waste transactions on one that hasn't — the problem stops needing a model of the future.
+  </div>
 
-  <h2>Data</h2>
-  <p><em>To be written.</em></p>
+  <h2>Observations, actions, environment</h2>
+  <dl class="dl">
+    <dt>Constraint</dt><dd>The router never sees a gateway's true state. Everything it knows is inferred from transactions it sent — the same constraint production has.</dd>
+    <dt>Action</dt><dd>Choose one of N gateways for each transaction.</dd>
+    <dt>Observation</dt><dd>8 features per gateway (a 40-vector for five gateways), each from a rolling window of that gateway's recent outcomes; neutral defaults until a gateway has 5 observations.</dd>
+    <dt>Reward</dt><dd>The signal the agent optimises: <code>+1.0</code> success / <code>−0.5</code> failure; <code>−0.0005 × latency_ms</code>; <code>+0.2</code> for switching away from a gateway whose success-rate trend has dropped more than 5 points — rewarding proactive switching before failures accumulate.</dd>
+  </dl>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Feature</th><th>Definition</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><code>sr_overall</code></td><td>success rate over all observed outcomes</td><td>baseline health</td></tr>
+      <tr><td><code>sr_recent</code></td><td>success rate over the last 20</td><td>current health</td></tr>
+      <tr><td><code>sr_delta</code></td><td><code>sr_recent − sr_overall</code></td><td><strong>trend — catches degradation before it's complete</strong></td></tr>
+      <tr><td><code>latency_norm</code></td><td>mean of last 20 latencies ÷ 2000 ms, capped</td><td>speed</td></tr>
+      <tr><td><code>latency_var</code></td><td>std of last 20 latencies ÷ 500 ms, capped</td><td>stability</td></tr>
+      <tr><td><code>confidence</code></td><td>observations ÷ window size</td><td>how much to trust the above</td></tr>
+      <tr><td><code>volume_frac</code></td><td>share of recent traffic sent here</td><td>load awareness</td></tr>
+      <tr><td><code>success_streak</code></td><td>consecutive successes ÷ 20</td><td>momentum; detects recovery</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Simulator.</strong> Each gateway carries hidden parameters — base success rate, volatility, health, and a degradation pattern from {stable, slow-decay, sudden-crash, bursty}. A turbulence manager starts a degradation with 0.02% probability per transaction, drops success rate 2 points per step to a floor of 5–10%, holds for 100–500 transactions, then recovers at 1 point per step; latency spikes of 2–5× occur independently. Gradual degradation and slow recovery were deliberate: sudden crashes are easy to detect, slow decay looks like noise. The environment is more turbulent than production, so a router that copes here has margin.</p>
+  <p><strong>Production features.</strong> The same 8 observations are computed live from a rolling-feature pipeline — 1-, 5- and 15-minute windows, per gateway and per traffic segment — and served to the router.</p>
 
   <h2>Approach</h2>
   <figure>
-    <em>To be written.</em>
-    <figcaption><em>To be written.</em></figcaption>
+    <svg viewBox="0 0 760 290" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
+      <g fill="#fff" stroke="#999" stroke-width="1.2">
+        <rect x="10" y="60" width="120" height="58" rx="8"/>
+        <rect x="160" y="60" width="180" height="58" rx="8"/>
+        <rect x="370" y="60" width="190" height="58" rx="8" stroke="#b5462b" stroke-width="1.8" fill="#fdf3ef"/>
+        <rect x="590" y="60" width="160" height="58" rx="8"/>
+        <rect x="160" y="180" width="180" height="58" rx="8" stroke-dasharray="5 4"/>
+        <rect x="370" y="180" width="190" height="58" rx="8" stroke-dasharray="5 4"/>
+      </g>
+      <g fill="#222" text-anchor="middle">
+        <text x="70" y="84">Transaction</text><text x="70" y="102" fill="#666" font-size="11">arrives</text>
+        <text x="250" y="84">Observation tracker</text><text x="250" y="102" fill="#666" font-size="11">8 features × N gateways</text>
+        <text x="465" y="84">UCB score per gateway</text><text x="465" y="102" fill="#666" font-size="11">success + explore + stale − latency</text>
+        <text x="670" y="84">Route · observe</text><text x="670" y="102" fill="#666" font-size="11">success? latency?</text>
+        <text x="250" y="204">Drift check</text><text x="250" y="222" fill="#666" font-size="11">last 5 vs previous 5 → boost exploration</text>
+        <text x="465" y="204">Safety floor</text><text x="465" y="222" fill="#666" font-size="11">never route below 20% observed success</text>
+      </g>
+      <g stroke="#666" stroke-width="1.4" fill="none" marker-end="url(#a)">
+        <path d="M130 89H158"/><path d="M340 89H368"/><path d="M560 89H588"/>
+        <path d="M670 118V150Q670 209 562 209" stroke-dasharray="5 4"/>
+        <path d="M370 209H342" stroke-dasharray="5 4"/>
+        <path d="M250 180V120" stroke-dasharray="5 4"/>
+        <path d="M670 118V160Q670 260 20 260Q10 260 10 250V120" stroke-dasharray="3 4"/>
+      </g>
+      <text x="30" y="30" fill="#222" font-size="13" font-weight="600">Per-transaction loop: score, route, observe, update — no offline training in the loop</text>
+      <text x="380" y="276" fill="#666" font-size="11" text-anchor="middle">outcome feeds the tracker; the next transaction is routed on updated knowledge</text>
+    </svg>
+    <figcaption>The router is an online bandit: every outcome updates the tracker, the drift check adjusts how much to explore, and the next decision uses the new state.</figcaption>
   </figure>
-  <p><em>To be written.</em></p>
+  <ol class="steps">
+    <li><b>Score every gateway with an upper confidence bound (UCB)</b><p><code>UCB = empirical success rate + exploration bonus + staleness bonus − latency penalty</code>. The exploration bonus is the UCB1 algorithm's <code>√(log N / nᵢ)</code> scaled by 0.15 — large for gateways sampled rarely, shrinking as evidence accumulates. Staleness adds <code>+0.2</code> to any gateway not sampled in the last 100 transactions, so a recovered gateway gets re-tried. Latency above 100 ms is penalised.</p></li>
+    <li><b>Detect drift and explore harder</b><p>Before each decision, compare the current gateway's success over its last 5 transactions with the 5 before. A drop of more than 10 points flags degradation and raises the exploration rate to 10% to find alternatives. Otherwise exploration decays exponentially from 8% to a 2% floor (τ = 2,000 transactions).</p></li>
+    <li><b>Never do the obviously wrong thing</b><p>A hard floor: no traffic to a gateway whose observed success rate is below 20%. A general safety check, cheap in the benchmark, and the kind of guarantee a payments team needs before trusting a learning system.</p></li>
+    <li><b>Learn online, not offline</b><p>No retraining step. The tracker is the model; every transaction updates it. Gateway behaviour changes faster than any offline model could be refreshed.</p></li>
+    <li><b>A PPO policy, trained but not in the loop</b><p>A Proximal Policy Optimization (PPO) agent — a standard deep reinforcement-learning algorithm — with a small two-layer neural network (64×64 multilayer perceptron) was pre-trained in a Gymnasium environment on the simulator with the reward above was pre-trained on the simulator as a candidate prior for the online layer. The benchmarked and deployed router makes its decisions from the observation tracker alone; the PPO policy is not in the decision path. It's kept as the natural next experiment (see below).</p></li>
+  </ol>
 
-  <h2>Results</h2>
+  <h2>Benchmark</h2>
+  <p>Two routers under the same observation-only constraint, in the turbulence simulator, at three scales. The rule-based router reimplements the production logic: start on a random gateway, switch when observed success rate over the last 5 drops below 50%, 5-transaction cooldown, re-evaluate every 50.</p>
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
-    <tbody><em>To be written.</em></tbody>
+    <thead><tr><th>Scale (transactions)</th><th>Rule-based success rate</th><th>Adaptive success rate</th><th>Degradation events</th><th>Gateway switches (rule / adaptive)</th></tr></thead>
+    <tbody>
+      <tr><td>100K</td><td>93.3%</td><td>95.7%</td><td>269</td><td>59 / 16,159</td></tr>
+      <tr><td>1M</td><td>35.9%</td><td>95.6%</td><td>2,825</td><td>73 / 163,957</td></tr>
+      <tr><td><strong>10M</strong></td><td><strong>42.7%</strong></td><td><strong>96.0%</strong></td><td>27,820</td><td>84 / 1,554,607</td></tr>
+    </tbody>
   </table>
   </div>
-  <p><em>To be written.</em></p>
+  <p class="stat-row">10 million transactions ran in 20.5 minutes (~8,100 transactions per second). Average latency: 208 ms rule-based vs. 233 ms adaptive — ~25 ms paid for switching and probing.</p>
+  <p><strong>Why the gap is so large.</strong> The rule-based router switched 84 times in ten million transactions. Gradual degradation never trips its 50% threshold until most of the damage is done, and with no exploration it never discovers that a gateway has recovered — so it sits on degraded gateways for long stretches. The adaptive router's 1.55M switches are not churn; they are the mechanism that keeps it on whichever gateway is healthiest right now.</p>
+  <p><strong>Why scale matters.</strong> At 100K transactions the rule-based router looked fine — 269 degradations aren't enough to expose it. The failure only becomes visible at 1M+. A small benchmark would have shipped the wrong conclusion.</p>
+  <p><strong>What this benchmark doesn't show.</strong> Only two routers were compared. A greedy baseline, a frozen-PPO variant and an oracle that routes to the true-best gateway would separate "reacting at all" from "reacting well" and show the ceiling — that's the first thing I'd add (below).</p>
+
+  <h2>Deployment</h2>
+  <dl class="dl">
+    <dt>Shadow mode</dt><dd>One week alongside production, logging the recommended gateway per transaction without executing it.</dd>
+    <dt>Rollout</dt><dd>Then live traffic. Success rate on the routed traffic was higher than the control. Guardrails were implemented as designed — automatic rollback on a sustained success-rate drop or a latency regression versus control.</dd>
+    <dt>Measurement</dt><dd>I owned the measurement. A production figure isn't reported here; the benchmark above was the basis for the rollout decision.</dd>
+  </dl>
 
   <h2>What I'd do differently</h2>
-  <p><em>To be written.</em></p>
+  <div class="cards small">
+    <div class="card"><h3>Complete the ablation</h3><p>Random, greedy, frozen PPO and an oracle alongside the two routers benchmarked. The interesting number is adaptive vs. oracle — what exploration costs.</p></div>
+    <div class="card"><h3>Put the PPO prior to the test</h3><p>Wire the trained policy into the online layer and measure whether it beats the tracker-only bandit. If it doesn't, drop it.</p></div>
+    <div class="card"><h3>Use the literature's bandits</h3><p>Staleness probes and drift boosts are heuristics doing the job of sliding-window or discounted UCB, or Thompson sampling with forgetting — the standard algorithms for bandits whose arms change over time. Try those as the online layer.</p></div>
+    <div class="card"><h3>Route per segment</h3><p>Gateways degrade per payment method or bank, not globally. A contextual bandit over gateway × segment is the obvious next model.</p></div>
+    <div class="card"><h3>Replay real incidents</h3><p>The simulator was built by the same person as the router. Replaying logged production incidents would be a more convincing test than a synthetic environment.</p></div>
+    <div class="card"><h3>Report regret over time</h3><p>Cumulative regret against the oracle shows <em>when</em> the router loses — at onsets or during recoveries — which is where the next improvement is.</p></div>
+  </div>
+
+  <h2>Related work</h2>
+  <p>The UCB1 algorithm (Auer, Cesa-Bianchi &amp; Fischer, 2002) for the exploration bonus; discounted and sliding-window UCB (Garivier &amp; Moulines, 2011) as the principled treatment of non-stationary arms this router approximates with heuristics; PPO (Schulman et al., 2017) for the pre-trained policy.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p><em>To be written.</em></p>
+  <p>Proprietary to Razorpay. Stack: Python; Gymnasium (the standard reinforcement-learning environment interface) and Stable-Baselines3 for the PPO pre-training; an online-learning service with the observation tracker and UCB router; rolling-feature pipeline on the warehouse; shadow-mode logging and guardrail alerts.</p>
 
   <div class="pager"><a href="../#projects">← All projects</a><a href="driver-churn.html">Next: Driver churn prediction →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>

@@ -19,7 +19,7 @@
   </nav>
 
   <h1>Chirag Singal</h1>
-  <p class="lede">Data scientist in Bangalore, on the Global Payments team at Razorpay. Since 2022 I've built ML and analytics systems in fintech and ride-hailing — fraud detection, churn prediction, an adaptive RL router, and an LLM analyst that answers a team's data questions from its own wiki.</p>
+  <p class="lede">Data scientist in Bangalore, on the Global Payments team at Razorpay. Since 2022 I've built ML and analytics systems in fintech and ride-hailing — fraud detection, churn prediction, an adaptive payment router, and an LLM analyst that answers a team's data questions from its own wiki.</p>
   <p class="meta">Selected work below. Industry projects are described as methods write-ups (code is proprietary); personal and coursework projects link to their repositories.</p>
 
   <h2 id="projects">Selected projects</h2>
@@ -38,8 +38,8 @@
   <path d="M262 55 L300 55" stroke="#1f6f78" stroke-width="3"/><path d="M292 48 L300 55 L292 62" stroke="#1f6f78" stroke-width="3"/></svg></div>
       <div class="body">
         <h3>Adaptive payment-gateway router</h3>
-        <p>RL router that shifts payment traffic away from degrading gateways: a PPO policy pre-trained in a gateway-turbulence simulator, deployed inside an online layer with UCB exploration, drift detection and safety constraints.</p>
-        <div class="tags"><span class="tag org">Razorpay</span><span class="tag">Reinforcement learning</span><span class="tag">Online learning</span></div>
+        <p>Online-learning router that shifts payment traffic away from degrading gateways: an upper-confidence-bound bandit with drift detection over observed outcomes, benchmarked in a gateway-turbulence simulator (96% vs 43% success rate at 10M transactions) and deployed after shadow mode.</p>
+        <div class="tags"><span class="tag org">Razorpay</span><span class="tag">Bandits</span><span class="tag">Online learning</span><span class="tag">Simulation</span></div>
       </div>
     </a>
     <a class="card" href="projects/driver-churn.html">
@@ -51,7 +51,7 @@
   <rect x="120" y="14" width="80" height="16" rx="8" fill="#b5462b"/><text x="160" y="26" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" font-family="Inter,sans-serif">intervene</text></svg></div>
       <div class="body">
         <h3>Driver churn prediction</h3>
-        <p>Daily-scored XGBoost + random-forest ensemble on 36 features across ~150k drivers; monthly churn fell from 42% to 30% over three months, and the ops feedback loop reshaped pricing and matching.</p>
+        <p>Daily-scored ensemble of XGBoost (gradient-boosted trees) and a random forest on 36 features across ~150k drivers; monthly churn fell from 42% to 30% over three months, and the ops feedback loop reshaped pricing and matching.</p>
         <div class="tags"><span class="tag org">Namma Yatri</span><span class="tag">Ensembles</span><span class="tag">Retention</span></div>
       </div>
     </a>
@@ -66,7 +66,7 @@
   <text x="254" y="66" font-size="10" fill="#1f6f78" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">FROM wiki</text></svg></div>
       <div class="body">
         <h3>Slack-native AI analyst</h3>
-        <p>2,000+ documents compiled into a human-ratified data wiki (LLM-Wiki / OKF pattern); a model-agnostic Slack agent navigates it index-first, asks clarifying questions, and runs guarded SQL. 96% 👍 rate, ~40% of a 127-person team asking daily.</p>
+        <p>2,000+ documents compiled into a human-ratified data wiki; a model-agnostic Slack agent navigates it from the index, asks clarifying questions, and runs read-only SQL. 96% 👍 rate, ~40% of a 127-person team asking daily.</p>
         <div class="tags"><span class="tag org">Razorpay</span><span class="tag">LLM agents</span><span class="tag">Knowledge base</span></div>
       </div>
     </a>
@@ -78,7 +78,7 @@
   <g fill="#b5462b"><circle cx="51" cy="58" r="3"/><circle cx="135" cy="36" r="3"/><circle cx="191" cy="28" r="3"/><circle cx="275" cy="48" r="3"/></g></svg></div>
       <div class="body">
         <h3>Fantasy Premier League player-performance models</h3>
-        <p>Predicting per-gameweek player points from public FPL data: 79 pre-deadline features, a 75-gameweek walk-forward backtest, ~10% more points than naive picks — and two data-quality findings (a contaminated benchmark column; an availability feature that didn't help).</p>
+        <p>Predicting Fantasy Premier League player points from public data: 79 pre-deadline features, a 75-gameweek walk-forward backtest, ~10% more points than naive picks — and two data-quality findings (a contaminated benchmark column; an availability feature that didn't help).</p>
         <div class="tags"><span class="tag">Personal</span><span class="tag">Regression</span><span class="tag">Backtesting</span><span class="tag code">Code</span></div>
       </div>
     </a>
@@ -96,7 +96,7 @@
   <path d="M230 80 L286 66" stroke="#1f6f78" stroke-width="3"/><path d="M279 60 L286 66 L279 72" stroke="#1f6f78" stroke-width="3"/></svg></div>
       <div class="body">
         <h3>Linear Algebra for Machine Learning — UC San Diego Extended Studies</h3>
-        <p>CSE X412.87, Summer 2026, grade A+, 100% on all quizzes and the final. Assignments (code on GitHub): face-image compression with PCA; linear regression via gradient descent vs. the normal equation.</p>
+        <p>CSE X412.87, Summer 2026, grade A+, 100% on all quizzes and the final. Assignments (code on GitHub): face-image compression with principal component analysis; linear regression via gradient descent vs. the normal equation.</p>
         <div class="tags"><span class="tag">Credit-bearing</span><span class="tag">A+</span><span class="tag code">Code</span></div>
       </div>
     </a>

@@ -21,15 +21,15 @@
 
   <div class="glance">
     <div><b>114k</b><span>player-fixture rows, 4 seasons, 79 pre-deadline features</span></div>
-    <div><b>75 GWs</b><span>walk-forward backtest, retrained before every gameweek</span></div>
-    <div><b>+10%</b><span>points captured by top XI vs. naive baselines</span></div>
-    <div><b>2 findings</b><span>archived xP is contaminated; availability didn't help</span></div>
+    <div><b>75 weeks</b><span>walk-forward backtest, retrained before every gameweek</span></div>
+    <div><b>+10%</b><span>points captured by the top starting eleven vs. naive baselines</span></div>
+    <div><b>2 findings</b><span>the archived expected-points column is contaminated; availability didn't help</span></div>
   </div>
 
   <h2>Problem</h2>
-  <p>Every week, 6M+ FPL managers pick a squad and score the points their players earn on the pitch. <strong>I finished in the top 12% using this approach</strong> — predicting each player's points for the coming gameweek from form and fixture features, then picking the XI — built ad hoc each week on Fantasy Football Scout's member data. This repo rebuilds the approach on public data, reproducibly, with a walk-forward backtest, so the method can be evaluated rather than taken on trust.</p>
+  <p>Every week, 6M+ Fantasy Premier League (FPL) managers pick a squad of real footballers and score the points their players earn on the pitch. <strong>I finished in the top 12% using this approach</strong> — predicting each player's points for the coming gameweek from form and fixture features, then picking the XI — built ad hoc each week on Fantasy Football Scout's member data. This repo rebuilds the approach on public data, reproducibly, with a walk-forward backtest, so the method can be evaluated rather than taken on trust.</p>
   <div class="two">
-    <div><h4>Question</h4><p>How many points will each player score in the next gameweek — and does a learned model pick a better XI than simple rules?</p></div>
+    <div><h4>Question</h4><p>How many points will each player score in the next gameweek — and does a learned model pick a better starting eleven (XI) than simple rules?</p></div>
     <div><h4>Constraint</h4><p>Every feature must be computable before the deadline. The backtest must use models the way a manager would: retrain on what's happened, predict the coming week, repeat.</p></div>
   </div>
 
@@ -37,16 +37,16 @@
   <dl class="dl">
     <dt>Unit</dt><dd>Player-fixture: one row per player per match, 2022-23 to now (114,202 rows), from the <a href="https://github.com/vaastav/Fantasy-Premier-League">vaastav archive</a> of the official FPL API. Earlier seasons lack xG/xA and are excluded.</dd>
     <dt>Target</dt><dd>FPL points scored in that fixture.</dd>
-    <dt>Features</dt><dd>79, all pre-deadline. Rolling form over the last 3 / 6 / 10 fixtures and season-to-date (points, minutes, starts, goals, assists, bonus, xG, xA, ICT…), shifted by one fixture so a player's own result never leaks into its features; team and opponent strength; home/away and rest days; price, ownership, transfers; position; availability at the deadline.</dd>
-    <dt>Availability</dt><dd>The FPL API only exposes injury status for the <em>current</em> week, so historical status was <strong>reconstructed from the archive's git history</strong>: for each gameweek, the last weekly snapshot committed before its first kickoff. 152 gameweeks recovered; players flagged unavailable average 0.001 points.</dd>
+    <dt>Features</dt><dd>79, all pre-deadline. Rolling form over the last 3 / 6 / 10 fixtures and season-to-date (points, minutes, starts, goals, assists, bonus, expected goals and assists, FPL's influence–creativity–threat index…), shifted by one fixture so a player's own result never leaks into its features; team and opponent strength; home/away and rest days; price, ownership, transfers; position; availability at the deadline.</dd>
+    <dt>Availability</dt><dd>The official FPL API (the game's public data interface) only exposes injury status for the <em>current</em> week, so historical status was <strong>reconstructed from the archive's git history</strong>: for each gameweek, the last weekly snapshot committed before its first kickoff. 152 gameweeks recovered; players flagged unavailable average 0.001 points.</dd>
   </dl>
 
   <h2>Approach</h2>
   <ol class="steps">
     <li><b>Walk-forward, not cross-validation</b><p>For each of the 75 gameweeks in 2024-25 and 2025-26: train on every fixture that had kicked off before the gameweek started, predict it, move on. Random splits would leak the same player's later form into earlier predictions.</p></li>
     <li><b>Baselines first</b><p>Last-3-fixture mean and season-to-date mean — what a casual manager does by eye.</p></li>
-    <li><b>Three learned models</b><p><strong>Ridge</strong> regression; <strong>gradient-boosted trees</strong> (300 rounds, 31 leaves, ≥100 samples per leaf, L2-regularised); and a <strong>hurdle model</strong> — a classifier for <em>will they play?</em> times a regressor for <em>points if they do</em>, because most of the variance in FPL points is whether the player is on the pitch at all.</p></li>
-    <li><b>Score what a manager cares about</b><p>Per-fixture error (MAE, RMSE, rank correlation) <em>and</em> the points captured by picking each method's best legal XI (1-4-4-2) every week — against an oracle that picks with hindsight, so the gap to the ceiling is visible.</p></li>
+    <li><b>Three learned models</b><p><strong>Ridge</strong> regression; <strong>gradient-boosted decision trees</strong> (300 rounds, 31 leaves, ≥100 samples per leaf, L2-regularised); and a <strong>hurdle model</strong> — a classifier for <em>will they play?</em> times a regressor for <em>points if they do</em>, because most of the variance in FPL points is whether the player is on the pitch at all.</p></li>
+    <li><b>Score what a manager cares about</b><p>Per-fixture error (mean absolute error, root-mean-square error, Spearman rank correlation) <em>and</em> the points captured by picking each method's best legal XI (1-4-4-2) every week — against an oracle that picks with hindsight, so the gap to the ceiling is visible.</p></li>
     <li><b>Check the data before believing the result</b><p>Two probes — one for missing values, one for leakage — that turned out to matter more than the modelling (below).</p></li>
   </ol>
 
@@ -57,7 +57,7 @@
   </figure>
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Method</th><th>MAE</th><th>Spearman</th><th>XI points / GW</th><th>Share of oracle</th></tr></thead>
+    <thead><tr><th>Method</th><th>MAE (mean abs. error, points)</th><th>Spearman rank corr.</th><th>Starting-XI points per gameweek</th><th>Share of oracle</th></tr></thead>
     <tbody>
       <tr><td>Last-3 mean (baseline)</td><td>1.063</td><td>0.721</td><td>47.2</td><td>35.8%</td></tr>
       <tr><td>Season mean (baseline)</td><td>1.066</td><td>0.685</td><td>48.5</td><td>36.8%</td></tr>
@@ -71,7 +71,7 @@
   <p class="stat-row">Learned models beat the naive baselines by ~5 points per gameweek on picks (~10%) and ~7% on error, consistently across both seasons. The three learned models are within noise of each other — the features are the ceiling, not the algorithm.</p>
 
   <h3>Finding 1 — the archive's expected-points column is contaminated</h3>
-  <p>FPL publishes its own expected points per player, stored in the archive as <code>xP</code>. It's the obvious benchmark, and an early version used it as a baseline and as a stacking feature — and captured <strong>87% of the oracle</strong>. Too good. Two checks showed why:</p>
+  <p>FPL publishes its own expected points per player (its forecast of how many points a player will score), stored in the archive as <code>xP</code>. It's the obvious benchmark, and an early version used it as a baseline and as a stacking feature — and captured <strong>87% of the oracle</strong>. Too good. Two checks showed why:</p>
   <ul>
     <li><strong>Missing stored as zero.</strong> For 27 of 38 gameweeks in 2025-26 the column is 0 for nearly everyone, including starters who scored — weeks the scraper didn't capture, not predictions of zero.</li>
     <li><strong>Post-match information.</strong> Among players who started, archived <code>xP</code> correlates 0.50 with actual points versus 0.15 for the best genuine pre-match feature, and within a player's season it sits +1.3 above their average on exactly the matches where they scored. Consistent with the field being re-scraped after the gameweek, when FPL's "form" already included that week's points.</li>
@@ -83,7 +83,7 @@
     <img src="../assets/fpl/ablation_availability.png" alt="Ablation: MAE and XI points per gameweek for each model with and without availability features">
     <figcaption>With vs. without the reconstructed availability features. Error improves slightly; points captured don't.</figcaption>
   </figure>
-  <p>Availability looked like the single most valuable missing signal (unavailable players score ~0). The ablation says otherwise: MAE 0.997 → 0.989, rank correlation 0.714 → 0.725, XI points 54.0 → 52.2 — inside week-to-week noise. The snapshots average ten days old, and the players any method picks are regular starters whose availability the form features already encode. The experiment that could change this needs deadline-time snapshots, which don't exist historically — so the pipeline now needs to collect them going forward.</p>
+  <p>Availability looked like the single most valuable missing signal (unavailable players score ~0). The ablation (the same models with the feature removed) says otherwise: mean absolute error 0.997 → 0.989, rank correlation 0.714 → 0.725, starting-XI points 54.0 → 52.2 — inside week-to-week noise. The snapshots average ten days old, and the players any method picks are regular starters whose availability the form features already encode. The experiment that could change this needs deadline-time snapshots, which don't exist historically — so the pipeline now needs to collect them going forward.</p>
 
   <div class="insight">
     <strong>Key insight</strong>
@@ -94,7 +94,7 @@
   <div class="cards small">
     <div class="card"><h3>Snapshot at the deadline</h3><p>A scheduled job capturing the FPL API at every deadline gives hours-old availability instead of days-old. This is the ablation I couldn't run.</p></div>
     <div class="card"><h3>A clean external benchmark</h3><p>Bookmaker odds or a third-party expected-points source captured <em>before</em> each deadline, to replace the contaminated xP as the bar to beat.</p></div>
-    <div class="card"><h3>Optimise the squad, not the XI</h3><p>Budget, transfers and captaincy under FPL's real constraints — closing the loop with how I actually play.</p></div>
+    <div class="card"><h3>Optimise the squad, not the starting eleven</h3><p>Budget, transfers and captaincy under FPL's real constraints — closing the loop with how I actually play.</p></div>
     <div class="card"><h3>Position-specific models</h3><p>Goalkeepers and forwards earn points differently; one model with position one-hots may be leaving signal on the table.</p></div>
   </div>
 

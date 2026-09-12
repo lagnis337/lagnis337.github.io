@@ -22,9 +22,9 @@
 
   <div class="glance">
     <div><b>2k → 100+</b><span>source docs compiled into ratified wiki pages</span></div>
-    <div><b>Index-first</b><span>agent navigates the wiki; no embeddings; model-agnostic</span></div>
+    <div><b>Index-first</b><span>agent navigates the wiki from its index; no vector search; any model</span></div>
     <div><b>96% 👍</b><span>asker satisfaction · ~2 min median answer</span></div>
-    <div><b>~40% DAU</b><span>of a 127-person team; data-team tickets −10% w/w</span></div>
+    <div><b>~40% daily</b><span>of a 127-person team asking each day; data-team tickets −10% week on week</span></div>
   </div>
 
   <h2>Problem</h2>
@@ -35,24 +35,24 @@
   </div>
   <div class="insight">
     <strong>Key insight</strong>
-    Not retrieval-augmented generation over a document pile. The documents were <em>compiled once into a persistent, human-ratified wiki</em>, and the agent navigates it the way an analyst would — read the index, open the relevant pages, ask a clarifying question if the request is ambiguous, then write and run the SQL. The wiki compounds with every correction; the models come and go underneath it.
+    Not retrieval-augmented generation (RAG — fetching text snippets for a language model on every query) over a document pile. The documents were <em>compiled once into a persistent, human-ratified wiki</em>, and the agent navigates it the way an analyst would — read the index, open the relevant pages, ask a clarifying question if the request is ambiguous, then write and run the SQL query. The wiki compounds with every correction; the models come and go underneath it.
   </div>
 
   <h2>The wiki</h2>
   <dl class="dl">
-    <dt>Pattern</dt><dd><em>LLM Wiki</em> (Karpathy) for the compile-and-maintain loop; <em>Open Knowledge Format</em> (Google) for the layout — a git repo of markdown, one page per table / metric / dashboard, YAML frontmatter.</dd>
+    <dt>Pattern</dt><dd><em>LLM Wiki</em> (Karpathy) for the compile-and-maintain loop; <em>Open Knowledge Format</em> (Google) for the layout — a git repository of markdown files, one page per table / metric / dashboard, each with a small header of structured metadata (YAML frontmatter: type, tags, status).</dd>
     <dt>Size</dt><dd>100+ ratified pages compiled from 2,000+ source documents.</dd>
-    <dt>Grounding</dt><dd>Table pages carry schema, grain, join paths and caveats; metric pages carry definitions with canonical SQL. The model sees curated pages, never raw DDL — that's what "schema-grounded" means here.</dd>
+    <dt>Grounding</dt><dd>Table pages carry schema, grain, join paths and caveats; metric pages carry definitions with canonical SQL. The model sees curated pages, never raw database schema definitions — that's what "schema-grounded" means here.</dd>
     <dt>Validation</dt><dd>Every proposed page or change is run against live warehouse data before it can be ratified. Canonical SQL has to execute and return sensible numbers, not just read well.</dd>
   </dl>
   <div class="table-wrap"><table>
     <thead><tr><th>File / field</th><th>Role</th></tr></thead>
     <tbody>
       <tr><td><code>index.md</code></td><td>Catalogue of every page with a one-line summary. Read first on every query; the agent opens only the pages it needs. <strong>Index-first navigation, no embeddings.</strong></td></tr>
-      <tr><td><code>rules.md</code> + reading skill</td><td>Page templates and frontmatter conventions; how to ingest, answer and propose. The skill tells <em>any</em> model how the repo is to be read — the method lives here, not in the model.</td></tr>
+      <tr><td><code>rules.md</code> + reading skill</td><td>Page templates and metadata conventions; how to ingest, answer and propose. The skill tells <em>any</em> model how the repo is to be read — the method lives here, not in the model.</td></tr>
       <tr><td><code>metrics.md</code> → playbooks</td><td>Regularly asked metrics, each linked to a ratified, <strong>parameterised</strong> SQL playbook (merchant, date range, segment). Known metric → known-good query; generation only for what playbooks don't cover.</td></tr>
       <tr><td><code>log.md</code></td><td>Append-only record of every change, with date and author.</td></tr>
-      <tr><td><code>status</code> frontmatter</td><td><code>draft</code> until a human ratifies; the agent answers only from <code>active</code> pages.</td></tr>
+      <tr><td><code>status</code> field</td><td><code>draft</code> until a human ratifies; the agent answers only from <code>active</code> pages.</td></tr>
     </tbody>
   </table></div>
 
@@ -91,7 +91,7 @@
     <li><b>Clarify before reading</b><p>The agent is instructed to think like a data analyst, not a search engine. If a question is ambiguous ("revenue" — which product, which date basis?) it asks <strong>one clarifying question</strong> before opening anything.</p></li>
     <li><b>Navigate, don't retrieve</b><p>Read <code>index.md</code>; open only the metric and table pages the question needs; check <code>metrics.md</code> for a matching playbook. Fill the playbook's parameters if there is one, otherwise write SQL grounded on the pages' schema and join paths.</p></li>
     <li><b>Any model</b><p>The Slack agent <strong>selects the model at run time</strong>; the repo and the reading skill are built so any capable model can navigate them. Claude frontier models were used most, but nothing depends on them.</p></li>
-    <li><b>Guardrails</b><p>The bot's service account can only <code>SELECT</code> on the curated schema; results are capped at <strong>10,000 rows</strong>; no raw event tables, no writes.</p></li>
+    <li><b>Guardrails</b><p>The bot's database account can only read (<code>SELECT</code>) from the curated schema; results are capped at <strong>10,000 rows</strong>; no raw event tables, no writes.</p></li>
     <li><b>Show the work</b><p>Every answer carries a footnote: the SQL that ran, the pages traversed, and the <strong>time and token cost of each step</strong> — repo access, per-page navigation, query execution — plus the total. Askers check the definition; I used per-page costs to find pages that were expensive to read every time and restructure them.</p></li>
     <li><b>Maintain daily</b><p>A scheduled skill scrapes the day's Slack responses — the 👎s especially — works out what the wiki was missing or wrong, drafts the change (a metric page, a corrected join path, a new playbook) and pushes it as a pending proposal. I validate against live data and ratify or reject.</p></li>
   </ol>
@@ -102,7 +102,7 @@
     <thead><tr><th>Metric</th><th>Value</th><th>How measured</th></tr></thead>
     <tbody>
       <tr><td>Responses rated 👍</td><td><strong>96%</strong></td><td>Share of all responses with a thumbs-up from the asker</td></tr>
-      <tr><td>Daily active askers</td><td><strong>~40% of 127</strong></td><td>Distinct people asking per day</td></tr>
+      <tr><td>Daily active users</td><td><strong>~40% of 127</strong></td><td>Distinct people asking at least one question per day</td></tr>
       <tr><td>Questions to the data team</td><td><strong>−10% week on week</strong></td><td>Ticket volume after launch</td></tr>
       <tr><td>Median time to answer</td><td><strong>~2 minutes</strong></td><td>Slack timestamps; previously a ticket queue</td></tr>
       <tr><td>Main cause of 👎</td><td>Incomplete wiki context</td><td>Review of thumbs-downs — the expected failure of a wiki built to grow, and what the daily loop fixes</td></tr>
@@ -123,7 +123,7 @@
   <p><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">LLM Wiki</a> (Karpathy) — an LLM incrementally compiling and maintaining a persistent markdown wiki, with <code>index.md</code>, <code>log.md</code>, a schema file and answers filed back, instead of re-retrieving from raw sources on every query. <a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing">Open Knowledge Format</a> (Google) — that wiki's layout for data: one markdown page per dataset / table / metric with YAML frontmatter, schema tables and join paths, curated like code. This project applied both to a live warehouse and added a Slack agent, guardrails and a human-ratification loop.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p>Proprietary to Razorpay. Stack: markdown wiki in git with YAML frontmatter and page status; a model-agnostic Slack agent with run-time model selection and a defined reading skill; SELECT-only warehouse service account; a daily scheduled review skill that proposes wiki changes for human ratification.</p>
+  <p>Proprietary to Razorpay. Stack: markdown wiki in git with structured page metadata and status; a model-agnostic Slack agent with run-time model selection and a defined reading skill; read-only data-warehouse account; a daily scheduled review skill that proposes wiki changes for human ratification.</p>
 
   <div class="pager"><a href="../#projects">← All projects</a><a href="fpl-player-models.html">Next: FPL player models →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
