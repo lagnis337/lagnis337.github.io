@@ -62,7 +62,8 @@ a.card:hover { text-decoration: none; transform: translateY(-2px); box-shadow: 0
 .card h3 { margin: 0 0 6px; font-size: 1.12rem; }
 .card p { margin: 0 0 10px; color: var(--muted); font-size: 0.93rem; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag { font-size: 0.74rem; font-weight: 500; background: var(--tag); border-radius: 999px; padding: 3px 9px; color: var(--muted); }
+.tag { font-size: 0.74rem; font-weight: 500; background: var(--tag); border-radius: 999px; padding: 3px 9px; color: var(--muted); display: inline-flex; align-items: center; gap: 5px; }
+.tag svg { width: 13px; height: 13px; fill: currentColor; flex: none; }
 .tag.code { background: var(--accent-soft); color: var(--accent); }
 .tag.org { background: var(--accent2-soft); color: var(--accent2); }
 .card .links { margin: 12px 0 0; font-size: 0.9rem; }
