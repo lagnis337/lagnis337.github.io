@@ -20,6 +20,13 @@
   <p class="meta">Namma Yatri · Central data team · 2024–2025 · Owner, end to end</p>
   <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up using only publicly stated figures.</p>
 
+  <div class="glance">
+    <div><b>~150k</b><span>drivers scored every morning</span></div>
+    <div><b>XGBoost + RF</b><span>averaged, calibrated, 36 features</span></div>
+    <div><b>AUC ~0.80</b><span>held-out later month</span></div>
+    <div><b>42% → 30%</b><span>monthly churn, 3 months in production</span></div>
+  </div>
+
   <h2>Problem</h2>
   <p>Namma Yatri is a zero-commission ride-hailing platform: drivers pay a subscription rather than a per-ride cut, so driver retention is both the supply side of the marketplace and a direct revenue line. Around <strong>42% of active drivers were churning</strong>. This is a <em>non-contractual</em> churn setting — there is no cancellation event, so churn has to be inferred from inactivity; here it meant no completed rides for 30 days.</p>
   <p>There was no systematic targeting: ops would look at drivers who hadn't been active for more than a week and reach out — by which point many had already left. The goal was to identify drivers <em>likely</em> to churn early enough for an intervention to matter, and to give ops and customer success a ranked list of who to reach each day.</p>
@@ -91,7 +98,11 @@
   </div>
   <p>Churn was tracked as <strong>monthly cohorts</strong> — for each month's active drivers, the share churned at M0, M1, M2, M3 — so the effect could be read cohort by cohort as the system ran. Over three months in production the monthly churn rate fell from roughly 42% to 30%. This is a before/after comparison on the whole base; it includes everything else that changed in the period (see below).</p>
   <p><strong>What drove the predictions.</strong> The most important features were <strong>utilisation</strong> (online hours and how much of that time produced rides) and <strong>completed-trip</strong> metrics — how many rides, and how that compared with the driver's own recent baseline.</p>
-  <p><strong>What the calls said.</strong> Reasons drivers gave were tagged by the ops team into categories, and the categories went to product. The clearest example: drivers working evenings wanted their last rides to end near home, and were declining or logging off rather than accept a trip in the wrong direction. That became a <strong>"Go Home" mode</strong> — a driver switches it on and receives requests whose drop-off is near their home. Other tagged reasons fed changes to pricing and to driver–rider matching. The model decided who to call; the calls changed the product.</p>
+  <p><strong>What the calls said.</strong> Reasons drivers gave were tagged by the ops team into categories, and the categories went to product. Other than the example below, tagged reasons fed changes to pricing and to driver–rider matching.</p>
+  <div class="insight">
+    <strong>Key insight</strong>
+    Drivers working evenings wanted their last rides to end near home, and were declining trips or logging off rather than head the wrong way. That became <em>"Go Home" mode</em> — switch it on and you receive requests whose drop-off is near your house. The model decided who to call; the calls changed the product; the product changed churn.
+  </div>
 
   <h2>What I'd do differently</h2>
   <p>The cohort comparison shows the system worked but can't separate the model's contribution from the interventions' or from concurrent product changes like Go Home. A <strong>holdout</strong> — a random slice of high-risk drivers deliberately not contacted — would have measured the true lift of a call, and reframing the problem as <strong>uplift modelling</strong> (who changes behaviour when contacted) rather than risk scoring would have targeted the ~100 daily calls better. I'd also replace the 30-day binary label with a <strong>time-to-churn</strong> (survival) formulation, which uses the information in <em>when</em> a driver stops rather than just whether they crossed a threshold, and add drift monitoring on the top features so a change in incentives shows up in the model's metrics the week it happens.</p>

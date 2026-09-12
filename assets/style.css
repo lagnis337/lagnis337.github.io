@@ -69,3 +69,12 @@ li { margin-bottom: 6px; }
 footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
 .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 40px; font-size: 0.95rem; }
 @media (max-width: 480px) { body { font-size: 16px; } h1 { font-size: 1.6rem; } }
+
+/* At-a-glance tiles and key-insight callout on case-study pages */
+.glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 20px 0 8px; }
+.glance div { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.glance b { display: block; font-size: 1.25rem; line-height: 1.2; margin-bottom: 4px; }
+.glance span { color: var(--muted); font-size: 0.85rem; }
+.insight { border: 1px solid var(--accent); border-radius: 10px; padding: 14px 18px; margin: 24px 0; background: var(--card); }
+.insight strong { color: var(--accent); display: block; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
+h2 { margin-top: 56px; }
