@@ -17,13 +17,14 @@
   </nav>
 
   <h1>Driver churn prediction</h1>
+  <p class="plain">Every morning, rank 150,000 drivers by how likely they are to stop driving, and hand ops a list they can act on.</p>
   <p class="meta">Namma Yatri · Central data team · 2024–2025 · Owner, end to end</p>
   <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up.</p>
 
   <div class="glance">
     <div><b>~150k</b><span>drivers scored every morning</span></div>
     <div><b>XGB + RF</b><span>XGBoost and random forest, averaged &amp; calibrated, 36 features</span></div>
-    <div><b>AUC ~0.80</b><span>area under the ROC curve, held-out later month</span></div>
+    <div><b>AUC ~0.80</b><span>ranks a driver who will churn above one who won't about 80% of the time (held-out month)</span></div>
     <div><b>42% → 30%</b><span>monthly churn, 3 months in production</span></div>
   </div>
 

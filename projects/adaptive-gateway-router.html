@@ -17,6 +17,7 @@
   </nav>
 
   <h1>Adaptive payment-gateway router</h1>
+  <p class="plain">A router that notices when a payment gateway starts failing and moves traffic to healthier ones on its own, learning from each transaction's outcome.</p>
   <p class="meta">Razorpay · 2026 · Owner: framing, simulator, agent, benchmark, shadow-mode and rollout measurement; platform engineering owned production integration</p>
   <p class="notice">Industry project at a payments company. Code and data are proprietary; this is a methods write-up. All figures are from the synthetic benchmark.</p>
 
@@ -96,7 +97,7 @@
     <li><b>Detect drift and explore harder</b><p>Before each decision, compare the current gateway's success over its most recent transactions with the batch before. A sharp drop flags degradation and temporarily raises the exploration rate to find alternatives. Otherwise exploration decays over time toward a small floor that never reaches zero — the router keeps checking.</p></li>
     <li><b>Never do the obviously wrong thing</b><p>A hard floor: no traffic to a gateway whose observed success rate is below a threshold. A general safety check, cheap in the benchmark, and the kind of guarantee a payments team needs before trusting a learning system.</p></li>
     <li><b>Learn online, not offline</b><p>No retraining step. The tracker is the model; every transaction updates it. Gateway behaviour changes faster than any offline model could be refreshed.</p></li>
-    <li><b>A PPO policy, trained but not in the loop</b><p>A Proximal Policy Optimization (PPO) agent — a standard deep reinforcement-learning algorithm — with a small neural-network policy was pre-trained in a Gymnasium environment on the simulator with the reward above was pre-trained on the simulator as a candidate prior for the online layer. The benchmarked and deployed router makes its decisions from the observation tracker alone; the PPO policy is not in the decision path. It's kept as the natural next experiment (see below).</p></li>
+    <li><b>A PPO policy, trained but not in the loop</b><p>A Proximal Policy Optimization (PPO) agent — a standard deep reinforcement-learning algorithm — with a small neural-network policy was pre-trained in a Gymnasium environment on the simulator, with the reward above, as a candidate prior for the online layer. The benchmarked and deployed router makes its decisions from the observation tracker alone; the PPO policy is not in the decision path. It's kept as the natural next experiment (see below).</p></li>
   </ol>
 
   <figure class="chart">
@@ -122,19 +123,20 @@
   </table>
   </div>
   <p class="stat-row">The 10-million-transaction run completes in about twenty minutes. The adaptive router pays a small latency premium (on the order of ten percent) for its switching and probing.</p>
-  <p><strong>Why the gap is so large.</strong> The rule-based router switched fewer than a hundred times in ten million transactions. Gradual degradation never trips its threshold until most of the damage is done, and with no exploration it never discovers that a gateway has recovered — so it sits on degraded gateways for long stretches. The adaptive router's ~1.5 million switches are not churn; they are the mechanism that keeps it on whichever gateway is healthiest right now.</p>
-  <p><strong>Why scale matters.</strong> At 100K transactions the rule-based router looked fine — a few hundred degradations aren't enough to expose it. The failure only becomes visible at a million transactions and beyond. A small benchmark would have shipped the wrong conclusion.</p>
+  <p><strong>Why the gap is so large.</strong> The rule-based router switched fewer than a hundred times in ten million transactions. Gradual degradation never trips its threshold until most of the damage is done, and with no exploration it never discovers that a gateway has recovered — so it sits on degraded gateways for long stretches. The adaptive router's ~1.5 million switches are not churn; they are the mechanism that keeps it on whichever gateway is healthiest right now. That also means a large share of the gap is the baseline's missing re-enable rule: a threshold router that periodically re-checks a gateway it has left would recover part of it. The multiplier is a statement about this baseline, not about threshold routing in general — which is why a fairer baseline is the first item below.</p>
+  <p><strong>Why scale matters.</strong> At 100K transactions the rule-based router looked fine — a few hundred degradations aren't enough to expose it. The failure only becomes visible at a million transactions and beyond. A small benchmark would have shipped the wrong conclusion. The multiplier itself moves between runs (2.7× at 1M, 2.2× at 10M) because the rule-based router's outcome depends on which gateway it starts on and when the degradations land; the adaptive router's success rate stayed within a point of itself across all three scales.</p>
   <p><strong>What this benchmark doesn't show.</strong> Only two routers were compared. A greedy baseline, a frozen-PPO variant and an oracle that routes to the true-best gateway would separate "reacting at all" from "reacting well" and show the ceiling — that's the first thing I'd add (below).</p>
 
   <h2>Deployment</h2>
   <dl class="dl">
     <dt>Shadow mode</dt><dd>Ran alongside production, logging the recommended gateway per transaction without executing it.</dd>
     <dt>Rollout</dt><dd>Then live traffic, behind guardrails that roll back automatically if success rate or latency regresses against control. Success rate on the routed traffic was higher than the control.</dd>
-    <dt>Measurement</dt><dd>I owned the measurement. The benchmark above was the basis for the rollout decision; live performance is tracked against the control.</dd>
+    <dt>Measurement</dt><dd>The benchmark above was the basis for the rollout decision; live performance is tracked against the control group on the same success-rate metric.</dd>
   </dl>
 
   <h2>What I'd do differently</h2>
   <div class="cards small">
+    <div class="card"><h3>A fairer baseline</h3><p>Give the threshold router a re-enable rule — re-check a gateway it left after a cooldown — and report absolute success rates for both. The headline multiplier should survive that; if it shrinks, the honest number is the smaller one.</p></div>
     <div class="card"><h3>Complete the ablation</h3><p>Random, greedy, frozen PPO and an oracle alongside the two routers benchmarked. The interesting number is adaptive vs. oracle — what exploration costs.</p></div>
     <div class="card"><h3>Put the PPO prior to the test</h3><p>Wire the trained policy into the online layer and measure whether it beats the tracker-only bandit. If it doesn't, drop it.</p></div>
     <div class="card"><h3>Use the literature's bandits</h3><p>Staleness probes and drift boosts are heuristics doing the job of sliding-window or discounted UCB, or Thompson sampling with forgetting — the standard algorithms for bandits whose arms change over time. Try those as the online layer.</p></div>

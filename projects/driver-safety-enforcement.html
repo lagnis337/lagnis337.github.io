@@ -17,6 +17,7 @@
   </nav>
 
   <h1>Driver safety enforcement</h1>
+  <p class="plain">Read every rider complaint the same day, in any language, and apply a consequence that fits the severity — automatically for minor cases, with a person deciding the serious ones.</p>
   <p class="meta">Namma Yatri · Central data team · 2024–2025 · Owner: classifier, scoring and action logic</p>
   <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up.</p>
 
@@ -92,8 +93,8 @@
     <figcaption>Two levers. Deprioritisation is applied by the job itself; a block needs a person to look at the text and the driver's history first.</figcaption>
   </figure>
   <ol class="steps">
-    <li><b>Translate first, then classify</b><p>Sarvam's translation API turned every comment into English — including the romanised Kannada and Hindi that trip up most models. That moved the multilingual difficulty out of the model entirely, so a <strong>simple, inspectable classifier</strong> was enough: TF-IDF (term frequency–inverse document frequency) features over word and character n-grams (which tolerate the spelling noise that survives translation), into a linear classifier. Inspectable mattered — ops could see which words drove a flag.</p></li>
-    <li><b>Threshold for recall at the top</b><p>The cost of the two mistakes is asymmetric: a missed assault report is far worse than an extra case for a human to review. Thresholds on the severe buckets were set for recall, and the resulting false positives were absorbed by the review step rather than tuned away.</p></li>
+    <li><b>Translate first, then classify</b><p>Sarvam's translation API turned every comment into English — including the romanised Kannada and Hindi that trip up most models. That moved the multilingual difficulty out of the model entirely, so a <strong>simple, inspectable classifier</strong> was enough: TF-IDF (term frequency–inverse document frequency) features over word and character n-grams (short runs of words or letters, which tolerate the spelling noise that survives translation), into a linear classifier. Inspectable mattered — ops could see which words drove a flag.</p></li>
+    <li><b>Threshold for recall at the top</b><p>The cost of the two mistakes is asymmetric: a missed assault report is far worse than an extra case for a human to review. Thresholds on the severe buckets were set for recall — catch as many genuine cases as possible, accepting some false alarms — and the resulting false positives were absorbed by the review step rather than tuned away.</p></li>
     <li><b>Severity chooses the lever, the window scales with it</b><p>Each driver's flags roll up by bucket. Buckets 1–3 lead to a block whose duration scales with severity — permanent at the top, a fixed number of days lower down. Buckets 4–5 lead to <strong>deprioritisation</strong>: the driver stays online but drops down the ride-matching order for a window, and is told why. Losing ride volume for a week is the warning. Matching already supported priority tiers; this was the first time the mechanism was customised this heavily, and it turned enforcement into a graded cost rather than an on/off switch.</p></li>
     <li><b>Humans on every block</b><p>Deprioritisation is automatic. Any block goes to a queue with the original text, its translation, the driver's history and the recommended action; driver-ops confirm or overturn with one click. Overturned cases go back as corrected labels. Drivers can appeal through driver support.</p></li>
     <li><b>Daily batch, not real time</b><p>Feedback is reviewed the same day, which is what the problem needed; a streaming system would have added complexity without changing outcomes.</p></li>
@@ -111,10 +112,10 @@
     </tbody>
   </table>
   </div>
-  <p class="stat-row">The complaint reduction is a before/after comparison, so it includes everything else that changed in the period; the ratio of corrected to removed drivers — roughly twenty to one — is the number that says the graded lever did most of the work.</p>
+  <p class="stat-row">The complaint reduction is a before/after comparison, so it includes everything else that changed in the period. And "no further flag" after one deprioritisation is partly what any policy would see — most drivers with a single complaint never get a second — so ~12,000 counts drivers who went through the lighter lever, not a measured change in behaviour.</p>
   <div class="insight">
     <strong>Key insight</strong>
-    Most drivers who get a complaint are not dangerous; they had a bad day, or a habit nobody had called out. A binary warn-or-block system either lets that slide or over-punishes it. Making <em>ride priority</em> the lever gave enforcement a dial: a cost proportionate to the offence, felt immediately in earnings, reversible by behaving. ~12,000 drivers changed behaviour without anyone being removed from the platform — and the ~550 who were removed had a human look at the evidence first.
+    Most drivers who get a complaint are not dangerous; they had a bad day, or a habit nobody had called out. A binary warn-or-block system either lets that slide or over-punishes it. Making <em>ride priority</em> the lever gave enforcement a dial: a cost proportionate to the offence, felt immediately in earnings, reversible by behaving. Most of the ~12,000 drivers who went through it never appeared again; the ~550 who were removed had a person look at the evidence first.
   </div>
 
   <h2>What went wrong, and what changed</h2>
@@ -128,7 +129,7 @@
   <div class="cards small">
     <div class="card"><h3>Measure the lever</h3><p>Randomly vary the deprioritisation window for bucket-5 drivers to learn how much cost actually changes behaviour, instead of picking a window by judgement.</p></div>
     <div class="card"><h3>Rider credibility</h3><p>A rider's own complaint history as a feature — a first complaint from a frequent rider and a fifth from a rider with a fare dispute are not the same evidence.</p></div>
-    <div class="card"><h3>Held-out evaluation</h3><p>A fixed, hand-labelled evaluation set to report precision and recall per bucket over time, rather than relying on the review queue as the only quality signal.</p></div>
+    <div class="card"><h3>Held-out evaluation</h3><p>A fixed, hand-labelled evaluation set to report precision and recall per bucket over time, and the block queue's overturn rate tracked as a metric — the one quality signal the system already produces every day.</p></div>
   </div>
 
   <h2>Related work</h2>

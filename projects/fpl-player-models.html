@@ -17,6 +17,7 @@
   </nav>
 
   <h1>Fantasy Premier League player-performance models</h1>
+  <p class="plain">Predict how many fantasy points each footballer will score next week, and test honestly whether the predictions beat simple rules.</p>
   <p class="meta">Personal project · 2026 · Solo · <a class="ghlink" href="https://github.com/lagnis337/fpl-player-models"><svg aria-hidden="true"><use href="../assets/icons.svg#i-github"/></svg>Code on GitHub</a></p>
 
   <div class="glance">
@@ -57,18 +58,18 @@
   </figure>
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Method</th><th>MAE (mean abs. error, points)</th><th>Spearman rank corr.</th><th>Starting-XI points per gameweek</th><th>Share of oracle</th></tr></thead>
+    <thead><tr><th>Method</th><th>MAE (mean abs. error, points)</th><th>Spearman rank corr.</th><th>Starting-XI points per gameweek</th><th>vs. last-3 baseline (95% CI)</th><th>Share of oracle</th></tr></thead>
     <tbody>
-      <tr><td>Last-3 mean (baseline)</td><td>1.063</td><td>0.721</td><td>47.2</td><td>35.8%</td></tr>
-      <tr><td>Season mean (baseline)</td><td>1.066</td><td>0.685</td><td>48.5</td><td>36.8%</td></tr>
-      <tr><td>Ridge</td><td>1.088</td><td>0.710</td><td><strong>52.9</strong></td><td><strong>40.1%</strong></td></tr>
-      <tr><td><strong>Gradient-boosted trees</strong></td><td><strong>0.989</strong></td><td><strong>0.725</strong></td><td>52.2</td><td>39.6%</td></tr>
-      <tr><td>Hurdle</td><td>0.991</td><td>0.719</td><td>52.6</td><td>39.9%</td></tr>
-      <tr><td>Oracle (hindsight)</td><td>—</td><td>—</td><td>131.9</td><td>100%</td></tr>
+      <tr><td>Last-3 mean (baseline)</td><td>1.063</td><td>0.721</td><td>47.2</td><td>—</td><td>35.8%</td></tr>
+      <tr><td>Season mean (baseline)</td><td>1.066</td><td>0.685</td><td>48.5</td><td>+1.3 [−2.8, +5.0]</td><td>36.8%</td></tr>
+      <tr><td>Ridge</td><td>1.088</td><td>0.710</td><td><strong>52.9</strong></td><td><strong>+5.6 [+2.4, +8.7]</strong></td><td><strong>40.1%</strong></td></tr>
+      <tr><td><strong>Gradient-boosted trees</strong></td><td><strong>0.989</strong></td><td><strong>0.725</strong></td><td>52.2</td><td>+5.0 [+1.5, +8.4]</td><td>39.6%</td></tr>
+      <tr><td>Hurdle</td><td>0.991</td><td>0.719</td><td>52.6</td><td>+5.4 [+1.9, +8.9]</td><td>39.9%</td></tr>
+      <tr><td>Oracle (hindsight)</td><td>—</td><td>—</td><td>131.9</td><td>—</td><td>100%</td></tr>
     </tbody>
   </table>
   </div>
-  <p class="stat-row">Learned models beat the naive baselines by ~5 points per gameweek on picks (~10%) and ~7% on error, consistently across both seasons. The three learned models are within noise of each other — the features are the ceiling, not the algorithm.</p>
+  <p class="stat-row">Learned models beat the naive baselines by ~5 points per gameweek on picks (~10%) and ~7% on error, consistently across both seasons. The last column pairs each method with the last-3 baseline gameweek by gameweek and bootstraps the mean difference (10,000 resamples); every learned model's interval excludes zero, the season-mean baseline's does not. The three learned models are within noise of each other — the features are the ceiling, not the algorithm.</p>
 
   <h3>Finding 1 — the archive's expected-points column is contaminated</h3>
   <p>FPL publishes its own expected points per player (its forecast of how many points a player will score), stored in the archive as <code>xP</code>. It's the obvious benchmark, and an early version used it as a baseline and as a stacking feature — and captured <strong>87% of the oracle</strong>. Too good. Two checks showed why:</p>
@@ -83,7 +84,7 @@
     <img src="../assets/fpl/ablation_availability.png" alt="Ablation: MAE and XI points per gameweek for each model with and without availability features">
     <figcaption>With vs. without the reconstructed availability features. Error improves slightly; points captured don't.</figcaption>
   </figure>
-  <p>Availability looked like the single most valuable missing signal (unavailable players score ~0). The ablation (the same models with the feature removed) says otherwise: mean absolute error 0.997 → 0.989, rank correlation 0.714 → 0.725, starting-XI points 54.0 → 52.2 — inside week-to-week noise. The snapshots average ten days old, and the players any method picks are regular starters whose availability the form features already encode. The experiment that could change this needs deadline-time snapshots, which don't exist historically — so the pipeline now needs to collect them going forward.</p>
+  <p>Availability looked like the single most valuable missing signal (unavailable players score ~0). The ablation (the same models with the feature removed) says otherwise: mean absolute error 0.997 → 0.989, rank correlation 0.714 → 0.725, starting-XI points 54.0 → 52.2 — inside week-to-week noise (paired difference −1.8 per gameweek, 95% CI [−4.0, +0.3]; the ridge and hurdle intervals straddle zero too). The snapshots average ten days old, and the players any method picks are regular starters whose availability the form features already encode. The experiment that could change this needs deadline-time snapshots, which don't exist historically — so the pipeline now needs to collect them going forward.</p>
 
   <div class="insight">
     <strong>Key insight</strong>
