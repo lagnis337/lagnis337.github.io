@@ -18,7 +18,7 @@
 
   <h1>Adaptive payment-gateway router</h1>
   <p class="meta">Razorpay · Global Payments · 2026 · Owner: framing, simulator, agent, benchmark, shadow-mode and rollout measurement; platform engineering owned production integration</p>
-  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up. Production volumes, gateway identities and revenue figures are deliberately omitted; the numbers shown are from the synthetic benchmark.</p>
+  <p class="notice">Industry project at a payments company. Code and data are proprietary; this is a methods write-up. Production volumes, traffic shares, gateway identities, incident details and revenue figures are deliberately omitted; every number shown is from the synthetic benchmark.</p>
 
   <div class="glance">
     <div><b>Observe → act</b><span>learn to respond to failures, not predict them</span></div>
@@ -28,7 +28,7 @@
   </div>
 
   <h2>Problem</h2>
-  <p>A payments platform routes each transaction to one of several gateways. Gateways degrade suddenly, partially and temporarily, and static routing rules keep sending traffic to a degraded gateway until someone notices and re-weights by hand. In one production incident, a gateway whose success rate had collapsed kept receiving about half of all traffic for most of a day while healthier alternatives sat under-used — the detection time was hours, and every hour was failed payments.</p>
+  <p>A payments platform routes each transaction to one of several gateways. Gateways degrade suddenly, partially and temporarily, and static routing rules keep sending traffic to a degraded gateway until someone notices and re-weights by hand. Detection is measured in hours, and every hour of mis-routed traffic is failed payments and lost revenue. Incidents of this shape motivated the project.</p>
   <div class="two">
     <div><h4>Rejected: predict</h4><p>Forecast each gateway's success rate and route to the best forecast. Fails exactly when it matters: gateway failures are non-stationary, rare in training data, and by the time a forecast updates the damage is done.</p></div>
     <div><h4>Chosen: respond</h4><p>An agent that observes only the outcomes of transactions it routes — success, failure, latency — and shifts traffic away from a gateway the moment its observed health drops. No forecasting; the skill being learned is <em>adaptation</em>.</p></div>
@@ -59,7 +59,7 @@
     </tbody>
   </table></div>
   <p><strong>Simulator.</strong> Each gateway carries hidden parameters — base success rate, volatility, health, and a degradation pattern from {stable, slow-decay, sudden-crash, bursty}. A turbulence manager starts a degradation with 0.02% probability per transaction, drops success rate 2 points per step to a floor of 5–10%, holds for 100–500 transactions, then recovers at 1 point per step; latency spikes of 2–5× occur independently. Gradual degradation and slow recovery were deliberate: sudden crashes are easy to detect, slow decay looks like noise. The environment is more turbulent than production, so a router that copes here has margin.</p>
-  <p><strong>Production features.</strong> The same 8 observations are computed live from a rolling-feature pipeline — 1-, 5- and 15-minute windows, per gateway and per traffic segment — and served to the router.</p>
+  <p><strong>Production features.</strong> The same 8 observations are computed live from rolling windows of recent outcomes, per gateway, and served to the router.</p>
 
   <h2>Approach</h2>
   <figure>
@@ -102,7 +102,7 @@
   </ol>
 
   <h2>Benchmark</h2>
-  <p>Two routers under the same observation-only constraint, in the turbulence simulator, at three scales. The rule-based router reimplements the production logic: start on a random gateway, switch when observed success rate over the last 5 drops below 50%, 5-transaction cooldown, re-evaluate every 50.</p>
+  <p>Two routers under the same observation-only constraint, in the turbulence simulator, at three scales. The rule-based router stands in for conventional threshold-based routing: start on a random gateway, switch when observed success rate over the last 5 drops below 50%, 5-transaction cooldown, re-evaluate every 50.</p>
   <div class="table-wrap">
   <table>
     <thead><tr><th>Scale (transactions)</th><th>Rule-based success rate</th><th>Adaptive success rate</th><th>Degradation events</th><th>Gateway switches (rule / adaptive)</th></tr></thead>
@@ -121,7 +121,7 @@
   <h2>Deployment</h2>
   <dl class="dl">
     <dt>Shadow mode</dt><dd>One week alongside production, logging the recommended gateway per transaction without executing it.</dd>
-    <dt>Rollout</dt><dd>Then live traffic. Success rate on the routed traffic was higher than the control. Guardrails were implemented as designed — automatic rollback on a sustained success-rate drop or a latency regression versus control.</dd>
+    <dt>Rollout</dt><dd>Then live traffic, behind guardrails that roll back automatically if success rate or latency regresses against control. Success rate on the routed traffic was higher than the control.</dd>
     <dt>Measurement</dt><dd>I owned the measurement. A production figure isn't reported here; the benchmark above was the basis for the rollout decision.</dd>
   </dl>
 
