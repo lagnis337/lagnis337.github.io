@@ -28,28 +28,33 @@
   </div>
 
   <h2>Problem</h2>
-  <p>A 127-person product and operations team asked the same kinds of questions every day — "what was X last week for merchant Y?", "how do we define an active user?", "which dashboard has Z?" — and each one became a ticket for a small data team.</p>
-  <p>The knowledge needed to answer them existed — spread across 2,000+ documents, dashboards, column comments and people's heads — but nobody could find it, and no two documents agreed.</p>
-  <p>The goal was an agent in Slack that answers from <em>the team's own definitions</em>, shows its working, and gets more reliable as people use it — without giving a language model free rein over a production warehouse.</p>
+  <p>A 127-person product and operations team asked the same kinds of questions every day — <em>"what was X last week for merchant Y?"</em>, <em>"how do we define an active user?"</em>, <em>"which dashboard has Z?"</em> — and each became a ticket for a small data team. The answers existed, spread across 2,000+ documents, dashboards, column comments and people's heads; nobody could find them, and no two documents agreed.</p>
+  <div class="two">
+    <div><h4>Before</h4><p>A ticket queue. Median wait measured in days; the same questions answered again and again by hand.</p></div>
+    <div><h4>Goal</h4><p>An agent in Slack that answers from the team's <em>own</em> definitions, shows its working, gets more reliable with use — and never has free rein over the warehouse.</p></div>
+  </div>
   <div class="insight">
     <strong>Key insight</strong>
     Not retrieval-augmented generation over a document pile. The documents were <em>compiled once into a persistent, human-ratified wiki</em>, and the agent navigates it the way an analyst would — read the index, open the relevant pages, ask a clarifying question if the request is ambiguous, then write and run the SQL. The wiki compounds with every correction; the models come and go underneath it.
   </div>
 
-  <h2>Data: the wiki</h2>
-  <p>Built on the <em>LLM Wiki</em> pattern (Karpathy) and laid out like the <em>Open Knowledge Format</em> (Google): a git repository of markdown, one page per concept — tables, metrics, dashboards — with YAML frontmatter, <strong>100+ pages</strong> compiled from the 2,000+ source documents.</p>
+  <h2>The wiki</h2>
+  <dl class="dl">
+    <dt>Pattern</dt><dd><em>LLM Wiki</em> (Karpathy) for the compile-and-maintain loop; <em>Open Knowledge Format</em> (Google) for the layout — a git repo of markdown, one page per table / metric / dashboard, YAML frontmatter.</dd>
+    <dt>Size</dt><dd>100+ ratified pages compiled from 2,000+ source documents.</dd>
+    <dt>Grounding</dt><dd>Table pages carry schema, grain, join paths and caveats; metric pages carry definitions with canonical SQL. The model sees curated pages, never raw DDL — that's what "schema-grounded" means here.</dd>
+    <dt>Validation</dt><dd>Every proposed page or change is run against live warehouse data before it can be ratified. Canonical SQL has to execute and return sensible numbers, not just read well.</dd>
+  </dl>
   <div class="table-wrap"><table>
-    <thead><tr><th>Element</th><th>What it does</th></tr></thead>
+    <thead><tr><th>File / field</th><th>Role</th></tr></thead>
     <tbody>
-      <tr><td><code>index.md</code></td><td>Catalogue of every page with a one-line summary. The agent reads it first on every query and opens only the pages it needs — <strong>index-first navigation, no embeddings</strong>. Frontmatter (type, tags, status) is what makes this navigable.</td></tr>
-      <tr><td><code>rules.md</code> and the reading skill</td><td>Page templates, frontmatter conventions, how to ingest a source, how to propose a change — and a well-defined <strong>skill</strong> that tells any model how the repository is to be read when answering a question. The skill, not the model, carries the method.</td></tr>
+      <tr><td><code>index.md</code></td><td>Catalogue of every page with a one-line summary. Read first on every query; the agent opens only the pages it needs. <strong>Index-first navigation, no embeddings.</strong></td></tr>
+      <tr><td><code>rules.md</code> + reading skill</td><td>Page templates and frontmatter conventions; how to ingest, answer and propose. The skill tells <em>any</em> model how the repo is to be read — the method lives here, not in the model.</td></tr>
+      <tr><td><code>metrics.md</code> → playbooks</td><td>Regularly asked metrics, each linked to a ratified, <strong>parameterised</strong> SQL playbook (merchant, date range, segment). Known metric → known-good query; generation only for what playbooks don't cover.</td></tr>
       <tr><td><code>log.md</code></td><td>Append-only record of every change, with date and author.</td></tr>
-      <tr><td>Page <code>status</code></td><td>Every page is <code>draft</code> until a human ratifies it; the agent answers only from <code>active</code> pages. Drafts exist, but they can't produce answers.</td></tr>
-      <tr><td>Table and metric pages</td><td>Schema, grain, join paths, caveats; metric definitions with canonical SQL. This is what "schema-grounded" means here — the model sees curated pages, not raw DDL.</td></tr>
-      <tr><td><code>metrics.md</code> and playbooks</td><td>A page listing the metrics people ask for regularly, each linked to its <strong>playbook</strong> — a ratified, <strong>parameterised</strong> SQL query (merchant, date range, segment as parameters). A question about a known metric reuses a known-good query; generation is reserved for questions the playbooks don't cover.</td></tr>
+      <tr><td><code>status</code> frontmatter</td><td><code>draft</code> until a human ratifies; the agent answers only from <code>active</code> pages.</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Validation before merge.</strong> Every proposed page or change is checked against live data in the warehouse before it can be ratified — a metric page's canonical SQL has to run and return sensible numbers, not just read well.</p>
 
   <h2>Approach</h2>
   <figure>
@@ -65,10 +70,10 @@
       </g>
       <g fill="#222" text-anchor="middle">
         <text x="70" y="84">Slack question</text><text x="70" y="102" fill="#666" font-size="11">or clarifying reply</text>
-        <text x="245" y="84">Agent navigates wiki</text><text x="245" y="102" fill="#666" font-size="11">index.md → pages → playbook?</text>
+        <text x="245" y="84">Agent navigates wiki</text><text x="245" y="102" fill="#666" font-size="11">index → pages → playbook</text>
         <text x="445" y="84">SQL + guardrails</text><text x="445" y="102" fill="#666" font-size="11">SELECT-only role, 10k-row cap</text>
-        <text x="655" y="84">Answer + footnote</text><text x="655" y="102" fill="#666" font-size="11">SQL, pages used, timings · 👍/👎</text>
-        <text x="245" y="194">Daily review skill</text><text x="245" y="212" fill="#666" font-size="11">scrapes 👎s, drafts wiki changes</text>
+        <text x="655" y="84">Answer + footnote</text><text x="655" y="102" fill="#666" font-size="11">SQL, pages, time &amp; cost · 👍/👎</text>
+        <text x="245" y="194">Daily review skill</text><text x="245" y="212" fill="#666" font-size="11">👎s → proposed wiki edits</text>
         <text x="445" y="194">Human ratifies</text><text x="445" y="212" fill="#666" font-size="11">validated on live data → active</text>
       </g>
       <g stroke="#666" stroke-width="1.4" fill="none" marker-end="url(#a)">
@@ -78,41 +83,44 @@
         <path d="M245 170V120" stroke-dasharray="5 4"/>
       </g>
       <text x="30" y="30" fill="#222" font-size="13" font-weight="600">Query path (solid) and the wiki-maintenance loop (dashed)</text>
-      <text x="90" y="270" fill="#666" font-size="11">Ambiguous question → agent asks one clarifying question before touching the wiki</text>
+      <text x="90" y="270" fill="#666" font-size="11">Ambiguous question → the agent asks one clarifying question before touching the wiki</text>
     </svg>
-    <figcaption>Answers come from ratified wiki pages; thumbs-downs become proposed wiki changes, which a human validates and ratifies. The wiki compounds; the model doesn't.</figcaption>
+    <figcaption>Answers come from ratified pages; thumbs-downs become proposed wiki changes that a human validates and ratifies.</figcaption>
   </figure>
-  <p><strong>Model.</strong> Deliberately none in particular. The Slack agent <strong>selects the model at run time</strong>, and the repository is structured so that any capable, popular model can navigate it — the reading skill and the wiki's conventions do the work that would otherwise be baked into prompts for one vendor's model. Claude frontier models were used most, but the system doesn't depend on them.</p>
-  <p><strong>Query path.</strong> The agent is instructed to think like a data analyst rather than a search engine: if the question is ambiguous ("revenue" for which product, which date basis?) it asks <strong>one clarifying question</strong> before reading anything. Then it reads <code>index.md</code>, opens only the metric and table pages the question needs, checks for a matching playbook, and either fills the playbook's parameters or writes new SQL grounded on the pages' schema and join paths.</p>
-  <p><strong>Guardrails.</strong> The bot's warehouse service account can only <code>SELECT</code> on the curated schema, and results are capped at <strong>10,000 rows</strong>. It cannot see raw event tables and cannot write.</p>
-  <p><strong>Showing its work.</strong> Every answer carries a footnote: the SQL that ran, the wiki pages traversed, and the <strong>time and token cost of each step</strong> — repository access, navigation per page, query execution — plus the total. Askers can check the definition it used; I used the per-page costs to spot anomalies, such as a page that was expensive to read every time and needed restructuring.</p>
+  <ol class="steps">
+    <li><b>Clarify before reading</b><p>The agent is instructed to think like a data analyst, not a search engine. If a question is ambiguous ("revenue" — which product, which date basis?) it asks <strong>one clarifying question</strong> before opening anything.</p></li>
+    <li><b>Navigate, don't retrieve</b><p>Read <code>index.md</code>; open only the metric and table pages the question needs; check <code>metrics.md</code> for a matching playbook. Fill the playbook's parameters if there is one, otherwise write SQL grounded on the pages' schema and join paths.</p></li>
+    <li><b>Any model</b><p>The Slack agent <strong>selects the model at run time</strong>; the repo and the reading skill are built so any capable model can navigate them. Claude frontier models were used most, but nothing depends on them.</p></li>
+    <li><b>Guardrails</b><p>The bot's service account can only <code>SELECT</code> on the curated schema; results are capped at <strong>10,000 rows</strong>; no raw event tables, no writes.</p></li>
+    <li><b>Show the work</b><p>Every answer carries a footnote: the SQL that ran, the pages traversed, and the <strong>time and token cost of each step</strong> — repo access, per-page navigation, query execution — plus the total. Askers check the definition; I used per-page costs to find pages that were expensive to read every time and restructure them.</p></li>
+    <li><b>Maintain daily</b><p>A scheduled skill scrapes the day's Slack responses — the 👎s especially — works out what the wiki was missing or wrong, drafts the change (a metric page, a corrected join path, a new playbook) and pushes it as a pending proposal. I validate against live data and ratify or reject.</p></li>
+  </ol>
 
   <h2>Results</h2>
   <div class="table-wrap">
   <table>
     <thead><tr><th>Metric</th><th>Value</th><th>How measured</th></tr></thead>
     <tbody>
-      <tr><td>Responses rated 👍 by the asker</td><td><strong>96%</strong></td><td>Share of all responses with a thumbs-up reaction</td></tr>
+      <tr><td>Responses rated 👍</td><td><strong>96%</strong></td><td>Share of all responses with a thumbs-up from the asker</td></tr>
       <tr><td>Daily active askers</td><td><strong>~40% of 127</strong></td><td>Distinct people asking per day</td></tr>
-      <tr><td>Questions to the data team</td><td><strong>−10% week on week</strong> after launch</td><td>Ticket volume</td></tr>
+      <tr><td>Questions to the data team</td><td><strong>−10% week on week</strong></td><td>Ticket volume after launch</td></tr>
       <tr><td>Median time to answer</td><td><strong>~2 minutes</strong></td><td>Slack timestamps; previously a ticket queue</td></tr>
-      <tr><td>Wiki size</td><td>100+ ratified pages</td><td>Compiled from 2,000+ source documents</td></tr>
+      <tr><td>Main cause of 👎</td><td>Incomplete wiki context</td><td>Review of thumbs-downs — the expected failure of a wiki built to grow, and what the daily loop fixes</td></tr>
     </tbody>
   </table>
   </div>
-  <p>The 96% is a satisfaction rate, not an execution-accuracy figure: askers rate whether the answer looked right and was useful, and a plausible wrong answer can earn a 👍. Its value is as a trend and as the trigger for the loop below. The most common cause of a 👎 was <strong>incomplete wiki context</strong> — a metric or table the wiki didn't yet cover — which is the expected failure mode of a knowledge base designed to grow with use, and exactly what the loop fixes.</p>
-  <p><strong>The maintenance loop.</strong> A scheduled skill runs daily: it scrapes the day's responses from Slack — the thumbs-downs in particular — works out what the wiki was missing or wrong, drafts the change (a new metric page, a corrected join path, a new playbook) and pushes it to the repository as a pending proposal. I validate it against live data and ratify or reject. The wiki gets better every day.</p>
+  <p class="stat-row">96% is a satisfaction rate, not execution accuracy — askers rate whether the answer looked right and was useful, and a plausible wrong answer can earn a 👍. Its value is as a trend and as the trigger for the maintenance loop.</p>
 
   <h2>What I'd do differently</h2>
-  <ul>
-    <li><strong>A real evaluation set.</strong> A fixed set of questions with human-written reference SQL and results on a frozen snapshot would give execution accuracy — a number that can't be flattered by polite thumbs-ups — and would make ablations possible (with vs. without playbooks; with vs. without clarifying questions).</li>
-    <li><strong>Categorise failures.</strong> "Incomplete context" is one bucket; time-grain confusion, missing filters and wrong joins are probably hiding inside it, and each needs a different fix.</li>
-    <li><strong>Go further on playbooks.</strong> The <code>metrics.md</code> → playbook path already avoids generation for common metrics; a proper metric-request compiler (metric + filters + grain → SQL, with no free-form generation) would extend that guarantee to variations of known metrics, not just exact matches.</li>
-    <li><strong>Use the cost data to cache.</strong> The footnote already shows which pages are read most and cost most; caching the index and hot pages would cut the median well below two minutes without changing the auditability.</li>
-  </ul>
+  <div class="cards small">
+    <div class="card"><h3>A real evaluation set</h3><p>Fixed questions with reference SQL and results on a frozen snapshot → execution accuracy that can't be flattered by polite thumbs-ups, and ablations (with vs. without playbooks, with vs. without clarifying questions).</p></div>
+    <div class="card"><h3>Categorise failures</h3><p>"Incomplete context" is one bucket; time-grain confusion, missing filters and wrong joins are probably inside it, and each needs a different fix.</p></div>
+    <div class="card"><h3>Compile metric variations</h3><p>Playbooks already cover exact matches; a metric-request compiler (metric + filters + grain → SQL) would extend the no-generation guarantee to variations of known metrics.</p></div>
+    <div class="card"><h3>Cache from the cost data</h3><p>The footnote already shows which pages are read most and cost most; caching the index and hot pages cuts the median well below two minutes without losing auditability.</p></div>
+  </div>
 
   <h2>Related work</h2>
-  <p><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">LLM Wiki</a> (Karpathy) — the pattern of an LLM incrementally compiling and maintaining a persistent markdown wiki, with <code>index.md</code>, <code>log.md</code>, a schema file, and answers filed back, rather than re-retrieving from raw sources on every query. <a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing">Open Knowledge Format</a> (Google) — the layout of that wiki for data: one markdown page per dataset / table / metric with YAML frontmatter, schema tables and join paths, curated like code. This project applied both to a live warehouse and put a Slack agent, guardrails and a human-ratification loop on top.</p>
+  <p><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">LLM Wiki</a> (Karpathy) — an LLM incrementally compiling and maintaining a persistent markdown wiki, with <code>index.md</code>, <code>log.md</code>, a schema file and answers filed back, instead of re-retrieving from raw sources on every query. <a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing">Open Knowledge Format</a> (Google) — that wiki's layout for data: one markdown page per dataset / table / metric with YAML frontmatter, schema tables and join paths, curated like code. This project applied both to a live warehouse and added a Slack agent, guardrails and a human-ratification loop.</p>
 
   <h2>Code &amp; artifacts</h2>
   <p>Proprietary to Razorpay. Stack: markdown wiki in git with YAML frontmatter and page status; a model-agnostic Slack agent with run-time model selection and a defined reading skill; SELECT-only warehouse service account; a daily scheduled review skill that proposes wiki changes for human ratification.</p>

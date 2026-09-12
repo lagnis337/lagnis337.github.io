@@ -78,3 +78,28 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
 .insight { border: 1px solid var(--accent); border-radius: 10px; padding: 14px 18px; margin: 24px 0; background: var(--card); }
 .insight strong { color: var(--accent); display: block; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
 h2 { margin-top: 56px; }
+
+/* Structured components for case-study pages */
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
+.two > div { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.two h4 { margin: 0 0 6px; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.two p { margin: 0; font-size: 0.97rem; }
+.dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 14px 0 20px; font-size: 0.97rem; }
+.dl dt { color: var(--muted); font-weight: 600; }
+.dl dd { margin: 0; }
+.steps { list-style: none; counter-reset: s; padding: 0; margin: 16px 0; }
+.steps li { counter-increment: s; position: relative; padding: 0 0 16px 44px; }
+.steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.steps li + li::after { content: ""; position: absolute; left: 13px; top: -14px; height: 14px; border-left: 2px solid var(--line); }
+.steps b { display: block; margin-bottom: 2px; }
+.steps p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.cards.small .card { padding: 14px 16px; }
+.cards.small h3 { font-size: 0.98rem; }
+.cards.small p { font-size: 0.92rem; margin: 0; }
+.stat-row { color: var(--muted); font-size: 0.95rem; margin-top: -6px; }
+h2 { margin-top: 52px; }
+figure { margin: 18px 0 22px; }
+@media (max-width: 480px) { .dl { grid-template-columns: 1fr; gap: 2px 0; } .dl dd { margin-bottom: 8px; } }
+.card .links { margin: 12px 0 0; font-size: 0.92rem; }
+.card .links a { margin-right: 14px; font-weight: 600; }
+div.card:hover { border-color: var(--line); }

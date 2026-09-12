@@ -28,21 +28,27 @@
   </div>
 
   <h2>Problem</h2>
-  <p>Namma Yatri is a zero-commission ride-hailing platform: drivers pay a subscription rather than a per-ride cut, so driver retention is both the supply side of the marketplace and a direct revenue line. Around <strong>42% of active drivers were churning</strong>. This is a <em>non-contractual</em> churn setting — there is no cancellation event, so churn has to be inferred from inactivity; here it meant no completed rides for 30 days.</p>
-  <p>There was no systematic targeting: ops would look at drivers who hadn't been active for more than a week and reach out — by which point many had already left. The goal was to identify drivers <em>likely</em> to churn early enough for an intervention to matter, and to give ops and customer success a ranked list of who to reach each day.</p>
+  <p>Namma Yatri is a zero-commission ride-hailing platform: drivers pay a subscription, not a per-ride cut, so driver retention is both marketplace supply and a direct revenue line. Around <strong>42% of active drivers were churning</strong> — a <em>non-contractual</em> setting, with no cancellation event: churn is inferred from inactivity (no completed rides for 30 days).</p>
+  <div class="two">
+    <div><h4>Before</h4><p>No systematic targeting. Ops looked at drivers who hadn't been active for more than a week and reached out — by which point many had already left.</p></div>
+    <div><h4>Goal</h4><p>Score every driver daily on their probability of churning in the next 30 days, and give ops and customer success a ranked list sized to what they can act on.</p></div>
+  </div>
 
   <h2>Data</h2>
-  <p><strong>Unit of prediction:</strong> driver-day. Roughly <strong>150,000 active drivers were scored every morning</strong>. Drivers below a minimum tenure were excluded from training, since their activity windows are mostly empty.</p>
-  <p><strong>Label.</strong> <code>churn_30d = 1</code> if the driver completed no rides in the 30 days after the scoring date. The label is only known a month later, so the most recent month of history is never labelled and every live prediction is unverified for 30 days — which is why impact was measured on monthly cohorts rather than on the model's own predictions.</p>
-  <p><strong>36 features</strong>, most over both weekly and monthly windows, each computed strictly from activity before the scoring date. The recency features — days since last completed trip, time since last active — are the ones that leak if you're careless: computed as of any moment after the scoring date they encode the label directly, so the feature build pins every window to the scoring date. Structured on the RFM framework from the churn literature — recency, frequency, monetary — plus two families it doesn't cover:</p>
+  <dl class="dl">
+    <dt>Unit</dt><dd>Driver-day; ~150,000 active drivers scored each morning. Drivers below a minimum tenure excluded from training.</dd>
+    <dt>Label</dt><dd><code>churn_30d = 1</code> if no completed rides in the 30 days after the scoring date. Known only a month later, so the latest month is never labelled and impact is measured on cohorts, not on the model's own predictions.</dd>
+    <dt>Features</dt><dd>36, most over weekly and monthly windows, all computed strictly before the scoring date. Structured on RFM (recency, frequency, monetary) plus feedback and context.</dd>
+    <dt>Leakage</dt><dd>The recency features — days since last trip, time since last active — encode the label if computed after the scoring date. Every window is pinned to it.</dd>
+  </dl>
   <div class="table-wrap"><table>
     <thead><tr><th>Family</th><th>Features</th></tr></thead>
     <tbody>
-      <tr><td>Recency</td><td>Days since last completed ride; recent activity relative to the driver's own longer-run baseline (a trend feature — a busy driver slowing down looks different from a quiet driver staying quiet)</td></tr>
-      <tr><td>Frequency</td><td>Rides completed, days active, hours online; the demand funnel — requests received → accepted → completed, cancellation rate; share of night rides</td></tr>
-      <tr><td>Monetary</td><td>Average fare, average trip distance, earnings per online hour; subscription status (days left on the current plan)</td></tr>
+      <tr><td>Recency</td><td>Days since last completed ride; recent activity vs. the driver's own longer-run baseline (a busy driver slowing down ≠ a quiet driver staying quiet)</td></tr>
+      <tr><td>Frequency</td><td>Rides completed, days active, hours online; demand funnel — requests → accepted → completed, cancellation rate; share of night rides</td></tr>
+      <tr><td>Monetary</td><td>Average fare, average trip distance, earnings per online hour; subscription status (days left on plan)</td></tr>
       <tr><td>Feedback</td><td>Rider ratings and complaints</td></tr>
-      <tr><td>Context</td><td>City and geo-zone; tenure; zone-level demand — requests per online driver in the driver's area, a proxy for whether there is work to be had; whether the driver was contacted by ops recently</td></tr>
+      <tr><td>Context</td><td>City and geo-zone; tenure; zone-level demand (requests per online driver — is there work here?); contacted by ops recently</td></tr>
     </tbody>
   </table></div>
 
@@ -73,16 +79,14 @@
       <text x="230" y="174" fill="#666" font-size="11" text-anchor="end">pricing, matching, "Go Home"</text>
       <text x="10" y="30" fill="#222" font-size="13" font-weight="600">Daily scoring pipeline with a human feedback loop</text>
     </svg>
-    <figcaption>Features are rebuilt nightly; the top of the ranked list goes to ops calls, the next band to in-app incentives; what drivers say on the calls flows back into the product and into the model.</figcaption>
+    <figcaption>Features are rebuilt nightly; the top of the list goes to ops calls, the next band to in-app incentives; what drivers say on the calls flows back into the product and the model.</figcaption>
   </figure>
-  <p><strong>Model.</strong> Two models, trained on the same features, with their predicted probabilities averaged with equal weights:</p>
-  <ul>
-    <li><strong>XGBoost</strong> — gradient-boosted trees, the stronger of the two on its own; captures interactions such as high online hours combined with a falling acceptance rate, which is a different kind of at-risk driver from one whose hours are simply dropping.</li>
-    <li><strong>Random forest</strong> (scikit-learn) — slightly weaker alone, but its errors are less correlated with the boosted model's, so the average was <strong>more stable month to month</strong> than either model. For a list that ops act on every day, a stable ranking matters more than a marginally higher AUC.</li>
-  </ul>
-  <p>The averaged score was calibrated so it could be read as a probability, not just a rank.</p>
-  <p><strong>Training protocol.</strong> Split by <em>time</em>, never at random: train on earlier months, validate on a later held-out month. Churn drifts with incentive schemes and seasonality, and a random split leaks the same driver's rows across train and test. Retrained monthly on a rolling window as each new month's labels matured.</p>
-  <p><strong>Decision rule.</strong> Two tiers sized by capacity, not by a probability threshold: the top of the list — around <strong>100 drivers a day</strong> — got a call from the ops team; the next band got an in-app coin incentive. The list was written to a shared sheet by the nightly DAG, which is where product and customer success worked from.</p>
+  <ol class="steps">
+    <li><b>Two models, one score</b><p><strong>XGBoost</strong> — the stronger model alone; captures interactions such as high online hours <em>and</em> falling acceptance rate. <strong>Random forest</strong> (scikit-learn) — weaker alone, but its errors are less correlated with the boosted model's. Equal-weight average of the two probabilities, then calibrated so the score reads as a probability. The average was <strong>more stable month to month</strong> than either model — which matters more than a marginally higher AUC for a list ops act on daily.</p></li>
+    <li><b>Split by time, never at random</b><p>Train on earlier months, validate on a later held-out month. Churn drifts with incentive schemes and seasonality, and a random split leaks the same driver's rows across train and test. Retrained monthly on a rolling window as each month's labels matured.</p></li>
+    <li><b>Decision rule sized to capacity</b><p>Top of the list — around <strong>100 drivers a day</strong> — gets an ops call; the next band gets an in-app coin incentive. Cut-offs set by what teams can act on, not by a probability threshold. The nightly DAG writes the list to a shared sheet that product and customer success work from.</p></li>
+    <li><b>Close the loop</b><p>Ops tag the reasons drivers give on calls; the categories go to product and, as a <em>contacted recently</em> feature, back into the model.</p></li>
+  </ol>
 
   <h2>Results</h2>
   <div class="table-wrap">
@@ -90,25 +94,29 @@
     <thead><tr><th>Metric</th><th>Value</th><th>How measured</th></tr></thead>
     <tbody>
       <tr><td>AUC</td><td><strong>~0.80</strong></td><td>Held-out later month</td></tr>
-      <tr><td>Monthly driver churn (no rides in 30 days)</td><td><strong>~42% → ~30%</strong></td><td>Monthly cohorts, before vs. after three months in production</td></tr>
+      <tr><td>Monthly driver churn</td><td><strong>~42% → ~30%</strong></td><td>Monthly cohorts (M0, M1, M2, M3…), before vs. after three months in production</td></tr>
       <tr><td>Drivers scored / day</td><td>~150,000</td><td>—</td></tr>
       <tr><td>Retention outreach</td><td>~100 model-ranked calls/day + incentive tier</td><td>Previously: manual review of drivers inactive &gt; 7 days</td></tr>
+      <tr><td>Top features</td><td>Utilisation and completed-trip metrics</td><td>Feature importance; own-baseline trend among the strongest</td></tr>
     </tbody>
   </table>
   </div>
-  <p>Churn was tracked as <strong>monthly cohorts</strong> — for each month's active drivers, the share churned at M0, M1, M2, M3 — so the effect could be read cohort by cohort as the system ran. Over three months in production the monthly churn rate fell from roughly 42% to 30%. This is a before/after comparison on the whole base; it includes everything else that changed in the period (see below).</p>
-  <p><strong>What drove the predictions.</strong> The most important features were <strong>utilisation</strong> (online hours and how much of that time produced rides) and <strong>completed-trip</strong> metrics — how many rides, and how that compared with the driver's own recent baseline.</p>
-  <p><strong>What the calls said.</strong> Reasons drivers gave were tagged by the ops team into categories, and the categories went to product. Other than the example below, tagged reasons fed changes to pricing and to driver–rider matching.</p>
+  <p class="stat-row">The 42% → 30% figure is a before/after comparison on the whole driver base, so it includes everything else that changed in the quarter — including the product change below.</p>
   <div class="insight">
     <strong>Key insight</strong>
-    Drivers working evenings wanted their last rides to end near home, and were declining trips or logging off rather than head the wrong way. That became <em>"Go Home" mode</em> — switch it on and you receive requests whose drop-off is near your house. The model decided who to call; the calls changed the product; the product changed churn.
+    Drivers working evenings wanted their last rides to end near home, and were declining trips or logging off rather than head the wrong way. That became <em>"Go Home" mode</em> — switch it on and you receive requests whose drop-off is near your house. Other tagged reasons fed changes to pricing and driver–rider matching. The model decided who to call; the calls changed the product; the product changed churn.
   </div>
 
   <h2>What I'd do differently</h2>
-  <p>The cohort comparison shows the system worked but can't separate the model's contribution from the interventions' or from concurrent product changes like Go Home. A <strong>holdout</strong> — a random slice of high-risk drivers deliberately not contacted — would have measured the true lift of a call, and reframing the problem as <strong>uplift modelling</strong> (who changes behaviour when contacted) rather than risk scoring would have targeted the ~100 daily calls better. I'd also replace the 30-day binary label with a <strong>time-to-churn</strong> (survival) formulation, which uses the information in <em>when</em> a driver stops rather than just whether they crossed a threshold, and add drift monitoring on the top features so a change in incentives shows up in the model's metrics the week it happens.</p>
+  <div class="cards small">
+    <div class="card"><h3>A holdout group</h3><p>Deliberately not contacting a random slice of high-risk drivers would separate the call's effect from selection and from concurrent changes like Go Home.</p></div>
+    <div class="card"><h3>Uplift, not risk</h3><p>Model who <em>changes behaviour</em> when contacted, so the ~100 daily calls go to drivers a call can actually keep.</p></div>
+    <div class="card"><h3>Time-to-churn</h3><p>A survival formulation uses <em>when</em> a driver stops, not just whether they crossed a 30-day threshold.</p></div>
+    <div class="card"><h3>Drift monitoring</h3><p>Weekly checks on the top features, so an incentive change shows up in the model's metrics the week it happens.</p></div>
+  </div>
 
   <h2>Related work</h2>
-  <p>The framing was adapted from <a href="https://medium.com/@ttah.hongtran/customer-churn-prediction-and-analysis-for-uber-ride-hailing-service-fbf1dc75a848">Tran (2021)</a>, who applied RFM-based, non-contractual churn prediction to <em>riders</em> on a public Uber dataset of ~1,400 users (published as <a href="https://link.springer.com/chapter/10.1007/978-3-030-97610-1_24">"Rider Churn Prediction Model for Ride-Hailing Service"</a>, ICABDE 2021). This project moved the idea to the supply side — drivers, whose churn removes capacity from the marketplace — at ~150,000 drivers scored daily in production, with an action loop attached to the predictions.</p>
+  <p>Framing adapted from <a href="https://medium.com/@ttah.hongtran/customer-churn-prediction-and-analysis-for-uber-ride-hailing-service-fbf1dc75a848">Tran (2021)</a> — RFM-based, non-contractual churn prediction for <em>riders</em> on a public Uber dataset of ~1,400 users (<a href="https://link.springer.com/chapter/10.1007/978-3-030-97610-1_24">ICABDE 2021</a>). This project moved it to the supply side — drivers, whose churn removes capacity — at ~150,000 drivers scored daily in production, with an action loop attached.</p>
 
   <h2>Code &amp; artifacts</h2>
   <p>Proprietary to Namma Yatri. Stack: SQL feature build orchestrated nightly with Airflow; Python with pandas, XGBoost and scikit-learn; scores delivered daily to a shared sheet.</p>
