@@ -21,19 +21,19 @@
   <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up using only publicly stated figures.</p>
 
   <h2>Problem</h2>
-  <p>Namma Yatri is a zero-commission ride-hailing platform: drivers pay a subscription rather than a per-ride cut, so driver retention is both the supply side of the marketplace and a direct revenue line. Around <strong>42% of active drivers were churning</strong>, where churn meant no completed rides for 30 days.</p>
+  <p>Namma Yatri is a zero-commission ride-hailing platform: drivers pay a subscription rather than a per-ride cut, so driver retention is both the supply side of the marketplace and a direct revenue line. Around <strong>42% of active drivers were churning</strong>. This is a <em>non-contractual</em> churn setting — there is no cancellation event, so churn has to be inferred from inactivity; here it meant no completed rides for 30 days.</p>
   <p>Retention effort — ops calls and in-app coin incentives — was being spent broadly, or after a driver had already gone quiet. The goal was to identify drivers <em>likely</em> to churn early enough for an intervention to matter, and to give ops and customer success a ranked list of who to reach each day.</p>
 
   <h2>Data</h2>
   <p>One row per driver. Features were rebuilt from platform activity every day and the model <strong>scored roughly 150,000 active drivers daily</strong>.</p>
   <p><strong>Label.</strong> Whether the driver went 30 days without a completed ride after the scoring date. The label is only known a month later, so the training set always lagged production by 30 days and every live prediction was unverified for that long — a constraint that shaped how impact was measured (below).</p>
-  <p><strong>36 features</strong>, in five families:</p>
+  <p><strong>36 features.</strong> The core is structured on the RFM framework from the churn literature — recency, frequency, monetary value — extended with two families it doesn't cover:</p>
   <ul>
-    <li><em>Supply behaviour</em> — hours online, days active, day vs. night rides</li>
-    <li><em>Demand funnel</em> — ride requests received → accepted → completed; cancellation rate</li>
-    <li><em>Earnings</em> — average fare, average trip distance, earnings per active hour</li>
+    <li><em>Recency</em> — days since last completed ride; current activity relative to the driver's own recent baseline</li>
+    <li><em>Frequency</em> — rides completed, days active, hours online, day vs. night rides, and the demand funnel: requests received → accepted → completed, cancellation rate</li>
+    <li><em>Monetary</em> — average fare, average trip distance, earnings per active hour</li>
     <li><em>Feedback</em> — rider ratings and complaint signals</li>
-    <li><em>Context</em> — city and geo-zone, tenure on the platform, and change in activity relative to the driver's own recent baseline</li>
+    <li><em>Context</em> — city and geo-zone, tenure on the platform</li>
   </ul>
 
   <h2>Approach</h2>
@@ -85,6 +85,9 @@
 
   <h2>What I'd do differently</h2>
   <p>The before/after cohort comparison shows the system worked, but it can't separate the model's contribution from the interventions' — some flagged drivers would have stayed regardless of a call, and some left despite one. A held-out group of at-risk drivers who were deliberately <em>not</em> contacted would have measured the true lift, and reframing the problem as <strong>uplift modelling</strong> (who changes behaviour when contacted) rather than risk scoring would have targeted incentive spend better. I'd also replace the 30-day binary label with a <strong>time-to-churn</strong> (survival) formulation, which uses the information in <em>when</em> a driver stops rather than just whether they crossed a threshold.</p>
+
+  <h2>Related work</h2>
+  <p>The framing was adapted from <a href="https://medium.com/@ttah.hongtran/customer-churn-prediction-and-analysis-for-uber-ride-hailing-service-fbf1dc75a848">Tran (2021)</a>, who applied RFM-based, non-contractual churn prediction to <em>riders</em> on a public Uber dataset of ~1,400 users (published as <a href="https://link.springer.com/chapter/10.1007/978-3-030-97610-1_24">"Rider Churn Prediction Model for Ride-Hailing Service"</a>, ICABDE 2021). This project moved the idea to the supply side — drivers, whose churn removes capacity from the marketplace — at ~150,000 drivers scored daily in production, with an action loop attached to the predictions.</p>
 
   <h2>Code &amp; artifacts</h2>
   <p>Proprietary to Namma Yatri. The modelling stack was Python (pandas, scikit-learn, gradient boosting) with daily batch scoring.</p>
