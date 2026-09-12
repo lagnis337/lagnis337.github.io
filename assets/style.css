@@ -100,7 +100,9 @@ a.tag.demo:hover { background: var(--accent2); color: #fff; }
 .steps li + li::after { content: ""; position: absolute; left: 14px; top: -16px; height: 16px; border-left: 2px solid var(--line); }
 .steps b { display: block; margin-bottom: 2px; font-family: var(--serif); font-size: 1.1rem; font-weight: 500; }
 .steps p { margin: 0; color: var(--muted); font-size: 0.94rem; }
-.cards.small .card .body { padding: 14px 16px; }
+.cards.small .card { padding: 16px 18px; }
+.cards.small .card .body { padding: 0; }
+.cards.small .card h3 { color: var(--accent2); }
 .cards.small h3 { font-size: 1.05rem; }
 .cards.small p { font-size: 0.9rem; margin: 0; }
 .stat-row { color: var(--muted); font-size: 0.93rem; margin-top: -6px; }
