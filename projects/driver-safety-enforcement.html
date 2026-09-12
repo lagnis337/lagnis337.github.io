@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driver safety enforcement — Chirag Singal</title>
+<meta name="description" content="A multilingual text classifier on rider feedback feeding a graded enforcement ladder — deprioritise or block by severity — that cut safety complaints by about half.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<main class="article">
+  <nav class="nav">
+    <a class="home" href="../">Chirag Singal</a>
+    <a href="../#projects">Projects</a>
+    <a href="../#foundations">Foundations</a>
+    <a href="https://github.com/lagnis337"><svg aria-hidden="true"><use href="../assets/icons.svg#i-github"/></svg>GitHub</a>
+  </nav>
+
+  <h1>Driver safety enforcement</h1>
+  <p class="meta">Namma Yatri · Central data team · 2024–2025 · Owner: classifier, scoring and action logic</p>
+  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up.</p>
+
+  <div class="glance">
+    <div><b>~50%</b><span>fewer safety complaints, three months in</span></div>
+    <div><b>~12,000</b><span>drivers deprioritised, no repeat complaint after</span></div>
+    <div><b>~550</b><span>drivers blocked</span></div>
+    <div><b>5</b><span>severity buckets, each with its own action and window</span></div>
+  </div>
+
+  <h2>Problem</h2>
+  <p>Riders leave feedback after every ride — a rating with an optional comment — and raise support tickets in the app or through the call centre. Most of it is about fares, routes and cancellations. A small fraction describes something unsafe: rash driving, harassment, intoxication, threats. On a platform where <strong>rider safety is the product's main promise</strong>, that fraction matters far more than its size suggests.</p>
+  <div class="two">
+    <div><h4>Before</h4><p>Support agents read tickets one at a time and escalated the alarming ones by judgement. Nobody had a view across a driver's history, so a pattern of complaints looked like a series of one-offs, and serious cases surfaced days late.</p></div>
+    <div><h4>Goal</h4><p>Read every piece of feedback the same day, sort the safety-relevant ones by severity, and apply a proportionate, consistent consequence to the driver — automatically for minor cases, with a human decision for serious ones.</p></div>
+  </div>
+  <p>The text was the hard part. Feedback arrived in Kannada, Hindi and English, and often in romanised Kannada or Hindi typed on an English keyboard — spellings vary from rider to rider, so keyword rules and single-language models both fail.</p>
+
+  <h2>Data</h2>
+  <dl class="dl">
+    <dt>Unit</dt><dd>One feedback item — a rating comment or a support ticket — attached to a ride, a driver and a rider.</dd>
+    <dt>Languages</dt><dd>Kannada, Hindi, English and romanised mixes. Every item was translated to English with <strong>Sarvam AI</strong>'s translation API (built for Indian languages) before modelling, so the classifier only had to learn English complaint patterns.</dd>
+    <dt>Labels</dt><dd>Five severity buckets plus <em>not a safety complaint</em>. The first labelled set was hand-tagged by the support team against a written guide; after launch, every case reviewed by ops became a new labelled example.</dd>
+    <dt>Imbalance</dt><dd>Safety-relevant items are a small minority of all feedback, and the most severe buckets are rarer still — which set the modelling and threshold choices below.</dd>
+  </dl>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Bucket</th><th>Examples</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1 — Physical safety</strong></td><td>Assault, threats, sexual misconduct</td><td>Permanent block, human-confirmed</td></tr>
+      <tr><td><strong>2 — Harassment</strong></td><td>Abusive language, inappropriate behaviour</td><td>Long block, human-confirmed</td></tr>
+      <tr><td><strong>3 — Unsafe driving</strong></td><td>Rash or drunk driving, phone use at the wheel</td><td>Short block, human-confirmed</td></tr>
+      <tr><td><strong>4 — Extortion</strong></td><td>Demanding more than the app fare, refusing to end the ride</td><td>Deprioritised in matching</td></tr>
+      <tr><td><strong>5 — Conduct</strong></td><td>Rudeness, vehicle condition, minor route disputes</td><td>Deprioritised in matching, short window</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Approach</h2>
+  <figure>
+    <svg viewBox="0 0 760 270" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
+      <g fill="#fff" stroke="#999" stroke-width="1.2">
+        <rect x="10" y="60" width="120" height="58" rx="8"/>
+        <rect x="160" y="60" width="130" height="58" rx="8"/>
+        <rect x="320" y="60" width="150" height="58" rx="8" stroke="#b5462b" stroke-width="1.8" fill="#fdf3ef"/>
+        <rect x="500" y="20" width="150" height="52" rx="8"/>
+        <rect x="500" y="100" width="150" height="52" rx="8" stroke="#1f6f78" stroke-width="1.8" fill="#eef6f7"/>
+        <rect x="320" y="180" width="330" height="58" rx="8" stroke-dasharray="5 4"/>
+      </g>
+      <g fill="#222" text-anchor="middle">
+        <text x="70" y="84">Rider feedback</text><text x="70" y="102" fill="#666" font-size="11">comments, tickets</text>
+        <text x="225" y="84">Sarvam translate</text><text x="225" y="102" fill="#666" font-size="11">Kannada / Hindi / mixed → English</text>
+        <text x="395" y="84">TF-IDF + linear</text><text x="395" y="102" fill="#666" font-size="11">severity bucket per item</text>
+        <text x="575" y="41">Buckets 4–5</text><text x="575" y="59" fill="#666" font-size="11">deprioritise in matching, automatic</text>
+        <text x="575" y="121">Buckets 1–3</text><text x="575" y="139" fill="#666" font-size="11">block queue — ops confirm, then block</text>
+        <text x="485" y="204">Reviewed cases → new labels</text><text x="485" y="222" fill="#666" font-size="11">overturned decisions correct the model</text>
+      </g>
+      <g stroke="#666" stroke-width="1.4" fill="none" marker-end="url(#a)">
+        <path d="M130 89H158"/><path d="M290 89H318"/>
+        <path d="M470 80Q485 46 498 46"/><path d="M470 98Q485 126 498 126"/>
+        <path d="M575 152V178"/>
+        <path d="M320 209H395Q395 160 395 120" stroke-dasharray="5 4"/>
+      </g>
+      <text x="10" y="30" fill="#222" font-size="13" font-weight="600">Daily batch: text → severity → proportionate action, with humans on the serious end</text>
+    </svg>
+    <figcaption>Two levers. Deprioritisation is applied by the job itself; a block needs a person to look at the text and the driver's history first.</figcaption>
+  </figure>
+  <ol class="steps">
+    <li><b>Translate first, then classify</b><p>Sarvam's translation API turned every comment into English — including the romanised Kannada and Hindi that trip up most models. That moved the multilingual difficulty out of the model entirely, so a <strong>simple, inspectable classifier</strong> was enough: TF-IDF features (word and character n-grams, which tolerate the spelling noise that survives translation) into a linear classifier. Inspectable mattered — ops could see which words drove a flag.</p></li>
+    <li><b>Threshold for recall at the top</b><p>The cost of the two mistakes is asymmetric: a missed assault report is far worse than an extra case for a human to review. Thresholds on the severe buckets were set for recall, and the resulting false positives were absorbed by the review step rather than tuned away.</p></li>
+    <li><b>Severity chooses the lever, the window scales with it</b><p>Each driver's flags roll up by bucket. Buckets 1–3 lead to a block whose duration scales with severity — permanent at the top, a fixed number of days lower down. Buckets 4–5 lead to <strong>deprioritisation</strong>: the driver stays online but drops down the ride-matching order for a window, and is told why. Losing ride volume for a week is the warning. Matching already supported priority tiers; this was the first time the mechanism was customised this heavily, and it turned enforcement into a graded cost rather than an on/off switch.</p></li>
+    <li><b>Humans on every block</b><p>Deprioritisation is automatic. Any block goes to a queue with the original text, its translation, the driver's history and the recommended action; driver-ops confirm or overturn with one click. Overturned cases go back as corrected labels. Drivers can appeal through driver support.</p></li>
+    <li><b>Daily batch, not real time</b><p>Feedback is reviewed the same day, which is what the problem needed; a streaming system would have added complexity without changing outcomes.</p></li>
+  </ol>
+
+  <h2>Results</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Metric</th><th>Value</th><th>How measured</th></tr></thead>
+    <tbody>
+      <tr><td>Safety-related rider complaints</td><td><strong>~50% lower</strong></td><td>Three months after launch vs. the three before, normalised for ride volume</td></tr>
+      <tr><td>Drivers corrected</td><td><strong>~12,000</strong></td><td>Deprioritised once, with no further safety flag afterwards</td></tr>
+      <tr><td>Drivers removed</td><td><strong>~550</strong></td><td>Blocked after human confirmation</td></tr>
+      <tr><td>Time from serious complaint to action</td><td>Days → same day</td><td>Batch runs daily; block queue worked the same day</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="stat-row">The complaint reduction is a before/after comparison, so it includes everything else that changed in the period; the ratio of corrected to removed drivers — roughly twenty to one — is the number that says the graded lever did most of the work.</p>
+  <div class="insight">
+    <strong>Key insight</strong>
+    Most drivers who get a complaint are not dangerous; they had a bad day, or a habit nobody had called out. A binary warn-or-block system either lets that slide or over-punishes it. Making <em>ride priority</em> the lever gave enforcement a dial: a cost proportionate to the offence, felt immediately in earnings, reversible by behaving. ~12,000 drivers changed behaviour without anyone being removed from the platform — and the ~550 who were removed had a human look at the evidence first.
+  </div>
+
+  <h2>What went wrong, and what changed</h2>
+  <div class="cards small">
+    <div class="card"><h3>Safety as a fare complaint</h3><p>Some riders filed fare disputes under safety because it gets attention, and a few used it to retaliate after an argument. The human step on blocks exists largely because of this.</p></div>
+    <div class="card"><h3>Vocabulary drift</h3><p>A fare change produced a wave of complaints in new phrasing that the classifier had never seen. Fix: a weekly hand-checked sample of <em>unflagged</em> feedback, to catch misses rather than false alarms.</p></div>
+    <div class="card"><h3>Early pushback</h3><p>Driver-ops objected to false blocks in the first weeks. The rule that no block applies without confirmation came out of that, and made the system trusted enough to keep.</p></div>
+  </div>
+
+  <h2>What I'd do differently</h2>
+  <div class="cards small">
+    <div class="card"><h3>Measure the lever</h3><p>Randomly vary the deprioritisation window for bucket-5 drivers to learn how much cost actually changes behaviour, instead of picking a window by judgement.</p></div>
+    <div class="card"><h3>Rider credibility</h3><p>A rider's own complaint history as a feature — a first complaint from a frequent rider and a fifth from a rider with a fare dispute are not the same evidence.</p></div>
+    <div class="card"><h3>Held-out evaluation</h3><p>A fixed, hand-labelled evaluation set to report precision and recall per bucket over time, rather than relying on the review queue as the only quality signal.</p></div>
+  </div>
+
+  <h2>Related work</h2>
+  <p>The graded-consequence idea is standard in trust-and-safety practice at marketplaces; the unusual part here is using the matching engine's own priority tiers as the consequence, and offloading the multilingual problem to translation so the classifier stays simple. Sarvam AI's models are built for Indic languages, which is what made the translation step reliable enough to build on.</p>
+
+  <h2>Code &amp; artifacts</h2>
+  <p>Proprietary to Namma Yatri. Stack: Python with scikit-learn (TF-IDF, linear classifier) and pandas; Sarvam AI translation API; SQL over ride and feedback data; daily scheduled job; block queue and priority controls exposed by the platform's matching service.</p>
+
+  <div class="pager"><a href="../#projects">← All projects</a><a href="text-to-sql-analyst.html">Next: Slack-native AI analyst →</a></div>
+  <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
+</main>
+</body>
+</html>
