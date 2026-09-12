@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Slack-native AI analyst (text-to-SQL) — Chirag Singal</title>
-<meta name="description" content="A schema-grounded text-to-SQL system with a semantic layer over team documentation.">
+<title>Slack-native AI analyst — Chirag Singal</title>
+<meta name="description" content="A compiled, human-curated data wiki plus a Claude-based agent that answers metric questions in Slack with schema-grounded SQL.">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -16,37 +16,95 @@
     <a href="https://github.com/lagnis337">GitHub</a>
   </nav>
 
-  <h1>Slack-native AI analyst (text-to-SQL)</h1>
-  <p class="meta">Razorpay · 2025–2026 · Owner, end to end</p>
-  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up using only publicly stated figures.</p><p class="notice">Draft — this write-up is being finalised.</p>
+  <h1>Slack-native AI analyst</h1>
+  <p class="meta">Razorpay · 2025–2026 · Solo: design, wiki, agent, guardrails, rollout</p>
+  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up using only publicly stated figures.</p>
 
   <h2>Problem</h2>
-  <p><em>To be written.</em></p>
+  <p>A 127-person product and operations team asked the same kinds of questions every day — "what was X last week for merchant Y?", "how do we define an active user?", "which dashboard has Z?" — and each one became a ticket for a small data team. The knowledge needed to answer them existed, spread across 2,000+ documents, dashboards, column comments and people's heads, but nobody could find it and no two documents agreed.</p>
+  <p>The goal was an agent in Slack that answers from <em>the team's own definitions</em>, shows its working, and gets more reliable as people use it — without giving a language model free rein over a production warehouse.</p>
+  <p><strong>Framing.</strong> Not retrieval-augmented generation over a document pile. The documents were <strong>compiled once into a persistent, human-ratified wiki</strong>, and the agent navigates that wiki the way an analyst would — read the index, open the relevant pages, ask a clarifying question if the request is ambiguous, then write and run the SQL.</p>
 
-  <h2>Data</h2>
-  <p><em>To be written.</em></p>
+  <h2>Data: the wiki</h2>
+  <p>Built on the <em>LLM Wiki</em> pattern (Karpathy) and laid out like the <em>Open Knowledge Format</em> (Google): a git repository of markdown, one page per concept — tables, metrics, dashboards — with YAML frontmatter, <strong>100+ pages</strong> compiled from the 2,000+ source documents.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Element</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>index.md</code></td><td>Catalogue of every page with a one-line summary. The agent reads it first on every query and opens only the pages it needs — <strong>index-first navigation, no embeddings</strong>. Frontmatter (type, tags, status) is what makes this navigable.</td></tr>
+      <tr><td><code>rules.md</code></td><td>Agent instructions: page templates, frontmatter conventions, how to ingest a source, how to answer a question, how to propose a change.</td></tr>
+      <tr><td><code>log.md</code></td><td>Append-only record of every change, with date and author.</td></tr>
+      <tr><td>Page <code>status</code></td><td>Every page is <code>draft</code> until a human ratifies it; the agent answers only from <code>active</code> pages. Drafts exist, but they can't produce answers.</td></tr>
+      <tr><td>Table and metric pages</td><td>Schema, grain, join paths, caveats; metric definitions with canonical SQL. This is what "schema-grounded" means here — the model sees curated pages, not raw DDL.</td></tr>
+      <tr><td>Playbooks</td><td>Every SQL that produced a ratified answer is saved <strong>parameterised</strong> — merchant, date range, segment as parameters — so a similar question reuses a known-good query instead of generating a new one.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Validation before merge.</strong> Every proposed page or change is checked against live data in the warehouse before it can be ratified — a metric page's canonical SQL has to run and return sensible numbers, not just read well.</p>
 
   <h2>Approach</h2>
   <figure>
-    <em>To be written.</em>
-    <figcaption><em>To be written.</em></figcaption>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
+      <g fill="#fff" stroke="#999" stroke-width="1.2">
+        <rect x="10" y="60" width="120" height="58" rx="8"/>
+        <rect x="160" y="60" width="170" height="58" rx="8"/>
+        <rect x="360" y="60" width="170" height="58" rx="8"/>
+        <rect x="560" y="60" width="190" height="58" rx="8"/>
+        <rect x="160" y="170" width="170" height="58" rx="8" stroke-dasharray="5 4"/>
+        <rect x="360" y="170" width="170" height="58" rx="8" stroke-dasharray="5 4"/>
+      </g>
+      <g fill="#222" text-anchor="middle">
+        <text x="70" y="84">Slack question</text><text x="70" y="102" fill="#666" font-size="11">or clarifying reply</text>
+        <text x="245" y="84">Agent navigates wiki</text><text x="245" y="102" fill="#666" font-size="11">index.md → pages → playbook?</text>
+        <text x="445" y="84">SQL + guardrails</text><text x="445" y="102" fill="#666" font-size="11">SELECT-only role, 10k-row cap</text>
+        <text x="655" y="84">Answer + footnote</text><text x="655" y="102" fill="#666" font-size="11">SQL, pages used, timings · 👍/👎</text>
+        <text x="245" y="194">Daily review skill</text><text x="245" y="212" fill="#666" font-size="11">scrapes 👎s, drafts wiki changes</text>
+        <text x="445" y="194">Human ratifies</text><text x="445" y="212" fill="#666" font-size="11">validated on live data → active</text>
+      </g>
+      <g stroke="#666" stroke-width="1.4" fill="none" marker-end="url(#a)">
+        <path d="M130 89H158"/><path d="M330 89H358"/><path d="M530 89H558"/>
+        <path d="M655 118V150Q655 199 532 199" stroke-dasharray="5 4"/>
+        <path d="M360 199H332" stroke-dasharray="5 4"/>
+        <path d="M245 170V120" stroke-dasharray="5 4"/>
+      </g>
+      <text x="30" y="30" fill="#222" font-size="13" font-weight="600">Query path (solid) and the wiki-maintenance loop (dashed)</text>
+      <text x="90" y="270" fill="#666" font-size="11">Ambiguous question → agent asks one clarifying question before touching the wiki</text>
+    </svg>
+    <figcaption>Answers come from ratified wiki pages; thumbs-downs become proposed wiki changes, which a human validates and ratifies. The wiki compounds; the model doesn't.</figcaption>
   </figure>
-  <p><em>To be written.</em></p>
+  <p><strong>Model.</strong> Claude frontier models (Anthropic), run as an agent that can read the repository, clarify, write SQL and execute it through a constrained connection.</p>
+  <p><strong>Query path.</strong> The agent is instructed to think like a data analyst rather than a search engine: if the question is ambiguous ("revenue" for which product, which date basis?) it asks <strong>one clarifying question</strong> before reading anything. Then it reads <code>index.md</code>, opens only the metric and table pages the question needs, checks for a matching playbook, and either fills the playbook's parameters or writes new SQL grounded on the pages' schema and join paths.</p>
+  <p><strong>Guardrails.</strong> The bot's warehouse service account can only <code>SELECT</code> on the curated schema, and results are capped at <strong>10,000 rows</strong>. It cannot see raw event tables and cannot write.</p>
+  <p><strong>Showing its work.</strong> Every answer carries a footnote: the SQL that ran, the wiki pages traversed, and the time taken at each step — repository access, navigation, query execution. Askers can check the definition it used; I could see where the time went.</p>
 
   <h2>Results</h2>
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
-    <tbody><em>To be written.</em></tbody>
+    <thead><tr><th>Metric</th><th>Value</th><th>How measured</th></tr></thead>
+    <tbody>
+      <tr><td>Responses rated 👍 by the asker</td><td><strong>96%</strong></td><td>Share of all responses with a thumbs-up reaction</td></tr>
+      <tr><td>Daily active askers</td><td><strong>~40% of 127</strong></td><td>Distinct people asking per day</td></tr>
+      <tr><td>Questions to the data team</td><td><strong>−10% week on week</strong> after launch</td><td>Ticket volume</td></tr>
+      <tr><td>Median time to answer</td><td><strong>~2 minutes</strong></td><td>Slack timestamps; previously a ticket queue</td></tr>
+      <tr><td>Wiki size</td><td>100+ ratified pages</td><td>Compiled from 2,000+ source documents</td></tr>
+    </tbody>
   </table>
   </div>
-  <p><em>To be written.</em></p>
+  <p>The 96% is a satisfaction rate, not an execution-accuracy figure: askers rate whether the answer looked right and was useful, and a plausible wrong answer can earn a 👍. Its value is as a trend and as the trigger for the loop below. The most common cause of a 👎 was <strong>incomplete wiki context</strong> — a metric or table the wiki didn't yet cover — which is the expected failure mode of a knowledge base designed to grow with use, and exactly what the loop fixes.</p>
+  <p><strong>The maintenance loop.</strong> A scheduled skill runs daily: it scrapes the day's responses from Slack — the thumbs-downs in particular — works out what the wiki was missing or wrong, drafts the change (a new metric page, a corrected join path, a new playbook) and pushes it to the repository as a pending proposal. I validate it against live data and ratify or reject. The wiki gets better every day; the model is the same model it was on day one.</p>
 
   <h2>What I'd do differently</h2>
-  <p><em>To be written.</em></p>
+  <ul>
+    <li><strong>A real evaluation set.</strong> A fixed set of questions with human-written reference SQL and results on a frozen snapshot would give execution accuracy — a number that can't be flattered by polite thumbs-ups — and would make ablations possible (with vs. without playbooks; with vs. without clarifying questions).</li>
+    <li><strong>Categorise failures.</strong> "Incomplete context" is one bucket; time-grain confusion, missing filters and wrong joins are probably hiding inside it, and each needs a different fix.</li>
+    <li><strong>Compile metrics rather than generate.</strong> The metric pages already hold canonical SQL; a metric-request compiler over them would leave generation only for genuinely novel questions.</li>
+    <li><strong>Query-time cost.</strong> Reading the repository per query is honest and auditable but slow at the tail; caching the index and hot pages would cut the median well below two minutes.</li>
+  </ul>
+
+  <h2>Related work</h2>
+  <p><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">LLM Wiki</a> (Karpathy) — the pattern of an LLM incrementally compiling and maintaining a persistent markdown wiki, with <code>index.md</code>, <code>log.md</code>, a schema file, and answers filed back, rather than re-retrieving from raw sources on every query. <a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing">Open Knowledge Format</a> (Google) — the layout of that wiki for data: one markdown page per dataset / table / metric with YAML frontmatter, schema tables and join paths, curated like code. This project applied both to a live warehouse and put a Slack agent, guardrails and a human-ratification loop on top.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p><em>To be written.</em></p>
+  <p>Proprietary to Razorpay. Stack: markdown wiki in git with YAML frontmatter and page status; Claude frontier models as the agent; Slack app; SELECT-only warehouse service account; a daily scheduled review skill that proposes wiki changes for human ratification.</p>
 
   <div class="pager"><a href="../#projects">← All projects</a><a href="fpl-player-models.html">Next: FPL player models →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
