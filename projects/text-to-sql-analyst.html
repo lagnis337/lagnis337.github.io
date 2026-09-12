@@ -35,7 +35,7 @@
       <tr><td><code>log.md</code></td><td>Append-only record of every change, with date and author.</td></tr>
       <tr><td>Page <code>status</code></td><td>Every page is <code>draft</code> until a human ratifies it; the agent answers only from <code>active</code> pages. Drafts exist, but they can't produce answers.</td></tr>
       <tr><td>Table and metric pages</td><td>Schema, grain, join paths, caveats; metric definitions with canonical SQL. This is what "schema-grounded" means here — the model sees curated pages, not raw DDL.</td></tr>
-      <tr><td>Playbooks</td><td>Every SQL that produced a ratified answer is saved <strong>parameterised</strong> — merchant, date range, segment as parameters — so a similar question reuses a known-good query instead of generating a new one.</td></tr>
+      <tr><td><code>metrics.md</code> and playbooks</td><td>A page listing the metrics people ask for regularly, each linked to its <strong>playbook</strong> — a ratified, <strong>parameterised</strong> SQL query (merchant, date range, segment as parameters). A question about a known metric reuses a known-good query; generation is reserved for questions the playbooks don't cover.</td></tr>
     </tbody>
   </table></div>
   <p><strong>Validation before merge.</strong> Every proposed page or change is checked against live data in the warehouse before it can be ratified — a metric page's canonical SQL has to run and return sensible numbers, not just read well.</p>
@@ -74,7 +74,7 @@
   <p><strong>Model.</strong> Deliberately none in particular. The Slack agent <strong>selects the model at run time</strong>, and the repository is structured so that any capable, popular model can navigate it — the reading skill and the wiki's conventions do the work that would otherwise be baked into prompts for one vendor's model. Claude frontier models were used most, but the system doesn't depend on them.</p>
   <p><strong>Query path.</strong> The agent is instructed to think like a data analyst rather than a search engine: if the question is ambiguous ("revenue" for which product, which date basis?) it asks <strong>one clarifying question</strong> before reading anything. Then it reads <code>index.md</code>, opens only the metric and table pages the question needs, checks for a matching playbook, and either fills the playbook's parameters or writes new SQL grounded on the pages' schema and join paths.</p>
   <p><strong>Guardrails.</strong> The bot's warehouse service account can only <code>SELECT</code> on the curated schema, and results are capped at <strong>10,000 rows</strong>. It cannot see raw event tables and cannot write.</p>
-  <p><strong>Showing its work.</strong> Every answer carries a footnote: the SQL that ran, the wiki pages traversed, and the time taken at each step — repository access, navigation, query execution. Askers can check the definition it used; I could see where the time went.</p>
+  <p><strong>Showing its work.</strong> Every answer carries a footnote: the SQL that ran, the wiki pages traversed, and the <strong>time and token cost of each step</strong> — repository access, navigation per page, query execution — plus the total. Askers can check the definition it used; I used the per-page costs to spot anomalies, such as a page that was expensive to read every time and needed restructuring.</p>
 
   <h2>Results</h2>
   <div class="table-wrap">
@@ -96,8 +96,8 @@
   <ul>
     <li><strong>A real evaluation set.</strong> A fixed set of questions with human-written reference SQL and results on a frozen snapshot would give execution accuracy — a number that can't be flattered by polite thumbs-ups — and would make ablations possible (with vs. without playbooks; with vs. without clarifying questions).</li>
     <li><strong>Categorise failures.</strong> "Incomplete context" is one bucket; time-grain confusion, missing filters and wrong joins are probably hiding inside it, and each needs a different fix.</li>
-    <li><strong>Compile metrics rather than generate.</strong> The metric pages already hold canonical SQL; a metric-request compiler over them would leave generation only for genuinely novel questions.</li>
-    <li><strong>Query-time cost.</strong> Reading the repository per query is honest and auditable but slow at the tail; caching the index and hot pages would cut the median well below two minutes.</li>
+    <li><strong>Go further on playbooks.</strong> The <code>metrics.md</code> → playbook path already avoids generation for common metrics; a proper metric-request compiler (metric + filters + grain → SQL, with no free-form generation) would extend that guarantee to variations of known metrics, not just exact matches.</li>
+    <li><strong>Use the cost data to cache.</strong> The footnote already shows which pages are read most and cost most; caching the index and hot pages would cut the median well below two minutes without changing the auditability.</li>
   </ul>
 
   <h2>Related work</h2>
