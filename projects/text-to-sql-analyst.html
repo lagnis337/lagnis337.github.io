@@ -35,12 +35,12 @@
   </div>
   <div class="insight">
     <strong>Key insight</strong>
-    Not retrieval-augmented generation (RAG — fetching text snippets for a language model on every query) over a document pile. The documents were <em>compiled once into a persistent, human-ratified wiki</em>, and the agent navigates it the way an analyst would — read the index, open the relevant pages, ask a clarifying question if the request is ambiguous, then write and run the SQL query. The wiki compounds with every correction; the models come and go underneath it.
+    Not retrieval-augmented generation (RAG — fetching text snippets for a language model on every query) over a document pile. The documents were <em>compiled once into a persistent, human-ratified wiki</em>, and the agent navigates it the way an analyst would — read the index, open the relevant pages, ask a clarifying question if the request is ambiguous, then write and run the SQL (Structured Query Language) query. The wiki compounds with every correction; the models come and go underneath it.
   </div>
 
   <h2>The wiki</h2>
   <dl class="dl">
-    <dt>Pattern</dt><dd><em>LLM Wiki</em> (Karpathy) for the compile-and-maintain loop; <em>Open Knowledge Format</em> (Google) for the layout — a git repository of markdown files, one page per table / metric / dashboard, each with a small header of structured metadata (YAML frontmatter: type, tags, status).</dd>
+    <dt>Pattern</dt><dd><em>LLM Wiki</em> (Karpathy; LLM = large language model) for the compile-and-maintain loop; <em>Open Knowledge Format</em> (Google) for the layout — a git repository of markdown files, one page per table / metric / dashboard, each with a small header of structured metadata (YAML frontmatter: type, tags, status).</dd>
     <dt>Size</dt><dd>100+ ratified pages compiled from 2,000+ source documents.</dd>
     <dt>Grounding</dt><dd>Table pages carry schema, grain, join paths and caveats; metric pages carry definitions with canonical SQL. The model sees curated pages, never raw database schema definitions — that's what "schema-grounded" means here.</dd>
     <dt>Validation</dt><dd>Every proposed page or change is run against live warehouse data before it can be ratified. Canonical SQL has to execute and return sensible numbers, not just read well.</dd>
