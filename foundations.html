@@ -10,8 +10,8 @@
 <main class="article">
   <nav class="nav">
     <a class="home" href="./">Chirag Singal</a>
-    <a href="./#projects">Projects</a>
-    <a href="./#foundations">Foundations</a>
+    <a href="./#work">Work projects</a>
+    <a href="./#personal">Personal pursuits</a>
     <a href="https://github.com/lagnis337"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>GitHub</a>
   </nav>
   <h1>Foundations</h1>
@@ -20,31 +20,31 @@
   <h2>Credit-bearing coursework</h2>
   <h3>Linear Algebra for Machine Learning — UC San Diego, Division of Extended Studies</h3>
   <p class="meta">CSE X412.87 · 3 quarter units · Summer 2026 · Grade: A+ (4.0)</p>
-  <p>100% across all five quizzes and the final exam; both coding assignments at or above full marks. Syllabus, by week:</p>
+  <p>100% across all five quizzes and the final exam; both coding assignments at or above full marks. The course ran nine weeks, one topic per week:</p>
   <div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Topic</th><th>What I studied</th></tr></thead>
     <tbody>
-      <tr><td>1–2</td><td>Vectors, matrices, tensors; matrix operations, inverse, determinants</td></tr>
-      <tr><td>3</td><td>Linear systems — column/row/null spaces, rank, Gaussian elimination, reduced row-echelon form, pseudoinverse, condition number</td></tr>
-      <tr><td>4</td><td>Vector spaces — norms, orthogonality, projection, span, basis, linear transformations</td></tr>
-      <tr><td>5</td><td>Gram–Schmidt orthogonalisation, QR and LU matrix decompositions, eigenvalues and eigendecomposition</td></tr>
-      <tr><td>6</td><td>Singular value decomposition (SVD), low-rank approximation, the four fundamental subspaces</td></tr>
-      <tr><td>7</td><td>Principal component analysis (PCA) — assignment: face-image compression</td></tr>
-      <tr><td>8</td><td>Quadratic forms and gradient descent — assignment: linear regression, gradient descent vs. the closed-form normal equation</td></tr>
-      <tr><td>9</td><td>Neural-network frameworks (PyTorch / TensorFlow demos)</td></tr>
+      <tr><td>1</td><td><strong>Vectors, matrices and tensors</strong></td><td>Representing data as vectors, matrices and higher-order tensors</td></tr>
+      <tr><td>2</td><td><strong>Matrix operations</strong></td><td>Products, inverse and determinants</td></tr>
+      <tr><td>3</td><td><strong>Linear systems</strong></td><td>Column, row and null spaces; rank; Gaussian elimination and reduced row-echelon form; pseudoinverse and condition number</td></tr>
+      <tr><td>4</td><td><strong>Vector spaces</strong></td><td>Norms, orthogonality, projection, span, basis; linear transformations</td></tr>
+      <tr><td>5</td><td><strong>Decompositions</strong></td><td>Gram–Schmidt orthogonalisation; QR and LU decompositions; eigenvalues and eigendecomposition</td></tr>
+      <tr><td>6</td><td><strong>Singular value decomposition</strong></td><td>SVD, low-rank approximation and the four fundamental subspaces</td></tr>
+      <tr><td>7</td><td><strong>Principal component analysis</strong></td><td>PCA and its relationship to the SVD — <strong>assignment:</strong> face-image compression</td></tr>
+      <tr><td>8</td><td><strong>Quadratic forms and gradient descent</strong></td><td>Quadratic forms; batch gradient descent — <strong>assignment:</strong> linear regression, gradient descent vs. the closed-form normal equation</td></tr>
+      <tr><td>9</td><td><strong>Neural-network frameworks</strong></td><td>PyTorch and TensorFlow demonstrations</td></tr>
     </tbody>
   </table></div>
   <h3>Assignments</h3>
   <p>Code, data, and figures for both are in <a href="https://github.com/lagnis337/linear-algebra-for-ml-coursework">lagnis337/linear-algebra-for-ml-coursework</a>; every number below reproduces from the scripts there.</p>
   <div class="cards">
-    <div class="card linked"><h3><a href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/pca-face-compression">Face-image compression with PCA</a></h3><p>PCA via SVD on 400 Olivetti faces; reconstruction from K components. Mean squared error 0.0077 at K=10, 0.0022 at K=100 (~41:1 compression). Plus a sweep of K showing diminishing returns. <strong>10/10</strong></p><div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-numpy"/></svg>NumPy</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">SVD</span><a class="tag code" href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/pca-face-compression"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code</a></div></div>
-    <div class="card linked"><h3><a href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/linear-regression-gradient-descent">Linear regression: gradient descent vs. normal equation</a></h3><p>Derived the mean-squared-error gradient and implemented batch gradient descent with feature standardisation; closed-form solution for comparison. Both predict $293,237 for a 1,650 sq ft house. Bonus: the descent trajectory on the cost surface and a learning-rate sweep showing convergence, oscillation, and divergence. <strong>12/10</strong></p><div class="tags"><span class="tag">Octave</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-numpy"/></svg>NumPy</span><span class="tag">Optimisation</span><a class="tag code" href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/linear-regression-gradient-descent"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code</a></div></div>
+    <div class="card linked"><div class="body"><h3><a href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/pca-face-compression">Face-image compression with PCA</a></h3><p>PCA via SVD on 400 Olivetti faces; reconstruction from K components. Mean squared error 0.0077 at K=10, 0.0022 at K=100 (~41:1 compression). Plus a sweep of K showing diminishing returns. <strong>10/10</strong></p><div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-numpy"/></svg>NumPy</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">SVD</span><a class="tag code" href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/pca-face-compression"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code</a></div></div></div>
+    <div class="card linked"><div class="body"><h3><a href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/linear-regression-gradient-descent">Linear regression: gradient descent vs. normal equation</a></h3><p>Derived the mean-squared-error gradient and implemented batch gradient descent with feature standardisation; closed-form solution for comparison. Both predict $293,237 for a 1,650 sq ft house. Bonus: the descent trajectory on the cost surface and a learning-rate sweep showing convergence, oscillation, and divergence. <strong>12/10</strong></p><div class="tags"><span class="tag">Octave</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-numpy"/></svg>NumPy</span><span class="tag">Optimisation</span><a class="tag code" href="https://github.com/lagnis337/linear-algebra-for-ml-coursework/tree/main/linear-regression-gradient-descent"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code</a></div></div></div>
   </div>
 
-  <h2>In progress</h2>
-  <p><em>To be updated.</em></p>
-
-  <div class="pager"><a href="./">← Home</a></div>
+  <div class="pager"><a href="./#personal">← Personal pursuits</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
 </main>
+<script src="assets/anim.js"></script>
 </body>
 </html>

@@ -42,6 +42,8 @@ h1 { font-size: 2.6rem; line-height: 1.1; margin: 0 0 10px; }
 h2 { font-size: 1.55rem; margin: 56px 0 18px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 h3 { font-size: 1.15rem; margin: 26px 0 8px; }
 p { margin: 0 0 14px; }
+.contact { font-size: 0.93rem; color: var(--muted); margin: 0 0 14px; }
+.contact a { color: var(--accent2); font-weight: 500; }
 .lede { font-family: var(--serif); font-size: 1.28rem; line-height: 1.45; color: var(--fg); margin-bottom: 18px; max-width: 700px; }
 .nav { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.92rem; margin-bottom: 44px; font-weight: 500; }
 .nav a { color: var(--muted); display: inline-flex; align-items: center; gap: 5px; }
@@ -54,7 +56,7 @@ p { margin: 0 0 14px; }
 .article h2::before { content: "0" counter(sec); display: block; font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.14em; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
 
 /* cards */
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; align-items: stretch; }
 .card { position: relative; display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0; color: inherit; overflow: hidden; transition: transform .15s ease, box-shadow .15s ease; }
 a.card:hover, .card.linked:hover { text-decoration: none; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
 .card.linked h3 a { color: inherit; text-decoration: none; }
@@ -62,7 +64,9 @@ a.card:hover, .card.linked:hover { text-decoration: none; transform: translateY(
 .card .tags a.tag { position: relative; z-index: 1; text-decoration: none; }
 .card .cover { height: 110px; background: var(--tag); border-bottom: 1px solid var(--line); }
 .card .cover svg { width: 100%; height: 100%; display: block; }
-.card .body { padding: 16px 18px 16px; }
+.card .body { padding: 16px 18px 16px; display: flex; flex-direction: column; flex: 1 1 auto; }
+.card .body .tags { margin-top: auto; padding-top: 12px; }
+.cardmeta { color: var(--accent2); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 8px; }
 .card h3 { margin: 0 0 6px; font-size: 1.12rem; }
 .card p { margin: 0 0 10px; color: var(--muted); font-size: 0.93rem; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -130,3 +134,7 @@ figure.anim.in svg path[marker-end]:not([stroke-dasharray]) { stroke-dashoffset:
 figure.anim.in svg path[stroke-dasharray] { animation: flow 4.2s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -63; } }
 figure.chart svg { padding: 6px 4px; }
+
+/* card covers draw in when scrolled into view (anim.js adds .anim, then .in) */
+.cover.anim svg > * { opacity: 0; transform: translateY(5px); transition: opacity .4s ease, transform .4s ease; transition-delay: calc(var(--i, 0) * 55ms); }
+.cover.anim.in svg > * { opacity: 1; transform: none; }
