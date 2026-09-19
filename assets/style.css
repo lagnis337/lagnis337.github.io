@@ -42,8 +42,10 @@ h1 { font-size: 2.6rem; line-height: 1.1; margin: 0 0 10px; }
 h2 { font-size: 1.55rem; margin: 56px 0 18px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 h3 { font-size: 1.15rem; margin: 26px 0 8px; }
 p { margin: 0 0 14px; }
-.contact { font-size: 0.93rem; color: var(--muted); margin: 0 0 14px; }
-.contact a { color: var(--accent2); font-weight: 500; }
+.contact { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.93rem; margin: 0 0 16px; }
+.contact a { display: inline-flex; align-items: center; gap: 7px; color: var(--fg); font-weight: 500; }
+.contact a:hover { color: var(--accent); text-decoration: none; }
+.contact svg { width: 16px; height: 16px; fill: currentColor; flex: none; }
 .lede { font-family: var(--serif); font-size: 1.28rem; line-height: 1.45; color: var(--fg); margin-bottom: 18px; max-width: 700px; }
 .nav { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.92rem; margin-bottom: 44px; font-weight: 500; }
 .nav a { color: var(--muted); display: inline-flex; align-items: center; gap: 5px; }
