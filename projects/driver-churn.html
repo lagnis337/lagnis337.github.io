@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Driver churn prediction — Chirag Singal</title>
+<title>Driver churn prediction · Chirag Singal</title>
 <meta name="description" content="A daily-scored ensemble model that identified at-risk ride-hailing drivers for targeted retention; monthly churn fell from 42% to 30%.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
@@ -20,9 +20,9 @@
   </nav>
 
   <h1>Driver churn prediction</h1>
-  <p class="plain">Every morning, rank 150,000 drivers by how likely they are to stop driving, and hand ops a list they can act on.</p>
+  <p class="plain">Every morning, the model puts approximately 150,000 drivers in the order of the risk that they stop to drive. The operations team then acts on this list.</p>
   <p class="meta">Namma Yatri · Central data team · 2024–2025 · Owner, end to end</p>
-  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up.</p>
+  <p class="notice">This is an industry project. The code and the data are proprietary, thus this page shows only the method.</p>
 
   <div class="glance">
     <div><b>~150k</b><span>drivers scored every morning</span></div>
@@ -32,27 +32,27 @@
   </div>
 
   <h2>Problem</h2>
-  <p>Namma Yatri is a zero-commission ride-hailing platform: drivers pay a subscription, not a per-ride cut, so driver retention is both marketplace supply and a direct revenue line. Around <strong>42% of active drivers were churning</strong> — a <em>non-contractual</em> setting, with no cancellation event: churn is inferred from inactivity (no completed rides for 30 days).</p>
+  <p>Namma Yatri is a ride-hailing platform with no commission. The drivers pay a subscription and not a part of each fare. Driver retention is thus the supply of the marketplace and also a direct source of revenue. Approximately <strong>42% of the active drivers stopped to drive</strong>. There is no cancellation event in this business, thus the data has no direct label. A driver is a churned driver when the driver completes no ride in 30 days.</p>
   <div class="two">
-    <div><h4>Before</h4><p>No systematic targeting. Ops looked at drivers who hadn't been active for more than a week and reached out — by which point many had already left.</p></div>
-    <div><h4>Goal</h4><p>Score every driver daily on their probability of churning in the next 30 days, and give ops and customer success a ranked list sized to what they can act on.</p></div>
+    <div><h4>Before</h4><p>There was no systematic selection. The operations team looked at the drivers with no activity for more than one week and called them. Many of these drivers had already left the platform.</p></div>
+    <div><h4>Goal</h4><p>Calculate each day the probability that a driver stops in the next 30 days. Then give the operations team and the customer success team a list in the order of this probability, with a length that agrees with their capacity.</p></div>
   </div>
 
   <h2>Data</h2>
   <dl class="dl">
-    <dt>Unit</dt><dd>Driver-day; ~150,000 active drivers scored each morning. Drivers below a minimum tenure excluded from training.</dd>
-    <dt>Label</dt><dd><code>churn_30d = 1</code> if no completed rides in the 30 days after the scoring date. Known only a month later, so the latest month is never labelled and impact is measured on cohorts, not on the model's own predictions.</dd>
-    <dt>Features</dt><dd>36, most over weekly and monthly windows, all computed strictly before the scoring date. Structured on the RFM framework (recency, frequency, monetary value) plus feedback and context.</dd>
-    <dt>Leakage</dt><dd>The recency features — days since last trip, time since last active — encode the label if computed after the scoring date. Every window is pinned to it.</dd>
+    <dt>Unit</dt><dd>One row for each driver and each day. The model calculates a score for approximately 150,000 active drivers each morning. Drivers with a very short time on the platform are not in the training data.</dd>
+    <dt>Label</dt><dd><code>churn_30d = 1</code> when the driver completes no ride in the 30 days after the score date. The label is available only one month later. The most recent month thus has no label, and the measurement of the effect uses cohorts and not the predictions of the model.</dd>
+    <dt>Features</dt><dd>There are 36 features. Most of them use weekly and monthly windows, and all of them use only data from before the score date. The structure is the RFM framework (recency, frequency, monetary value), with feedback data and context data.</dd>
+    <dt>Leakage</dt><dd>The recency features are the days from the last trip and the time from the last activity. These features contain the label if you calculate them after the score date. Each window thus stops at the score date.</dd>
   </dl>
   <div class="table-wrap"><table>
     <thead><tr><th>Family</th><th>Features</th></tr></thead>
     <tbody>
-      <tr><td>Recency</td><td>Days since last completed ride; recent activity vs. the driver's own longer-run baseline (a busy driver slowing down ≠ a quiet driver staying quiet)</td></tr>
-      <tr><td>Frequency</td><td>Rides completed, days active, hours online; demand funnel — requests → accepted → completed, cancellation rate; share of night rides</td></tr>
-      <tr><td>Monetary</td><td>Average fare, average trip distance, earnings per online hour; subscription status (days left on plan)</td></tr>
+      <tr><td>Recency</td><td>Days from the last completed ride. Recent activity against the usual level of the same driver. A busy driver that becomes slow is not the same as a quiet driver that stays quiet.</td></tr>
+      <tr><td>Frequency</td><td>Rides completed, days with activity, hours online. The demand funnel: requests, accepted requests, completed rides, and the cancellation rate. The part of the rides that occur at night.</td></tr>
+      <tr><td>Monetary</td><td>Average fare, average trip distance, and earnings for each hour online. Subscription status, with the days that stay on the plan.</td></tr>
       <tr><td>Feedback</td><td>Rider ratings and complaints</td></tr>
-      <tr><td>Context</td><td>City and geo-zone; tenure; zone-level demand (requests per online driver — is there work here?); contacted by ops recently</td></tr>
+      <tr><td>Context</td><td>City and geo-zone. Time on the platform. Demand in the zone, which is the number of requests for each online driver, because a driver needs work in the area. A flag that shows if the operations team called the driver recently.</td></tr>
     </tbody>
   </table></div>
 
@@ -83,13 +83,13 @@
       <text x="230" y="174" fill="#666" font-size="11" text-anchor="end">pricing, matching, "Go Home"</text>
       <text x="10" y="30" fill="#222" font-size="13" font-weight="600">Daily scoring pipeline with a human feedback loop</text>
     </svg>
-    <figcaption>Features are rebuilt nightly; the top of the list goes to ops calls, the next band to in-app incentives; what drivers say on the calls flows back into the product and the model.</figcaption>
+    <figcaption>A job calculates the features each night. The drivers at the top of the list get a call from the operations team, and the next group gets an incentive in the application. The information from the calls goes back to the product team and to the model.</figcaption>
   </figure>
   <ol class="steps">
-    <li><b>Two models, one score</b><p><strong>XGBoost</strong> (gradient-boosted decision trees) — the stronger model alone; captures interactions such as high online hours <em>and</em> falling acceptance rate. <strong>Random forest</strong> (scikit-learn) — weaker alone, but its errors are less correlated with the boosted model's. Equal-weight average of the two probabilities, then calibrated so the score reads as a probability. The average was <strong>more stable month to month</strong> than either model — which matters more than a marginally higher AUC for a list ops act on daily.</p></li>
-    <li><b>Split by time, never at random</b><p>Train on earlier months, validate on a later held-out month. Churn drifts with incentive schemes and seasonality, and a random split leaks the same driver's rows across train and test. Retrained monthly on a rolling window as each month's labels matured.</p></li>
-    <li><b>Decision rule sized to capacity</b><p>Top of the list — around <strong>100 drivers a day</strong> — gets an ops call; the next band gets an in-app coin incentive. Cut-offs set by what teams can act on, not by a probability threshold. The nightly Airflow job (a scheduled pipeline) writes the list to a shared sheet that product and customer success work from.</p></li>
-    <li><b>Close the loop</b><p>Ops tag the reasons drivers give on calls; the categories go to product and, as a <em>contacted recently</em> feature, back into the model.</p></li>
+    <li><b>Two models, one score</b><p><strong>XGBoost</strong> (gradient-boosted decision trees) is the better of the two models. It finds combinations, for example many hours online and a decrease of the acceptance rate. The <strong>random forest</strong> (scikit-learn) is weaker, but it makes different errors. The final score is the average of the two probabilities, with a calibration that makes the score equal to a true probability. The average was <strong>more stable from month to month</strong> than each model alone. For a list that the operations team uses each day, this stability is more important than a small increase of the AUC.</p></li>
+    <li><b>Split by time, never at random</b><p>The training data contains the first months and the validation data contains a later month. Churn changes with the incentive programmes and with the season. A random split is not correct, because rows of the same driver go to the training set and to the test set. The training occurred each month on a moving window, when the labels of the month became available.</p></li>
+    <li><b>Decision rule sized to capacity</b><p>The drivers at the top of the list, approximately <strong>100 drivers each day</strong>, get a call from the operations team. The next group gets an incentive in coins in the application. The limits agree with the capacity of the teams and not with a probability threshold. A nightly Airflow job writes the list to a shared sheet, and the product team and the customer success team use this sheet.</p></li>
+    <li><b>Close the loop</b><p>The operations team records the reason that each driver gives during the call. These categories go to the product team. A feature that shows a recent call also goes back to the model.</p></li>
   </ol>
 
   <h2>Results</h2>
@@ -97,15 +97,15 @@
   <table>
     <thead><tr><th>Metric</th><th>Value</th><th>How measured</th></tr></thead>
     <tbody>
-      <tr><td>AUC (area under the ROC — receiver operating characteristic — curve; 0.5 = random, 1.0 = perfect ranking)</td><td><strong>~0.80</strong></td><td>Held-out later month</td></tr>
-      <tr><td>Monthly driver churn</td><td><strong>~42% → ~30%</strong></td><td>Monthly cohorts (share of each month's active drivers churned after 0, 1, 2, 3… months), before vs. after three months in production</td></tr>
-      <tr><td>Drivers scored / day</td><td>~150,000</td><td>—</td></tr>
-      <tr><td>Retention outreach</td><td>~100 model-ranked calls/day + incentive tier</td><td>Previously: manual review of drivers inactive &gt; 7 days</td></tr>
+      <tr><td>AUC (the area under the ROC curve, where ROC is the receiver operating characteristic; 0.5 is a random order and 1.0 is a perfect order)</td><td><strong>~0.80</strong></td><td>Held-out later month</td></tr>
+      <tr><td>Monthly driver churn</td><td><strong>~42% → ~30%</strong></td><td>Monthly cohorts. For each month, the data shows the part of the active drivers that stopped after 0, 1, 2, or 3 months. The comparison is before and after three months in production.</td></tr>
+      <tr><td>Drivers scored / day</td><td>~150,000</td><td>Not applicable</td></tr>
+      <tr><td>Retention outreach</td><td>~100 model-ranked calls/day + incentive tier</td><td>Before: a manual examination of the drivers with no activity for more than 7 days</td></tr>
       <tr><td>Top features</td><td>Utilisation and completed-trip metrics</td><td>Feature importance; own-baseline trend among the strongest</td></tr>
     </tbody>
   </table>
   </div>
-  <p class="stat-row">The 42% → 30% figure is a before/after comparison on the whole driver base, so it includes everything else that changed in the quarter — including the product change below.</p>
+  <p class="stat-row">The change from 42% to 30% is a comparison of two periods for all the drivers. It thus contains all the other changes of the quarter, and also the change of the product that the next paragraph describes.</p>
 
   <figure class="chart">
     <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
@@ -114,26 +114,26 @@
 <text x="400" y="234" fill="#666" text-anchor="middle">Months since the cohort's first month</text>
 <text x="20" y="120" fill="#666" text-anchor="middle" transform="rotate(-90 20 120)">Share of cohort still active</text><text x="60" y="216" fill="#666" text-anchor="middle">M0</text><text x="287" y="216" fill="#666" text-anchor="middle">M1</text><text x="513" y="216" fill="#666" text-anchor="middle">M2</text><text x="740" y="216" fill="#666" text-anchor="middle">M3</text><text x="54" y="164" fill="#666" text-anchor="end" font-size="11">25%</text><text x="54" y="124" fill="#666" text-anchor="end" font-size="11">50%</text><text x="54" y="84" fill="#666" text-anchor="end" font-size="11">75%</text><text x="54" y="44" fill="#666" text-anchor="end" font-size="11">100%</text><path d="M60.0 40.0 L82.7 51.8 L105.3 60.7 L128.0 68.4 L150.7 75.4 L173.3 81.7 L196.0 87.6 L218.7 93.0 L241.3 98.0 L264.0 102.8 L286.7 107.2 L309.3 111.4 L332.0 115.3 L354.7 119.0 L377.3 122.5 L400.0 125.8 L422.7 129.0 L445.3 132.0 L468.0 134.8 L490.7 137.5 L513.3 140.1 L536.0 142.5 L558.7 144.8 L581.3 147.0 L604.0 149.2 L626.7 151.2 L649.3 153.1 L672.0 154.9 L694.7 156.7 L717.3 158.4 L740.0 160.0" fill="none" stroke="#999" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="5 4"/><path d="M60.0 40.0 L82.7 47.9 L105.3 53.9 L128.0 59.2 L150.7 64.2 L173.3 68.7 L196.0 73.0 L218.7 77.0 L241.3 80.9 L264.0 84.5 L286.7 88.0 L309.3 91.3 L332.0 94.5 L354.7 97.5 L377.3 100.5 L400.0 103.3 L422.7 106.0 L445.3 108.6 L468.0 111.1 L490.7 113.5 L513.3 115.9 L536.0 118.1 L558.7 120.3 L581.3 122.4 L604.0 124.5 L626.7 126.4 L649.3 128.4 L672.0 130.2 L694.7 132.0 L717.3 133.7 L740.0 135.4" fill="none" stroke="#1f6f78" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="287" cy="107" r="5" fill="#999"/><text x="730" y="178" fill="#999" font-weight="600" text-anchor="end">before: 42% churned by M1</text><circle cx="287" cy="88" r="5" fill="#1f6f78"/><text x="730" y="108" fill="#1f6f78" font-weight="600" text-anchor="end">after: 30% churned by M1</text>
     </svg>
-    <figcaption>Each month's new active drivers followed as a cohort. Before, 42% had stopped riding by the end of their second month; after three months with the model and outreach loop live, 30%. The curve shapes are illustrative; the M1 points are the measured figures.</figcaption>
+    <figcaption>The figure follows the new active drivers of each month as a cohort. Before the model, 42% of them had stopped at the end of the second month. After three months with the model and the call loop, the value was 30%. The shapes of the curves are an illustration, but the M1 points are the measured values.</figcaption>
   </figure>
   <div class="insight">
     <strong>Key insight</strong>
-    Drivers working evenings wanted their last rides to end near home, and were declining trips or logging off rather than head the wrong way. That became <em>"Go Home" mode</em> — switch it on and you receive requests whose drop-off is near your house. Other tagged reasons fed changes to pricing and driver–rider matching. The model decided who to call; the calls changed the product; the product changed churn.
+    Drivers who work in the evening want the last ride of the day to end near their home. They refused rides in the other direction, or they went offline. This caused the <em>Go Home</em> function. When a driver starts this function, the driver receives only the requests with a destination near the home. Other reasons from the calls caused changes to the prices and to the match between a driver and a rider. The model selected the drivers to call, the calls changed the product, and the product decreased the churn.
   </div>
 
   <h2>What I'd do differently</h2>
   <div class="cards small">
-    <div class="card"><h3>A holdout group</h3><p>Deliberately not contacting a random slice of high-risk drivers would separate the call's effect from selection and from concurrent changes like Go Home.</p></div>
-    <div class="card"><h3>Uplift, not risk</h3><p>Uplift modelling — predicting who <em>changes behaviour</em> when contacted rather than who is at risk — so the ~100 daily calls go to drivers a call can actually keep.</p></div>
-    <div class="card"><h3>Time-to-churn</h3><p>A survival-analysis formulation (modelling <em>when</em> an event happens) uses <em>when</em> a driver stops, not just whether they crossed a 30-day threshold.</p></div>
-    <div class="card"><h3>Drift monitoring</h3><p>Weekly checks on the top features, so an incentive change shows up in the model's metrics the week it happens.</p></div>
+    <div class="card"><h3>A holdout group</h3><p>Select a random group of drivers with a high risk and do not call them. This group separates the effect of the call from the effect of the selection and from other changes, for example the Go Home function.</p></div>
+    <div class="card"><h3>Uplift, not risk</h3><p>Uplift modelling calculates which drivers <em>change their behaviour</em> after a call, and not which drivers have a high risk. The approximately 100 calls each day can then go to the drivers that a call can keep.</p></div>
+    <div class="card"><h3>Time-to-churn</h3><p>A survival model calculates <em>when</em> an event occurs. It thus uses the time when a driver stops, and not only the fact that the driver crossed a limit of 30 days.</p></div>
+    <div class="card"><h3>Drift monitoring</h3><p>Examine the most important features each week. A change of an incentive programme then becomes visible in the metrics of the model in the same week.</p></div>
   </div>
 
   <h2>Related work</h2>
-  <p>Framing adapted from <a href="https://medium.com/@ttah.hongtran/customer-churn-prediction-and-analysis-for-uber-ride-hailing-service-fbf1dc75a848">Tran (2021)</a> — RFM-based, non-contractual churn prediction for <em>riders</em> on a public Uber dataset of ~1,400 users (<a href="https://link.springer.com/chapter/10.1007/978-3-030-97610-1_24">ICABDE 2021</a>). This project moved it to the supply side — drivers, whose churn removes capacity — at ~150,000 drivers scored daily in production, with an action loop attached.</p>
+  <p>The frame of the project comes from <a href="https://medium.com/@ttah.hongtran/customer-churn-prediction-and-analysis-for-uber-ride-hailing-service-fbf1dc75a848">Tran (2021)</a>, which uses the RFM framework for non-contractual churn of <em>riders</em>, on a public Uber data set of approximately 1,400 users (<a href="https://link.springer.com/chapter/10.1007/978-3-030-97610-1_24">ICABDE 2021</a>). This project uses the same frame for the supply side, because the churn of a driver removes capacity from the marketplace. It also operates in production, with approximately 150,000 drivers each day and with an action loop.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p>Proprietary to Namma Yatri. Stack: SQL feature build orchestrated nightly with Apache Airflow; Python with pandas, XGBoost and scikit-learn; scores delivered daily to a shared sheet.</p>
+  <p>The code is proprietary to Namma Yatri. Stack: an SQL feature build that Apache Airflow starts each night, Python with pandas, XGBoost, and scikit-learn, and a daily delivery of the scores to a shared sheet.</p>
 
   <div class="pager"><a href="../#work">← All projects</a><a href="driver-safety-enforcement.html">Next: Driver safety enforcement →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>

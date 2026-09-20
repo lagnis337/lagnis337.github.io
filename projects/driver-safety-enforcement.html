@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Driver safety enforcement — Chirag Singal</title>
-<meta name="description" content="A multilingual text classifier on rider feedback feeding a graded enforcement ladder — deprioritise or block by severity — that cut safety complaints by about half.">
+<title>Driver safety enforcement · Chirag Singal</title>
+<meta name="description" content="A multilingual text classifier on rider feedback. A graded ladder then decreases the priority of a driver or blocks the driver, and safety complaints decreased by about half.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -20,9 +20,9 @@
   </nav>
 
   <h1>Driver safety enforcement</h1>
-  <p class="plain">Read every rider complaint the same day, in any language, and apply a consequence that fits the severity — automatically for minor cases, with a person deciding the serious ones.</p>
+  <p class="plain">Read all the rider complaints on the same day and in all the languages. Then apply a consequence that agrees with the severity. Small cases are automatic, and a person decides the serious cases.</p>
   <p class="meta">Namma Yatri · Central data team · 2024–2025 · Owner: classifier, scoring and action logic</p>
-  <p class="notice">Industry project. Code and data are proprietary; this is a methods write-up.</p>
+  <p class="notice">This is an industry project. The code and the data are proprietary, thus this page shows only the method.</p>
 
   <div class="glance">
     <div><b>~50%</b><span>fewer safety complaints, three months in</span></div>
@@ -32,37 +32,37 @@
   </div>
 
   <h2>Problem</h2>
-  <p>Riders leave feedback after every ride — a rating with an optional comment — and raise support tickets in the app or through the call centre. Most of it is about fares, routes and cancellations. A small fraction describes something unsafe: rash driving, harassment, intoxication, threats. On a platform where <strong>rider safety is the product's main promise</strong>, that fraction matters far more than its size suggests.</p>
+  <p>Riders give feedback after each ride. The feedback is a rating with an optional comment. Riders also open support tickets in the application or with the call centre. Most of the feedback is about fares, routes, and cancellations. A small part describes an unsafe condition: dangerous driving, harassment, alcohol, or threats. On a platform where <strong>the safety of the rider is the main promise of the product</strong>, this small part is very important.</p>
   <div class="two">
-    <div><h4>Before</h4><p>Support agents read tickets one at a time and escalated the alarming ones by judgement. Nobody had a view across a driver's history, so a pattern of complaints looked like a series of one-offs, and serious cases surfaced days late.</p></div>
-    <div><h4>Goal</h4><p>Read every piece of feedback the same day, sort the safety-relevant ones by severity, and apply a proportionate, consistent consequence to the driver — automatically for minor cases, with a human decision for serious ones.</p></div>
+    <div><h4>Before</h4><p>Support agents read the tickets one at a time and sent the serious tickets to a specialist. Nobody could see all the history of one driver. A group of complaints about one driver thus looked like separate events, and the serious cases became visible some days late.</p></div>
+    <div><h4>Goal</h4><p>Read all the feedback on the same day. Put the safety complaints in the order of their severity. Then give the driver a consequence that agrees with the severity and that is the same for all drivers. Small cases are automatic, and a person decides the serious cases.</p></div>
   </div>
-  <p>The text was the hard part. Feedback arrived in Kannada, Hindi and English, and often in romanised Kannada or Hindi typed on an English keyboard — spellings vary from rider to rider, so keyword rules and single-language models both fail.</p>
+  <p>The text was the difficult part. The feedback came in Kannada, Hindi, and English. Riders also wrote Kannada and Hindi with the Latin alphabet, and the spelling is different for each rider. Rules with keywords and models for one language thus both fail.</p>
 
   <h2>Data</h2>
   <dl class="dl">
-    <dt>Unit</dt><dd>One feedback item — a rating comment or a support ticket — attached to a ride, a driver and a rider.</dd>
-    <dt>Languages</dt><dd>Kannada, Hindi, English and romanised mixes. Every item was translated to English with <strong>Sarvam AI</strong>'s translation API (built for Indian languages) before modelling, so the classifier only had to learn English complaint patterns.</dd>
-    <dt>Labels</dt><dd>Five severity buckets plus <em>not a safety complaint</em>. The first labelled set was hand-tagged by the support team against a written guide; after launch, every case reviewed by ops became a new labelled example.</dd>
-    <dt>Imbalance</dt><dd>Safety-relevant items are a small minority of all feedback, and the most severe buckets are rarer still — which set the modelling and threshold choices below.</dd>
+    <dt>Unit</dt><dd>One item of feedback, which is a rating comment or a support ticket. Each item has a link to a ride, a driver, and a rider.</dd>
+    <dt>Languages</dt><dd>Kannada, Hindi, English, and mixtures with the Latin alphabet. The <strong>Sarvam AI</strong> translation API, which is made for Indian languages, translated each item to English before the classification. The classifier thus learns only English patterns.</dd>
+    <dt>Labels</dt><dd>Five severity groups, and also a group for the items that are not safety complaints. The support team labelled the first set of items with a written guide. After the release, each case that the operations team examined became a new labelled item.</dd>
+    <dt>Imbalance</dt><dd>The safety items are a small part of all the feedback, and the most severe groups are very rare. This condition controls the choices of the model and of the thresholds below.</dd>
   </dl>
   <div class="table-wrap"><table>
     <thead><tr><th>Bucket</th><th>Examples</th><th>Action</th></tr></thead>
     <tbody>
-      <tr><td><strong>1 — Physical safety</strong></td><td>Assault, threats, sexual misconduct</td><td>Permanent block, human-confirmed</td></tr>
-      <tr><td><strong>2 — Harassment</strong></td><td>Abusive language, inappropriate behaviour</td><td>Long block, human-confirmed</td></tr>
-      <tr><td><strong>3 — Unsafe driving</strong></td><td>Rash or drunk driving, phone use at the wheel</td><td>Short block, human-confirmed</td></tr>
-      <tr><td><strong>4 — Extortion</strong></td><td>Demanding more than the app fare, refusing to end the ride</td><td>Deprioritised in matching</td></tr>
-      <tr><td><strong>5 — Conduct</strong></td><td>Rudeness, vehicle condition, minor route disputes</td><td>Deprioritised in matching, short window</td></tr>
+      <tr><td><strong>1. Physical safety</strong></td><td>Assault, threats, sexual misconduct</td><td>Permanent block, human-confirmed</td></tr>
+      <tr><td><strong>2. Harassment</strong></td><td>Abusive language, inappropriate behaviour</td><td>Long block, human-confirmed</td></tr>
+      <tr><td><strong>3. Unsafe driving</strong></td><td>Rash or drunk driving, phone use at the wheel</td><td>Short block, human-confirmed</td></tr>
+      <tr><td><strong>4. Extortion</strong></td><td>Demanding more than the app fare, refusing to end the ride</td><td>Deprioritised in matching</td></tr>
+      <tr><td><strong>5. Conduct</strong></td><td>Rudeness, vehicle condition, minor route disputes</td><td>Deprioritised in matching, short window</td></tr>
     </tbody>
   </table></div>
 
   <figure class="chart">
     <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
       <text x="10" y="20" fill="#222" font-size="13" font-weight="600">Severity picks the lever; the window scales with it</text>
-<text x="170" y="66" fill="#222" text-anchor="end" font-weight="600">5 · Conduct</text><rect x="185" y="50" width="72" height="22" rx="5" fill="#1f6f78" opacity="0.48"/><text x="267" y="66" fill="#1f6f78" font-size="11">deprioritised — short window</text><text x="170" y="100" fill="#222" text-anchor="end" font-weight="600">4 · Extortion</text><rect x="185" y="84" width="144" height="22" rx="5" fill="#1f6f78" opacity="0.61"/><text x="339" y="100" fill="#1f6f78" font-size="11">deprioritised — longer window</text><text x="170" y="134" fill="#222" text-anchor="end" font-weight="600">3 · Unsafe driving</text><rect x="185" y="118" width="216" height="22" rx="5" fill="#b5462b" opacity="0.74"/><text x="411" y="134" fill="#b5462b" font-size="11">short block · human-confirmed</text><text x="170" y="168" fill="#222" text-anchor="end" font-weight="600">2 · Harassment</text><rect x="185" y="152" width="288" height="22" rx="5" fill="#b5462b" opacity="0.87"/><text x="483" y="168" fill="#b5462b" font-size="11">long block · human-confirmed</text><text x="170" y="202" fill="#222" text-anchor="end" font-weight="600">1 · Physical safety</text><rect x="185" y="186" width="360" height="22" rx="5" fill="#b5462b" opacity="1.00"/><text x="555" y="202" fill="#b5462b" font-size="11">permanent block · human-confirmed</text><text x="185" y="240" fill="#666" font-size="11">← lighter</text><text x="545" y="240" fill="#666" font-size="11" text-anchor="end">heavier consequence, longer window →</text>
+<text x="170" y="66" fill="#222" text-anchor="end" font-weight="600">5 · Conduct</text><rect x="185" y="50" width="72" height="22" rx="5" fill="#1f6f78" opacity="0.48"/><text x="267" y="66" fill="#1f6f78" font-size="11">lower priority, short window</text><text x="170" y="100" fill="#222" text-anchor="end" font-weight="600">4 · Extortion</text><rect x="185" y="84" width="144" height="22" rx="5" fill="#1f6f78" opacity="0.61"/><text x="339" y="100" fill="#1f6f78" font-size="11">lower priority, longer window</text><text x="170" y="134" fill="#222" text-anchor="end" font-weight="600">3 · Unsafe driving</text><rect x="185" y="118" width="216" height="22" rx="5" fill="#b5462b" opacity="0.74"/><text x="411" y="134" fill="#b5462b" font-size="11">short block · human-confirmed</text><text x="170" y="168" fill="#222" text-anchor="end" font-weight="600">2 · Harassment</text><rect x="185" y="152" width="288" height="22" rx="5" fill="#b5462b" opacity="0.87"/><text x="483" y="168" fill="#b5462b" font-size="11">long block · human-confirmed</text><text x="170" y="202" fill="#222" text-anchor="end" font-weight="600">1 · Physical safety</text><rect x="185" y="186" width="360" height="22" rx="5" fill="#b5462b" opacity="1.00"/><text x="555" y="202" fill="#b5462b" font-size="11">permanent block · human-confirmed</text><text x="185" y="240" fill="#666" font-size="11">← lighter</text><text x="545" y="240" fill="#666" font-size="11" text-anchor="end">heavier consequence, longer window →</text>
     </svg>
-    <figcaption>Two levers, five rungs. The lower buckets cost a driver ride volume for a while; the upper ones remove them, for a period that grows with severity, and only after a person has looked at the case.</figcaption>
+    <figcaption>Two levers and five steps. The lower groups decrease the number of rides of a driver for some time. The higher groups remove the driver for a period that increases with the severity, and only after a person examines the case.</figcaption>
   </figure>
 
   <h2>Approach</h2>
@@ -82,8 +82,8 @@
         <text x="70" y="104">Rider feedback</text><text x="70" y="122" fill="#666" font-size="11">comments, tickets</text>
         <text x="235" y="104">Sarvam translate</text><text x="235" y="122" fill="#666" font-size="11">Kannada, Hindi, mixed → English</text>
         <text x="415" y="104" fill="#b5462b" font-weight="600">TF-IDF + linear</text><text x="415" y="122" fill="#666" font-size="11">severity bucket per item</text>
-        <text x="635" y="61">Buckets 4–5</text><text x="635" y="79" fill="#666" font-size="11">deprioritise in matching — automatic</text>
-        <text x="635" y="147" fill="#1f6f78" font-weight="600">Buckets 1–3</text><text x="635" y="165" fill="#666" font-size="11">block queue — ops confirm, then block</text>
+        <text x="635" y="61">Buckets 4–5</text><text x="635" y="79" fill="#666" font-size="11">lower priority in matching, automatic</text>
+        <text x="635" y="147" fill="#1f6f78" font-weight="600">Buckets 1–3</text><text x="635" y="165" fill="#666" font-size="11">block queue: ops confirm, then block</text>
         <text x="545" y="233">Reviewed cases → new labels</text><text x="545" y="251" fill="#666" font-size="11">overturned decisions correct the model</text>
       </g>
       <g stroke="#666" stroke-width="1.4" fill="none" marker-end="url(#a)">
@@ -93,14 +93,14 @@
         <path d="M415 212V140" stroke-dasharray="5 4"/>
       </g>
     </svg>
-    <figcaption>Two levers. Deprioritisation is applied by the job itself; a block needs a person to look at the text and the driver's history first.</figcaption>
+    <figcaption>Two levers. The daily job applies the lower priority. A block needs a person, who first reads the text and the history of the driver.</figcaption>
   </figure>
   <ol class="steps">
-    <li><b>Translate first, then classify</b><p>Sarvam's translation API turned every comment into English — including the romanised Kannada and Hindi that trip up most models. That moved the multilingual difficulty out of the model entirely, so a <strong>simple, inspectable classifier</strong> was enough: TF-IDF (term frequency–inverse document frequency) features over word and character n-grams (short runs of words or letters, which tolerate the spelling noise that survives translation), into a linear classifier. Inspectable mattered — ops could see which words drove a flag.</p></li>
-    <li><b>Threshold for recall at the top</b><p>The cost of the two mistakes is asymmetric: a missed assault report is far worse than an extra case for a human to review. Thresholds on the severe buckets were set for recall — catch as many genuine cases as possible, accepting some false alarms — and the resulting false positives were absorbed by the review step rather than tuned away.</p></li>
-    <li><b>Severity chooses the lever, the window scales with it</b><p>Each driver's flags roll up by bucket. Buckets 1–3 lead to a block whose duration scales with severity — permanent at the top, a fixed number of days lower down. Buckets 4–5 lead to <strong>deprioritisation</strong>: the driver stays online but drops down the ride-matching order for a window, and is told why. Losing ride volume for a week is the warning. Matching already supported priority tiers; this was the first time the mechanism was customised this heavily, and it turned enforcement into a graded cost rather than an on/off switch.</p></li>
-    <li><b>Humans on every block</b><p>Deprioritisation is automatic. Any block goes to a queue with the original text, its translation, the driver's history and the recommended action; driver-ops confirm or overturn with one click. Overturned cases go back as corrected labels. Drivers can appeal through driver support.</p></li>
-    <li><b>Daily batch, not real time</b><p>Feedback is reviewed the same day, which is what the problem needed; a streaming system would have added complexity without changing outcomes.</p></li>
+    <li><b>Translate first, then classify</b><p>The Sarvam translation API changed each comment into English. It also translated the Kannada and the Hindi that riders wrote with the Latin alphabet, which is a problem for most models. The multilingual difficulty is thus outside the model, and a <strong>simple classifier that a person can examine</strong> was sufficient. The classifier uses TF-IDF (term frequency, inverse document frequency) features on word n-grams and character n-grams. An n-gram is a short group of words or letters, and it tolerates the spelling errors that stay after the translation. A linear classifier then calculates the group. The operations team could see which words caused a flag.</p></li>
+    <li><b>Threshold for recall at the top</b><p>The costs of the two errors are very different. A missed report of an assault is much worse than one more case for a person to examine. The thresholds of the severe groups thus give a high recall: the system finds as many true cases as possible and accepts some false alarms. The review step then removes the false alarms.</p></li>
+    <li><b>Severity chooses the lever, the window scales with it</b><p>The system collects the flags of each driver for each group. Groups 1 to 3 cause a block, and the length of the block increases with the severity. The block is permanent for the highest group and a fixed number of days for the lower groups. Groups 4 and 5 cause a <strong>lower priority</strong>: the driver stays online, but the ride matching puts the driver after the other drivers for some time, and the system gives the reason. The loss of rides for one week is the warning. The matching service already had priority levels, but this was the first heavy use of that function. The enforcement thus became a graded cost and not a switch with two positions.</p></li>
+    <li><b>Humans on every block</b><p>The lower priority is automatic. Each block goes first to a queue. The queue shows the original text, the translation, the history of the driver, and the recommended action. The driver operations team then confirms or refuses the action with one click. A refused case goes back as a corrected label. A driver can also make an appeal to driver support.</p></li>
+    <li><b>Daily batch, not real time</b><p>A person examines the feedback on the same day, and this speed is sufficient for the problem. A streaming system adds complexity but gives no better result.</p></li>
   </ol>
 
   <h2>Results</h2>
@@ -108,38 +108,38 @@
   <table>
     <thead><tr><th>Metric</th><th>Value</th><th>How measured</th></tr></thead>
     <tbody>
-      <tr><td>Safety-related rider complaints</td><td><strong>~50% lower</strong></td><td>Three months after launch vs. the three before, normalised for ride volume</td></tr>
-      <tr><td>Drivers corrected</td><td><strong>~12,000</strong></td><td>Deprioritised once, with no further safety flag afterwards</td></tr>
+      <tr><td>Safety-related rider complaints</td><td><strong>~50% lower</strong></td><td>The three months after the release against the three months before, with a correction for the number of rides</td></tr>
+      <tr><td>Drivers corrected</td><td><strong>~12,000</strong></td><td>Drivers with one lower priority and with no new safety flag after it</td></tr>
       <tr><td>Drivers removed</td><td><strong>~550</strong></td><td>Blocked after human confirmation</td></tr>
-      <tr><td>Time from serious complaint to action</td><td>Days → same day</td><td>Batch runs daily; block queue worked the same day</td></tr>
+      <tr><td>Time from serious complaint to action</td><td>Some days to the same day</td><td>Batch runs daily; block queue worked the same day</td></tr>
     </tbody>
   </table>
   </div>
-  <p class="stat-row">The complaint reduction is a before/after comparison, so it includes everything else that changed in the period. And "no further flag" after one deprioritisation is partly what any policy would see — most drivers with a single complaint never get a second — so ~12,000 counts drivers who went through the lighter lever, not a measured change in behaviour.</p>
+  <p class="stat-row">The comparison of the complaints is a comparison of two periods, thus it contains all the other changes of the period. Also, most drivers with one complaint never get a second complaint, thus a part of the result occurs with each policy. The number of approximately 12,000 drivers is therefore a count of the drivers that received the lighter lever, and not a measurement of a change of behaviour.</p>
   <div class="insight">
     <strong>Key insight</strong>
-    Most drivers who get a complaint are not dangerous; they had a bad day, or a habit nobody had called out. A binary warn-or-block system either lets that slide or over-punishes it. Making <em>ride priority</em> the lever gave enforcement a dial: a cost proportionate to the offence, felt immediately in earnings, reversible by behaving. Most of the ~12,000 drivers who went through it never appeared again; the ~550 who were removed had a person look at the evidence first.
+    Most drivers with a complaint are not dangerous. They had a bad day, or they had a habit that nobody told them about. A system with only a warning and a block is too weak for these cases, or too strong. The priority in the ride matching gives a third option. The cost agrees with the problem, the driver feels it immediately in the earnings, and good behaviour removes it. Most of the approximately 12,000 drivers in this group got no new complaint, and a person examined the evidence before each of the approximately 550 blocks.
   </div>
 
   <h2>What went wrong, and what changed</h2>
   <div class="cards small">
-    <div class="card"><h3>Safety as a fare complaint</h3><p>Some riders filed fare disputes under safety because it gets attention, and a few used it to retaliate after an argument. The human step on blocks exists largely because of this.</p></div>
-    <div class="card"><h3>Vocabulary drift</h3><p>A fare change produced a wave of complaints in new phrasing that the classifier had never seen. Fix: a weekly hand-checked sample of <em>unflagged</em> feedback, to catch misses rather than false alarms.</p></div>
-    <div class="card"><h3>Early pushback</h3><p>Driver-ops objected to false blocks in the first weeks. The rule that no block applies without confirmation came out of that, and made the system trusted enough to keep.</p></div>
+    <div class="card"><h3>Safety as a fare complaint</h3><p>Some riders used the safety category for a dispute about the fare, because this category gets attention. A small number of riders also used it after an argument. The step with a person exists mainly for this reason.</p></div>
+    <div class="card"><h3>Vocabulary drift</h3><p>A change of the fares caused many complaints with new words that the classifier did not know. The correction is a weekly examination of a sample of the feedback that the classifier did <em>not</em> flag. This sample finds the missed cases and not the false alarms.</p></div>
+    <div class="card"><h3>Early pushback</h3><p>In the first weeks, the driver operations team did not agree with some blocks. This caused the rule that no block occurs without a confirmation from a person. The rule made the system sufficiently reliable to keep.</p></div>
   </div>
 
   <h2>What I'd do differently</h2>
   <div class="cards small">
-    <div class="card"><h3>Measure the lever</h3><p>Randomly vary the deprioritisation window for bucket-5 drivers to learn how much cost actually changes behaviour, instead of picking a window by judgement.</p></div>
-    <div class="card"><h3>Rider credibility</h3><p>A rider's own complaint history as a feature — a first complaint from a frequent rider and a fifth from a rider with a fare dispute are not the same evidence.</p></div>
-    <div class="card"><h3>Held-out evaluation</h3><p>A fixed, hand-labelled evaluation set to report precision and recall per bucket over time, and the block queue's overturn rate tracked as a metric — the one quality signal the system already produces every day.</p></div>
+    <div class="card"><h3>Measure the lever</h3><p>Change the length of the lower priority at random for the drivers in group 5. The data then shows how much cost is necessary to change the behaviour, and the length is not only a decision of a person.</p></div>
+    <div class="card"><h3>Rider credibility</h3><p>Use the complaint history of the rider as a feature. A first complaint from a frequent rider and a fifth complaint from a rider with a dispute about a fare are not the same evidence.</p></div>
+    <div class="card"><h3>Held-out evaluation</h3><p>Make a fixed set of labelled items to measure the precision and the recall of each group with time. Also record the number of blocks that a person refuses in the queue. This number is a quality signal that the system already gives every day.</p></div>
   </div>
 
   <h2>Related work</h2>
-  <p>The graded-consequence idea is standard in trust-and-safety practice at marketplaces; the unusual part here is using the matching engine's own priority tiers as the consequence, and offloading the multilingual problem to translation so the classifier stays simple. Sarvam AI's models are built for Indic languages, which is what made the translation step reliable enough to build on.</p>
+  <p>A graded consequence is a usual method in the trust and safety teams of marketplaces, and the <a href="https://santaclaraprinciples.org/">Santa Clara Principles</a> give the usual expectations for notice and appeal. Two parts of this project are different. First, the consequence uses the priority levels of the matching service. Second, a translation step removes the multilingual problem, thus the classifier stays simple. The models of <a href="https://www.sarvam.ai/">Sarvam AI</a> are made for Indic languages, and they made the translation sufficiently reliable.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p>Proprietary to Namma Yatri. Stack: Python with scikit-learn (TF-IDF, linear classifier) and pandas; Sarvam AI translation API; SQL over ride and feedback data; daily scheduled job; block queue and priority controls exposed by the platform's matching service.</p>
+  <p>The code is proprietary to Namma Yatri. Stack: Python with scikit-learn (TF-IDF and a linear classifier) and pandas, the Sarvam AI translation API, SQL on the ride data and the feedback data, a daily scheduled job, and the block queue and the priority controls of the matching service.</p>
 
   <div class="pager"><a href="../#work">← All projects</a><a href="text-to-sql-analyst.html">Next: Slack-native AI analyst →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
