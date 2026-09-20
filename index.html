@@ -23,12 +23,11 @@
     <a href="https://www.linkedin.com/in/chiragsingal"><svg aria-hidden="true"><use href="assets/icons.svg#i-linkedin"/></svg>LinkedIn</a>
     <a href="https://github.com/lagnis337"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>GitHub</a>
   </p>
-  <p class="lede">Senior Data scientist based in Bangalore. Since 2022 I've built machine-learning and analytics systems with an expertise in fintech and ride-hailing — churn prediction, an adaptive payment router, and an LLM (large language model) analyst that answers a team's data questions from its own wiki.</p>
-  <p class="meta">Selected work below. Industry projects are described as methods write-ups (code is proprietary); personal and coursework projects link to their repositories.</p>
+  <p class="lede">Senior Data Scientist based in Bangalore. Since 2022 I've built machine-learning and analytics systems with an expertise in fintech and ride-hailing: churn prediction, an adaptive payment router, and an LLM (large language model) analyst that answers a team's data questions from its own wiki.</p>
   <div class="tags toolstrip"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-postgresql"/></svg>SQL</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">XGBoost</span><span class="tag">Reinforcement learning</span><span class="tag">LLM agents</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-airflow"/></svg>Airflow</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-tableau"/></svg>Tableau</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-metabase"/></svg>Metabase</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-claude"/></svg>Claude Code</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-cursor"/></svg>Cursor</span></div>
 
   <h2 id="work">Selected work projects</h2>
-  <p>Machine-learning systems shipped in production at Razorpay, Namma Yatri and Uber. The code is proprietary; the linked cards open a methods write-up.</p>
+  <p>Machine-learning systems shipped in production at Razorpay, Namma Yatri and Uber. The code is proprietary. The cards with a link open a write-up of the method.</p>
   <div class="cards">
     <div class="card linked">
       <div class="cover"><svg viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -45,8 +44,8 @@
       <div class="body">
         <h3><a href="projects/adaptive-gateway-router.html">Adaptive payment-gateway router</a></h3>
         <p class="cardmeta">Razorpay · 2026</p>
-        <p>Online-learning router that shifts payment traffic away from degrading gateways: an upper-confidence-bound bandit with drift detection over observed outcomes, benchmarked in a gateway-turbulence simulator (about 2.2× the success rate of threshold routing at 10M transactions) and deployed after shadow mode.</p>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">Multi-armed bandits</span><span class="tag">Online learning</span><span class="tag">Simulation</span></div>
+        <p>This router selects a payment gateway for each transaction. It learns from the result of every transaction. If a gateway starts to fail, the router moves the traffic to a better gateway. In a simulation with 10 million transactions, its success rate was about 2.2 times the success rate of a threshold router. I tested it in shadow mode before the release.</p>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">Gymnasium</span><span class="tag">Stable-Baselines3</span><span class="tag">UCB bandit</span><span class="tag">Online learning</span></div>
       </div>
     </div>
     <div class="card linked">
@@ -59,8 +58,8 @@
       <div class="body">
         <h3><a href="projects/driver-churn.html">Driver churn prediction</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
-        <p>Daily-scored ensemble of XGBoost (gradient-boosted trees) and a random forest on 36 features across ~150k drivers; monthly churn fell from 42% to 30% over three months, and the ops feedback loop reshaped pricing and matching.</p>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">XGBoost</span><span class="tag">Random forest</span><span class="tag">Calibration</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-airflow"/></svg>Airflow</span></div>
+        <p>This model calculates a churn risk for each of about 150,000 drivers every morning. It uses 36 features and two algorithms: XGBoost and a random forest. The operations team calls the drivers with the highest risk. In three months, the monthly churn decreased from 42% to 30%. The calls also showed why the drivers stop, and this caused changes to the prices and to the driver matching.</p>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">XGBoost</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-airflow"/></svg>Airflow</span><span class="tag">Probability calibration</span></div>
       </div>
     </div>
     <div class="card linked">
@@ -73,8 +72,8 @@
       <div class="body">
         <h3><a href="projects/driver-safety-enforcement.html">Driver safety enforcement</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
-        <p>Rider feedback in Kannada, Hindi and English translated with Sarvam, classified into five severity buckets, and turned into a graded consequence — ride-matching deprioritisation or a human-confirmed block. Safety complaints down ~50%; ~12,000 drivers corrected, ~550 removed.</p>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">TF-IDF</span><span class="tag">Text classification</span></div>
+        <p>Riders send feedback in Kannada, Hindi, and English. The Sarvam API translates the text to English, and a classifier puts each complaint in one of five severity groups. For a small problem, the system decreases the priority of the driver in the ride matching. For a serious problem, a person examines the case and can block the driver. Safety complaints decreased by about 50%. The system gave a lower priority to about 12,000 drivers and blocked about 550 drivers.</p>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Sarvam API</span><span class="tag">TF-IDF</span><span class="tag">Text classification</span></div>
       </div>
     </div>
     <div class="card linked">
@@ -89,8 +88,8 @@
       <div class="body">
         <h3><a href="projects/text-to-sql-analyst.html">Slack-native AI analyst</a></h3>
         <p class="cardmeta">Razorpay · 2025–2026</p>
-        <p>2,000+ documents compiled into a human-ratified data wiki; a model-agnostic Slack agent navigates it from the index, asks clarifying questions, and runs read-only SQL. 96% 👍 rate, ~40% of a 127-person team asking daily.</p>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-postgresql"/></svg>SQL</span><span class="tag">LLM agents</span><span class="tag">Text-to-SQL</span><span class="tag">Guardrails</span></div>
+        <p>I put more than 2,000 documents into one data wiki. A person must approve each page before the agent can use it. In Slack, the agent reads the index, opens the related pages, and writes an SQL query. The agent can only read data. Users gave a positive rating to 96% of the answers, and about 40% of the 127 persons in the team use the agent every day.</p>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-postgresql"/></svg>SQL</span><span class="tag">LLM agents</span><span class="tag">Text-to-SQL</span></div>
       </div>
     </div>
     <div class="card">
@@ -104,8 +103,8 @@
       <div class="body">
         <h3>Voice AI support agent</h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
-        <p>Sub-second-latency driver-support agent on Gemini Live, owned end to end: intent design, multilingual grounding, handoff to human agents. Resolution time down 75%; driver NPS (Net Promoter Score) up 18 points.</p>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-googlegemini"/></svg>Gemini Live</span><span class="tag">Speech interfaces</span><span class="tag">Multilingual NLP</span></div>
+        <p>Drivers speak to a voice agent when they need help. The agent uses Gemini Live and answers in less than one second. It speaks more than one language. If it cannot solve the problem, it sends the call to a person. The resolution time decreased by 75% and the driver NPS (Net Promoter Score) increased by 18 points.</p>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-googlegemini"/></svg>Gemini Live</span><span class="tag">Speech to speech</span><span class="tag">Natural language processing</span></div>
       </div>
     </div>
     <div class="card">
@@ -118,14 +117,14 @@
       <div class="body">
         <h3>Offer-propensity ranking</h3>
         <p class="cardmeta">Uber · 2024</p>
-        <p>Ranking model trained on customer-level signals to score offer propensity by type, timing and product for Uber's Asia-Pacific ads and promotions business. 3× net revenue per outlet through personalised targeting.</p>
+        <p>This model calculates a score for each offer and each customer. The score shows how probable it is that the customer uses the offer. The model examines the type of the offer, the time, and the product. Uber used these scores to select the offers in the Asia-Pacific region. The net revenue for each outlet increased 3 times.</p>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">Ranking models</span><span class="tag">Propensity modelling</span></div>
       </div>
     </div>
   </div>
 
   <h2 id="personal">Personal pursuits</h2>
-  <p>Coursework and things built out of curiosity. All of these link to their code.</p>
+  <p>Coursework and programs that I wrote because I was interested. All of them have a link to the code.</p>
   <div class="cards">
     <div class="card linked">
       <div class="cover"><svg viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -136,8 +135,8 @@
       <div class="body">
         <h3><a href="projects/fpl-player-models.html">Fantasy Premier League player-performance models</a></h3>
         <p class="cardmeta">Personal · 2026</p>
-        <p>Predicting Fantasy Premier League player points from public data: 79 pre-deadline features, a 75-gameweek walk-forward backtest, ~10% more points than naive picks — and two data-quality findings (a contaminated benchmark column; an availability feature that didn't help).</p>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-pandas"/></svg>pandas</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Walk-forward backtesting</span><a class="tag code" href="https://github.com/lagnis337/fpl-player-models"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code</a></div>
+        <p>These models predict the points of each Fantasy Premier League player in the next gameweek. They use 79 features that are available before the deadline. A walk forward backtest of 75 gameweeks measures the quality. The best team gets about 10% more points than a simple baseline. The tests also found two problems in the data: one column contains information from after the match, and the availability feature did not improve the results.</p>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-pandas"/></svg>pandas</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Gradient boosting</span><span class="tag">Walk-forward backtest</span><a class="tag code" href="https://github.com/lagnis337/fpl-player-models"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code</a></div>
       </div>
     </div>
     <div class="card linked">
@@ -148,9 +147,9 @@
   <path d="M230 80 L270 30" stroke="#b5462b" stroke-width="3"/><path d="M262 30 L270 30 L270 38" stroke="#b5462b" stroke-width="3"/>
   <path d="M230 80 L286 66" stroke="#1f6f78" stroke-width="3"/><path d="M279 60 L286 66 L279 72" stroke="#1f6f78" stroke-width="3"/></svg></div>
       <div class="body">
-        <h3><a href="foundations.html">Linear Algebra for Machine Learning — UC San Diego Extended Studies</a></h3>
+        <h3><a href="foundations.html">Linear Algebra for Machine Learning (UC San Diego Extended Studies)</a></h3>
         <p class="cardmeta">UC San Diego Extended Studies · Summer 2026</p>
-        <p>CSE X412.87, grade A+, 100% on all quizzes and the final. Assignments (code on GitHub): face-image compression with principal component analysis; linear regression via gradient descent vs. the normal equation.</p>
+        <p>This course gives the linear algebra that machine learning uses. I got the grade A+, with 100% in all the quizzes and in the final examination. In the first assignment, I compressed images of faces with principal component analysis. In the second assignment, I compared gradient descent with the normal equation. The code is on GitHub.</p>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-numpy"/></svg>NumPy</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">PCA &amp; SVD</span><span class="tag">Octave</span><a class="tag code" href="https://github.com/lagnis337/linear-algebra-for-ml-coursework"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code</a></div>
       </div>
     </div>
@@ -164,7 +163,7 @@
       <div class="body">
         <h3>Log Ingestor</h3>
         <p class="cardmeta">Personal build</p>
-        <p>Node/Express service that ingests JSON logs into PostgreSQL and exposes an 11-filter search.</p>
+        <p>This service receives log records in JSON format and writes them to a PostgreSQL database. You can search the records with 11 different filters.</p>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-nodedotjs"/></svg>Node.js</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-postgresql"/></svg>PostgreSQL</span><span class="tag">REST API</span><a class="tag code" href="https://github.com/lagnis337/logs_ingestor"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code</a></div>
       </div>
     </div>
@@ -178,7 +177,7 @@
       <div class="body">
         <h3>Lift Simulator</h3>
         <p class="cardmeta">Personal build</p>
-        <p>Browser simulation of multi-lift dispatch in vanilla JavaScript — compare nearest-idle vs. first-idle strategies, run random traffic, watch wait times.</p>
+        <p>This program simulates the lifts in a building. You can select one of two dispatch rules: the nearest lift that is free, or the first lift that is free. You can start random traffic and then see the wait times.</p>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-javascript"/></svg>JavaScript</span><span class="tag">DOM</span><span class="tag">Discrete-event simulation</span><a class="tag code" href="https://github.com/lagnis337/Lift_Simulator"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code</a><a class="tag demo" href="https://lagnis337.github.io/Lift_Simulator/">Live demo ↗</a></div>
       </div>
     </div>
