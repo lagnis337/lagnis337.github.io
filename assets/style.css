@@ -159,7 +159,6 @@ figure.chart svg { padding: 6px 4px; }
 /* top-right chip marks a card that opens something */
 .goto { position: absolute; top: 10px; right: 10px; z-index: 1; pointer-events: none; display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--muted); font-size: 0.67rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease; }
 .goto b { font-weight: 400; font-size: 0.8rem; letter-spacing: 0; }
-.card.linked:hover .goto { position: absolute; top: 10px; right: 10px; z-index: 1; pointer-events: none; display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--muted); font-size: 0.67rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease; }
-.goto b { font-weight: 400; font-size: 0.8rem; letter-spacing: 0; }
+.card.linked:hover .goto { background: var(--accent); border-color: var(--accent); color: #fff; transform: translate(2px, -2px); }
 .card.linked:hover h3 a { color: var(--accent); }
 .card.linked { cursor: pointer; }
