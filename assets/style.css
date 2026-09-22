@@ -147,3 +147,16 @@ figure.chart svg { padding: 6px 4px; }
 .totop:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 .totop svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 480px) { .totop { right: 14px; bottom: 14px; width: 38px; height: 38px; } }
+
+/* Problem / Solution / Impact blocks inside project cards */
+.psi { margin: 0; }
+.psi dt { font-size: 0.67rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent2); margin-bottom: 2px; }
+.psi dt.imp { color: var(--accent); }
+.psi dd { margin: 0 0 10px; font-size: 0.92rem; color: var(--muted); line-height: 1.5; }
+.psi dd:last-child { margin-bottom: 0; }
+
+/* "this card opens something" cue */
+.open { margin: 12px 0 0; font-size: 0.86rem; font-weight: 600; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+.open span { transition: transform .15s ease; }
+.card.linked:hover .open span { transform: translateX(4px); }
+.card.linked { cursor: pointer; }
