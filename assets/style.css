@@ -156,7 +156,9 @@ figure.chart svg { padding: 6px 4px; }
 .psi dd:last-child { margin-bottom: 0; }
 
 /* "this card opens something" cue */
-.open { margin: 12px 0 0; font-size: 0.86rem; font-weight: 600; color: var(--accent); display: flex; align-items: center; gap: 6px; }
-.open span { transition: transform .15s ease; }
-.card.linked:hover .open span { transform: translateX(4px); }
+.cardmeta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.cardmeta .go { color: var(--accent); white-space: nowrap; }
+.cardmeta .go span { display: inline-block; transition: transform .15s ease; }
+.card.linked:hover .cardmeta .go span { transform: translateX(3px); }
+.cardmeta.gh { margin-top: 12px; }
 .card.linked { cursor: pointer; }
