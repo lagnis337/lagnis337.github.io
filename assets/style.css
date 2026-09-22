@@ -76,6 +76,8 @@ a.card:hover, .card.linked:hover { text-decoration: none; transform: translateY(
 .tag svg { width: 13px; height: 13px; fill: currentColor; flex: none; }
 .tag.code { background: var(--accent-soft); color: var(--accent); }
 a.tag.code:hover { background: var(--accent); color: #fff; }
+.tag .arr { font-weight: 400; font-size: 0.78rem; line-height: 1; display: inline-block; transition: transform .15s ease; }
+a.tag:hover .arr { transform: translate(1px, -1px); }
 .tag.demo { background: var(--accent2-soft); color: var(--accent2); }
 a.tag.demo:hover { background: var(--accent2); color: #fff; }
 .ghlink { display: inline-flex; align-items: center; gap: 5px; }
