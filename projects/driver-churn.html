@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Driver churn prediction · Chirag Singal</title>
 <meta name="description" content="A daily-scored ensemble model that identified at-risk ride-hailing drivers for targeted retention; monthly churn fell from 42% to 30%.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Driver churn prediction · Chirag Singal">
+<meta property="og:description" content="A daily-scored ensemble model that identified at-risk ride-hailing drivers for targeted retention; monthly churn fell from 42% to 30%.">
+<meta property="og:url" content="https://lagnis337.github.io/projects/driver-churn.html">
+<meta property="og:image" content="https://lagnis337.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -58,7 +64,8 @@
 
   <h2>Approach</h2>
   <figure class="flow">
-    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+    <svg role="img" viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+      <title>A nightly pipeline: driver activity becomes features, two models give a churn score, and the ranked list goes to the operations team</title>
       <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
       <g fill="#fff" stroke="#999" stroke-width="1.2">
         <rect x="10" y="70" width="130" height="58" rx="8"/>
@@ -108,7 +115,8 @@
   <p class="stat-row">A randomised holdout measured the calls. Approximately 20% of the high-risk drivers were held out and got no call. The drivers who got a call churned 30 percentage points less than the holdout. The change from 42% to 30% is wider than this. It compares two periods for all the drivers, and it includes the product changes that the next paragraph describes, because those reached the holdout as well.</p>
 
   <figure class="chart">
-    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+    <svg role="img" viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+      <title>Cohort retention curves before and after the model, with the measured M1 points marked</title>
       <text x="10" y="20" fill="#222" font-size="13" font-weight="600">Cohort retention before and after the model went live (illustrative shape; M1 points are measured)</text>
 <g stroke="#999" stroke-width="1" fill="none"><path d="M60 40V200H740"/></g>
 <text x="400" y="234" fill="#666" text-anchor="middle">Months since the cohort's first month</text>

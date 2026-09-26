@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Slack-native AI analyst · Chirag Singal</title>
 <meta name="description" content="A compiled, human-curated data wiki plus a model-agnostic Slack agent that answers metric questions with schema-grounded SQL.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Slack-native AI analyst · Chirag Singal">
+<meta property="og:description" content="A compiled, human-curated data wiki plus a model-agnostic Slack agent that answers metric questions with schema-grounded SQL.">
+<meta property="og:url" content="https://lagnis337.github.io/projects/text-to-sql-analyst.html">
+<meta property="og:image" content="https://lagnis337.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -62,7 +68,8 @@
 
   <h2>Approach</h2>
   <figure class="flow">
-    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+    <svg role="img" viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+      <title>A question in Slack goes to the agent, which reads the wiki index, writes guarded SQL, and answers with a footnote</title>
       <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
       <g fill="#fff" stroke="#999" stroke-width="1.2">
         <rect x="10" y="60" width="120" height="58" rx="8"/>
@@ -116,7 +123,8 @@
   <p class="stat-row">The value of 96% is a satisfaction rate and not an execution accuracy. The askers show if the answer looked correct and was useful, thus an incorrect but plausible answer can also get a positive rating. The value is useful as a trend and as the start signal for the maintenance loop.</p>
 
   <figure class="chart">
-    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+    <svg role="img" viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+      <title>Weekly distinct askers as a share of the team, rising to about 40%</title>
       <text x="10" y="20" fill="#222" font-size="13" font-weight="600">Weekly distinct askers as a share of the team (illustrative shape; endpoint and growth rate are measured)</text>
 <g stroke="#999" stroke-width="1" fill="none"><path d="M60 40V200H740"/></g>
 <text x="400" y="234" fill="#666" text-anchor="middle">Weeks after launch</text>

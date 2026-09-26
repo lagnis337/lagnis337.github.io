@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adaptive payment-gateway router · Chirag Singal</title>
 <meta name="description" content="An online-learning router that shifts payment traffic away from degrading gateways: UCB exploration with drift detection, benchmarked in a turbulence simulator and deployed.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adaptive payment-gateway router · Chirag Singal">
+<meta property="og:description" content="An online-learning router that shifts payment traffic away from degrading gateways: UCB exploration with drift detection, benchmarked in a turbulence simulator and deployed.">
+<meta property="og:url" content="https://lagnis337.github.io/projects/adaptive-gateway-router.html">
+<meta property="og:image" content="https://lagnis337.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -65,7 +71,8 @@
 
   <h2>Approach</h2>
   <figure class="flow">
-    <svg viewBox="0 0 760 290" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+    <svg role="img" viewBox="0 0 760 290" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+      <title>A loop: a transaction arrives, the observation tracker updates, the UCB score chooses a gateway, the outcome returns to the tracker</title>
       <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
       <g fill="#fff" stroke="#999" stroke-width="1.2">
         <rect x="10" y="60" width="120" height="58" rx="8"/>
@@ -104,7 +111,8 @@
   </ol>
 
   <figure class="chart">
-    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+    <svg role="img" viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+      <title>The true success rate of one gateway falls and recovers, and the share of traffic that the router sends to it follows with a short delay</title>
       <text x="10" y="20" fill="#222" font-size="13" font-weight="600">One gateway fails and recovers: what the router does (illustrative)</text>
 <g stroke="#999" stroke-width="1" fill="none"><path d="M60 40V200H740"/></g>
 <text x="400" y="234" fill="#666" text-anchor="middle">Transactions →</text>
