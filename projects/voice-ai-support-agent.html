@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice AI support agent · Chirag Singal</title>
+<meta name="description" content="A voice agent answers the driver support calls that repeat every day, in Hindi, English and Kannada, and sends the rest to a person.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/style.css?v=7">
+</head>
+<body>
+<main class="article">
+  <nav class="nav">
+    <a class="home" href="../">Chirag Singal</a>
+    <a href="../#work">Work projects</a>
+    <a href="../#personal">Personal pursuits</a>
+    <a href="https://github.com/lagnis337"><svg aria-hidden="true"><use href="../assets/icons.svg#i-github"/></svg>GitHub</a>
+  </nav>
+
+  <h1>Voice AI support agent</h1>
+  <p class="plain">Answer the driver support calls that repeat every day, in the language the driver speaks. Send the rest to a person.</p>
+  <p class="meta">Namma Yatri · Central data team · 2024–2025 · Owner, end to end</p>
+  <p class="notice">This is an industry project. The code and the data are proprietary, thus this page shows only the method.</p>
+
+  <div class="glance">
+    <div><b>15–20 min</b><span>of a support agent, for each call, before the agent</span></div>
+    <div><b>3</b><span>languages: Hindi, English and Kannada</span></div>
+    <div><b>−75%</b><span>resolution time against the period with human agents</span></div>
+    <div><b>+18 pts</b><span>driver NPS over the same period</span></div>
+  </div>
+
+  <h2>Problem</h2>
+  <p>Drivers called support with the same problems every day. Each call used 15 to 20 minutes of a support agent. The problems repeated, thus the agents gave the same answers again and again. This is not a good use of a support team, and the drivers waited.</p>
+
+  <h2>Approach</h2>
+  <p>Two models do two different jobs, because neither model is sufficient alone.</p>
+  <div class="two">
+    <div><h4>How to speak</h4><p>Gemini Live holds the conversation. It answers in less than one second and it sounds like a person. Latency is important here, because a driver stops a call that pauses.</p></div>
+    <div><h4>What to say</h4><p>The Sarvam models are trained on Indian regional languages. They are stronger than a general model on the words that a driver uses, in Hindi and in Kannada as well as in English.</p></div>
+  </div>
+  <p>The agent works in Hindi, English and Kannada. If the agent cannot solve the problem, it sends the call to a person.</p>
+
+  <h2>Results</h2>
+  <p>The resolution time decreased by approximately 75%. This compares the period after the agent with the period before it, when support agents handled these tickets. The driver NPS (Net Promoter Score) increased by 18 points over the same period.</p>
+  <p class="stat-row">This is a before-and-after comparison and not a controlled test. The 18 points thus contain the other changes of the period as well as the effect of the agent.</p>
+
+  <h2>What went wrong</h2>
+  <p>The hardest part was not the part that looks hardest. Gemini Live and the Sarvam models were both strong. The recognition of the speech was not. The models that recognise Indian regional speech were weaker than the rest of the pipeline, and most of the failures started there. If the agent hears the wrong words, then every step after it is wrong, and the driver repeats the sentence to a machine that does not understand.</p>
+
+  <h2>What I'd do differently</h2>
+  <div class="cards small">
+    <div class="card"><h3>Improve the recognition layer</h3><p>The speech recognition is the weakest part of the pipeline and the source of most of the failures. A model that is trained on these speech patterns, or a model that is tuned on the calls, would remove more errors than any change to the generative layers.</p></div>
+    <div class="card"><h3>A controlled test</h3><p>Give the agent to a random part of the drivers and keep the others on the human queue. This separates the effect of the agent from the other changes of the period, for the NPS as well as for the resolution time.</p></div>
+  </div>
+
+  <p class="notice">Stack: Gemini Live for the conversation and the speech, the Sarvam models for the Indian languages, and a handoff to the human support queue.</p>
+
+  <div class="pager"><a href="../#work">← All projects</a><a href="fpl-player-models.html">Next: FPL player models →</a></div>
+  <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
+</main>
+<script src="../assets/anim.js?v=7"></script>
+</body>
+</html>
