@@ -156,6 +156,7 @@ figure.chart svg { padding: 6px 4px; }
 .psi dt.imp { color: var(--accent); }
 .psi dd { margin: 0 0 10px; font-size: 0.92rem; color: var(--muted); line-height: 1.5; }
 .psi dd:last-child { margin-bottom: 0; }
+.cardnote { margin: 12px 0 0; padding-left: 11px; border-left: 2px solid var(--line); color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
 
 /* "this card opens something" cue */
 /* top-right chip marks a card that opens something */
