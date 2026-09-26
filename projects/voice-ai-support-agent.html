@@ -14,7 +14,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="../assets/style.css?v=8">
+<link rel="stylesheet" href="../assets/style.css?v=9">
 </head>
 <body>
 <main class="article">
@@ -83,6 +83,47 @@
     <figcaption>Two models with two jobs. Gemini Live holds the conversation, and the Sarvam models read the request in the language the driver speaks. The speech recognition in front of them was the weak link.</figcaption>
   </figure>
 
+  <h2>How one call works</h2>
+  <ol class="steps">
+    <li><b>The driver speaks, and the agent listens while the driver speaks</b><p>The audio streams to the model. The agent does not wait for the end of the sentence, because a pause of more than one second makes a driver stop the call.</p></li>
+    <li><b>Speech becomes words</b><p>The recognition layer writes the audio as text, in Hindi, English, or Kannada. This step is the weakest part of the chain and the source of most of the failures (see below).</p></li>
+    <li><b>The words become an intent</b><p>The repeated support problems are a written catalogue of intents. The agent matches the request to one intent in the catalogue. The Sarvam models do this work, because they know the words that a driver uses in an Indian language.</p></li>
+    <li><b>The agent answers, or it stops</b><p>If the request matches an intent, the agent gives the answer for that intent and Gemini Live speaks it. If the request does not match, or the driver asks again for a person, the agent stops and sends the call to the human queue.</p></li>
+    <li><b>A person receives the call with the context</b><p>The support agent gets the call and the history of the conversation. The driver does not repeat the problem to a second listener.</p></li>
+  </ol>
+
+  <figure class="flow">
+    <svg viewBox="0 0 760 230" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+      <title>The intent catalogue holds the repeated support problems, which the agent answers; everything else goes to a person</title>
+      <defs><marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666"/></marker></defs>
+      <text x="10" y="18" fill="#222" font-size="13" font-weight="600">The catalogue decides what the agent answers and what a person answers</text>
+      <rect x="20" y="44" width="330" height="164" rx="12" stroke="#1f6f78" stroke-width="1.8" fill="#eef6f7"/>
+      <text x="185" y="68" fill="#1f6f78" font-size="12" font-weight="700" text-anchor="middle" letter-spacing="1.2">THE INTENT CATALOGUE</text>
+      <g fill="#fff" stroke="#9fc4c8" stroke-width="1.2">
+        <rect x="40" y="82" width="140" height="30" rx="15"/><rect x="192" y="82" width="138" height="30" rx="15"/>
+        <rect x="40" y="122" width="150" height="30" rx="15"/><rect x="202" y="122" width="128" height="30" rx="15"/>
+        <rect x="40" y="162" width="290" height="30" rx="15"/>
+      </g>
+      <g fill="#222" text-anchor="middle" font-size="12">
+        <text x="110" y="102">a repeated problem</text><text x="261" y="102">a repeated problem</text>
+        <text x="115" y="142">a repeated problem</text><text x="266" y="142">a repeated problem</text>
+        <text x="185" y="182" fill="#666">written once, in three languages</text>
+      </g>
+      <g stroke="#666" stroke-width="1.4" fill="none" marker-end="url(#b)"><path d="M356 90H430"/><path d="M356 168H430"/></g>
+      <text x="394" y="80" fill="#666" font-size="11" text-anchor="middle">a match</text>
+      <text x="394" y="158" fill="#666" font-size="11" text-anchor="middle">no match</text>
+      <g fill="#fff" stroke="#999" stroke-width="1.2">
+        <rect x="436" y="66" width="300" height="48" rx="8" stroke="#1f6f78" stroke-width="1.8" fill="#eef6f7"/>
+        <rect x="436" y="144" width="300" height="48" rx="8" stroke-dasharray="5 4"/>
+      </g>
+      <g fill="#222" text-anchor="middle">
+        <text x="586" y="86" fill="#1f6f78" font-weight="600">The agent answers the call</text><text x="586" y="104" fill="#666" font-size="11">the driver hears a reply in under one second</text>
+        <text x="586" y="164">A person answers the call</text><text x="586" y="182" fill="#666" font-size="11">with the conversation so far</text>
+      </g>
+    </svg>
+    <figcaption>The catalogue is the boundary of the agent. A new type of problem is a new entry in the catalogue, not a change to the models.</figcaption>
+  </figure>
+
   <h2>Results</h2>
   <p>The resolution time decreased by approximately 75%. This compares the period after the agent with the period before it, when support agents handled these tickets. The driver NPS (Net Promoter Score) increased by 18 points over the same period.</p>
   <div class="table-wrap">
@@ -121,6 +162,6 @@
   <div class="pager"><a href="../#work">← All projects</a><a href="fpl-player-models.html">Next: FPL player models →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
 </main>
-<script src="../assets/anim.js?v=8"></script>
+<script src="../assets/anim.js?v=9"></script>
 </body>
 </html>

@@ -156,7 +156,12 @@ figure.chart svg { padding: 6px 4px; }
 .psi dt.imp { color: var(--accent); }
 .psi dd { margin: 0 0 10px; font-size: 0.92rem; color: var(--muted); line-height: 1.5; }
 .psi dd:last-child { margin-bottom: 0; }
-.cardnote { margin: 12px 0 0; padding-left: 11px; border-left: 2px solid var(--line); color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
+.whywrap { position: absolute; top: 10px; right: 10px; z-index: 2; }
+.goto.why { position: static; pointer-events: auto; cursor: help; font-family: inherit; }
+.goto.why b { font-weight: 700; font-size: 0.72rem; border: 1px solid currentColor; border-radius: 50%; width: 13px; height: 13px; display: inline-flex; align-items: center; justify-content: center; }
+.whywrap .tip { position: absolute; top: 34px; right: 0; width: 248px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font-size: 0.82rem; font-weight: 400; letter-spacing: 0; text-transform: none; line-height: 1.5; color: var(--muted); box-shadow: 0 10px 28px rgba(0,0,0,0.18); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s ease, transform .15s ease, visibility .15s; }
+.whywrap:hover .tip, .whywrap:focus-within .tip { opacity: 1; visibility: visible; transform: none; }
+.whywrap:hover .goto.why, .whywrap:focus-within .goto.why { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 /* "this card opens something" cue */
 /* top-right chip marks a card that opens something */
