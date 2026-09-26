@@ -28,7 +28,7 @@
     <div><b>~150k</b><span>drivers scored every morning</span></div>
     <div><b>XGB + RF</b><span>XGBoost and random forest, averaged &amp; calibrated, 36 features</span></div>
     <div><b>AUC ~0.80</b><span>ranks a driver who will churn above one who won't about 80% of the time (held-out month)</span></div>
-    <div><b>42% → 30%</b><span>monthly churn, 3 months in production</span></div>
+    <div><b>−30 pp</b><span>churn among called drivers against a randomised holdout</span></div>
   </div>
 
   <h2>Problem</h2>
@@ -105,7 +105,7 @@
     </tbody>
   </table>
   </div>
-  <p class="stat-row">The change from 42% to 30% is a comparison of two periods for all the drivers. It thus contains all the other changes of the quarter, and also the change of the product that the next paragraph describes.</p>
+  <p class="stat-row">A randomised holdout measured the calls. Approximately 20% of the high-risk drivers were held out and got no call. The drivers who got a call churned 30 percentage points less than the holdout. The change from 42% to 30% is wider than this. It compares two periods for all the drivers, and it includes the product changes that the next paragraph describes, because those reached the holdout as well.</p>
 
   <figure class="chart">
     <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
@@ -123,7 +123,7 @@
 
   <h2>What I'd do differently</h2>
   <div class="cards small">
-    <div class="card"><h3>A holdout group</h3><p>Select a random group of drivers with a high risk and do not call them. This group separates the effect of the call from the effect of the selection and from other changes, for example the Go Home function.</p></div>
+    <div class="card"><h3>Measure the product changes</h3><p>The holdout separates the calls, but the changes that the calls caused reached every driver, including the holdout. A staggered release by city would measure the <em>Go Home</em> function and the price changes on their own.</p></div>
     <div class="card"><h3>Uplift, not risk</h3><p>Uplift modelling calculates which drivers <em>change their behaviour</em> after a call, and not which drivers have a high risk. The approximately 100 calls each day can then go to the drivers that a call can keep.</p></div>
     <div class="card"><h3>Time-to-churn</h3><p>A survival model calculates <em>when</em> an event occurs. It thus uses the time when a driver stops, and not only the fact that the driver crossed a limit of 30 days.</p></div>
     <div class="card"><h3>Drift monitoring</h3><p>Examine the most important features each week. A change of an incentive programme then becomes visible in the metrics of the model in the same week.</p></div>
