@@ -10,6 +10,16 @@
     fig.classList.add('anim');
     targets.push(fig);
   });
+  document.querySelectorAll('figure.chart').forEach(function (fig) {
+    var i = 0;
+    fig.querySelectorAll('svg text, svg circle, svg rect').forEach(function (el) { el.style.setProperty('--i', i++); });
+    fig.querySelectorAll('svg path').forEach(function (p) {
+      var w = parseFloat(p.getAttribute('stroke-width') || 0);
+      if (w >= 2 && !p.getAttribute('marker-end') && !p.getAttribute('stroke-dasharray')) { p.setAttribute('pathLength', '1'); p.classList.add('draw'); }
+    });
+    fig.classList.add('anim');
+    targets.push(fig);
+  });
   document.querySelectorAll('.card .cover').forEach(function (cover) {
     var i = 0;
     cover.querySelectorAll('svg > *').forEach(function (el) { el.style.setProperty('--i', i++); });

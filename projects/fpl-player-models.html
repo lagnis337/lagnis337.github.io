@@ -14,7 +14,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="../assets/style.css?v=9">
+<link rel="stylesheet" href="../assets/style.css?v=11">
 </head>
 <body>
 <main class="article">
@@ -37,7 +37,8 @@
   </div>
 
   <h2>Problem</h2>
-  <p>Each week, more than 6 million Fantasy Premier League (FPL) managers select a team of real football players, and the team gets the points that these players earn in the matches. <strong>I finished in the top 12% with this approach</strong>. Each week I predicted the points of each player from form features and fixture features, and then I selected the eleven players. At that time I did the work manually, with the member data of Fantasy Football Scout. This repository builds the same approach again with public data. The code is reproducible and has a walk-forward backtest, thus a person can examine the method.</p>
+  <p>Each week, more than 6 million Fantasy Premier League (FPL) managers select a team of real football players, and the team gets the points that these players earn in the matches. <strong>I finished in the top 12% with this approach</strong>. Each week I predicted the points of each player from form features and fixture features, and then I selected the eleven players. At that time I did the work manually, with the member data of Fantasy Football Scout. </p>
+  <p>This repository builds the same approach again with public data. The code is reproducible and has a walk-forward backtest, thus a person can examine the method.</p>
   <div class="two">
     <div><h4>Question</h4><p>How many points does each player score in the next gameweek? And does a model select a better team of eleven players (XI) than simple rules?</p></div>
     <div><h4>Constraint</h4><p>Each feature must be available before the deadline. The backtest must use the models in the same way as a manager: train on the past, predict the next week, and then repeat.</p></div>
@@ -93,7 +94,9 @@
     <img src="../assets/fpl/ablation_availability.png" alt="Ablation: MAE and XI points per gameweek for each model with and without availability features">
     <figcaption>The models with the availability features, against the same models without them. The error becomes a little better, but the points do not.</figcaption>
   </figure>
-  <p>The availability looked like the most valuable missing signal, because a player who does not play gets approximately 0 points. The ablation gives a different result: the mean absolute error changes from 0.997 to 0.989 and the rank correlation from 0.714 to 0.725, but the points of the eleven players change from 54.0 to 52.2. This difference is inside the weekly noise, because the paired difference is −1.8 points for each gameweek, with a 95% confidence interval from −4.0 to +0.3. The intervals of the ridge model and of the hurdle model also contain zero. The snapshots have an average age of ten days, and the players that each method selects are regular starters whose form features already show their availability. A better test needs snapshots at the time of the deadline, which do not exist for the past, thus the pipeline must collect them from now.</p>
+  <p>The availability looked like the most valuable missing signal, because a player who does not play gets approximately 0 points. The ablation gives a different result: the mean absolute error changes from 0.997 to 0.989 and the rank correlation from 0.714 to 0.725, but the points of the eleven players change from 54.0 to 52.2. </p>
+  <p>This difference is inside the weekly noise, because the paired difference is −1.8 points for each gameweek, with a 95% confidence interval from −4.0 to +0.3. The intervals of the ridge model and of the hurdle model also contain zero. </p>
+  <p>The snapshots have an average age of ten days, and the players that each method selects are regular starters whose form features already show their availability. A better test needs snapshots at the time of the deadline, which do not exist for the past, thus the pipeline must collect them from now.</p>
 
   <div class="insight">
     <strong>Key insight</strong>
@@ -108,12 +111,17 @@
     <div class="card"><h3>Position-specific models</h3><p>Goalkeepers and forwards earn their points in different ways. One model with a one-hot code for the position can thus lose information.</p></div>
   </div>
 
+  <h2>Related work</h2>
+  <p>The data comes from the <a href="https://github.com/vaastav/Fantasy-Premier-League">vaastav archive</a> of the official <a href="https://fantasy.premierleague.com/">Fantasy Premier League</a> interface, which keeps a weekly copy of the public game data.</p>
+  <p>The evaluation follows the usual method for a time series: a walk-forward backtest, which trains on the past and predicts the next period. A random split is not correct here, because it puts later information into earlier predictions.</p>
+  <p>The two findings on this page are examples of two known problems in applied machine learning. The first is a missing value that a data set stores as a zero. The second is target leakage, where a feature contains information from after the moment of the prediction.</p>
+
   <h2>Code &amp; artifacts</h2>
   <p><a class="ghlink" href="https://github.com/lagnis337/fpl-player-models"><svg aria-hidden="true"><use href="../assets/icons.svg#i-github"/></svg>lagnis337/fpl-player-models</a> contains the data download, the reconstruction of the availability, the feature build, the models, the walk-forward backtest, the ablation, and the figures. Six commands in the README give each number on this page again.</p>
 
   <div class="pager"><a href="../#work">← All projects</a><a href="../foundations.html">Next: Linear algebra coursework →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
 </main>
-<script src="../assets/anim.js?v=9"></script>
+<script src="../assets/anim.js?v=11"></script>
 </body>
 </html>

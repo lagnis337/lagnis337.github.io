@@ -14,7 +14,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="../assets/style.css?v=9">
+<link rel="stylesheet" href="../assets/style.css?v=11">
 </head>
 <body>
 <main class="article">
@@ -104,9 +104,12 @@
     <figcaption>Two levers. The daily job applies the lower priority. A block needs a person, who first reads the text and the history of the driver.</figcaption>
   </figure>
   <ol class="steps">
-    <li><b>Translate first, then classify</b><p>The Sarvam translation API changed each comment into English. It also translated the Kannada and the Hindi that riders wrote with the Latin alphabet, which is a problem for most models. The multilingual difficulty is thus outside the model, and a <strong>simple classifier that a person can examine</strong> was sufficient. The classifier uses TF-IDF (term frequency, inverse document frequency) features on word n-grams and character n-grams. An n-gram is a short group of words or letters, and it tolerates the spelling errors that stay after the translation. A linear classifier then calculates the group. The operations team could see which words caused a flag.</p></li>
+    <li><b>Translate first, then classify</b><p>The Sarvam translation API changed each comment into English. It also translated the Kannada and the Hindi that riders wrote with the Latin alphabet, which is a problem for most models. The multilingual difficulty is thus outside the model, and a <strong>simple classifier that a person can examine</strong> was sufficient. </p>
+  <p></p>
+  <p>The classifier uses TF-IDF (term frequency, inverse document frequency) features on word n-grams and character n-grams. An n-gram is a short group of words or letters, and it tolerates the spelling errors that stay after the translation. A linear classifier then calculates the group. The operations team could see which words caused a flag.</p></li>
     <li><b>Threshold for recall at the top</b><p>The costs of the two errors are very different. A missed report of an assault is much worse than one more case for a person to examine. The thresholds of the severe groups thus give a high recall: the system finds as many true cases as possible and accepts some false alarms. The review step then removes the false alarms.</p></li>
-    <li><b>Severity chooses the lever, the window scales with it</b><p>The system collects the flags of each driver for each group. Groups 1 to 3 cause a block, and the length of the block increases with the severity. The block is permanent for the highest group and a fixed number of days for the lower groups. Groups 4 and 5 cause a <strong>lower priority</strong>: the driver stays online, but the ride matching puts the driver after the other drivers for some time, and the system gives the reason. The loss of rides for one week is the warning. The matching service already had priority levels, but this was the first heavy use of that function. The enforcement thus became a graded cost and not a switch with two positions.</p></li>
+    <li><b>Severity chooses the lever, the window scales with it</b><p>The system collects the flags of each driver for each group. Groups 1 to 3 cause a block, and the length of the block increases with the severity. The block is permanent for the highest group and a fixed number of days for the lower groups. </p>
+  <p>Groups 4 and 5 cause a <strong>lower priority</strong>: the driver stays online, but the ride matching puts the driver after the other drivers for some time, and the system gives the reason. The loss of rides for one week is the warning. The matching service already had priority levels, but this was the first heavy use of that function. The enforcement thus became a graded cost and not a switch with two positions.</p></li>
     <li><b>Humans on every block</b><p>The lower priority is automatic. Each block goes first to a queue. The queue shows the original text, the translation, the history of the driver, and the recommended action. The driver operations team then confirms or refuses the action with one click. A refused case goes back as a corrected label. A driver can also make an appeal to driver support.</p></li>
     <li><b>Daily batch, not real time</b><p>A person examines the feedback on the same day, and this speed is sufficient for the problem. A streaming system adds complexity but gives no better result.</p></li>
   </ol>
@@ -154,6 +157,6 @@
   <div class="pager"><a href="../#work">← All projects</a><a href="text-to-sql-analyst.html">Next: Slack-native AI analyst →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
 </main>
-<script src="../assets/anim.js?v=9"></script>
+<script src="../assets/anim.js?v=11"></script>
 </body>
 </html>

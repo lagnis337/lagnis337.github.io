@@ -14,7 +14,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="../assets/style.css?v=9">
+<link rel="stylesheet" href="../assets/style.css?v=11">
 </head>
 <body>
 <main class="article">
@@ -66,7 +66,8 @@
       <tr><td>Success streak</td><td>Momentum. This is the first sign that a gateway is good again.</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Simulator.</strong> Each gateway has hidden parameters that the agent never sees: a base success rate, a volatility, a current health, and a degradation pattern (stable, slow decay, sudden crash, or bursty). A turbulence manager starts the degradations at random times. It decreases the success rate slowly to a very low value, keeps it there for some time, and then increases it slowly. Latency spikes occur independently. These slow changes are intentional, because a sudden crash is easy to find and a slow decrease looks like noise. The simulator is more turbulent than production, thus a router that operates here has a margin.</p>
+  <p><strong>Simulator.</strong> Each gateway has hidden parameters that the agent never sees: a base success rate, a volatility, a current health, and a degradation pattern (stable, slow decay, sudden crash, or bursty). </p>
+  <p>A turbulence manager starts the degradations at random times. It decreases the success rate slowly to a very low value, keeps it there for some time, and then increases it slowly. Latency spikes occur independently. These slow changes are intentional, because a sudden crash is easy to find and a slow decrease looks like noise. The simulator is more turbulent than production, thus a router that operates here has a margin.</p>
   <p><strong>Production features.</strong> The service calculates the same 8 observations from moving windows of the recent results of each gateway, and then sends them to the router.</p>
 
   <h2>Approach</h2>
@@ -122,7 +123,8 @@
   </figure>
 
   <h2>Benchmark</h2>
-  <p>The benchmark compares two routers in the turbulence simulator, at three sizes. The two routers have the same constraint: they see only the results of their own transactions. The rule-based router is an example of usual threshold routing. It stays on a gateway until the observed success rate in a short window is less than a fixed threshold. It then changes to a different gateway and waits for a cooldown time. All the numbers below come from the synthetic environment and are relative to this baseline.</p>
+  <p>The benchmark compares two routers in the turbulence simulator, at three sizes. The two routers have the same constraint: they see only the results of their own transactions. </p>
+  <p>The rule-based router is an example of usual threshold routing. It stays on a gateway until the observed success rate in a short window is less than a fixed threshold. It then changes to a different gateway and waits for a cooldown time. All the numbers below come from the synthetic environment and are relative to this baseline.</p>
   <div class="table-wrap">
   <table>
     <thead><tr><th>Scale (transactions)</th><th>Degradation events</th><th>Adaptive vs. rule-based success rate</th><th>Gateway switches (rule-based → adaptive)</th></tr></thead>
@@ -134,8 +136,10 @@
   </table>
   </div>
   <p class="stat-row">The run with 10 million transactions needs approximately twenty minutes. The adaptive router has a small increase of latency, approximately ten percent, because it changes gateways and sends probes.</p>
-  <p><strong>Why the difference is large.</strong> The rule-based router changed the gateway less than one hundred times in ten million transactions. A slow degradation does not cross its threshold until most of the damage is done. The rule-based router does no exploration, thus it does not find that a gateway is good again and it stays on a bad gateway for a long time. The 1.5 million changes of the adaptive router are not a problem, because they keep the traffic on the best gateway at each moment. A large part of the difference is thus the missing re-enable rule in the baseline, and a threshold router that examines a gateway again after a cooldown time can recover a part of it. The multiplier applies to this baseline and not to all threshold routers, thus a better baseline is the first item below.</p>
-  <p><strong>Why the size of the test is important.</strong> With 100 thousand transactions the rule-based router looked satisfactory, because a few hundred degradations are not sufficient to show the problem. The failure becomes visible at one million transactions and more, thus a small benchmark gives an incorrect conclusion. The multiplier also changes between the runs, from 2.7 times at 1 million to 2.2 times at 10 million. The cause is the rule-based router: its result depends on its first gateway and on the times of the degradations. The success rate of the adaptive router changed by less than one point between the three sizes.</p>
+  <p><strong>Why the difference is large.</strong> The rule-based router changed the gateway less than one hundred times in ten million transactions. A slow degradation does not cross its threshold until most of the damage is done. The rule-based router does no exploration, thus it does not find that a gateway is good again and it stays on a bad gateway for a long time. </p>
+  <p>The 1.5 million changes of the adaptive router are not a problem, because they keep the traffic on the best gateway at each moment. A large part of the difference is thus the missing re-enable rule in the baseline, and a threshold router that examines a gateway again after a cooldown time can recover a part of it. The multiplier applies to this baseline and not to all threshold routers, thus a better baseline is the first item below.</p>
+  <p><strong>Why the size of the test is important.</strong> With 100 thousand transactions the rule-based router looked satisfactory, because a few hundred degradations are not sufficient to show the problem. The failure becomes visible at one million transactions and more, thus a small benchmark gives an incorrect conclusion. </p>
+  <p>The multiplier also changes between the runs, from 2.7 times at 1 million to 2.2 times at 10 million. The cause is the rule-based router: its result depends on its first gateway and on the times of the degradations. The success rate of the adaptive router changed by less than one point between the three sizes.</p>
   <p><strong>What this benchmark does not show.</strong> The test compares only two routers. A random baseline, a greedy baseline, a frozen PPO agent, and an oracle that always selects the best gateway can show the difference between a reaction and a good reaction, and also the maximum that is possible. This is the first addition that I recommend (see below).</p>
 
   <h2>Deployment</h2>
@@ -165,6 +169,6 @@
   <div class="pager"><a href="../#work">← All projects</a><a href="driver-churn.html">Next: Driver churn prediction →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
 </main>
-<script src="../assets/anim.js?v=9"></script>
+<script src="../assets/anim.js?v=11"></script>
 </body>
 </html>

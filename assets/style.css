@@ -131,11 +131,11 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
 @media (max-width: 480px) { body { font-size: 16px; } h1 { font-size: 2rem; } .dl { grid-template-columns: 1fr; gap: 2px 0; } .dl dd { margin-bottom: 8px; } }
 
 /* flow-diagram animation (figure.flow gets .anim from anim.js, .in when scrolled into view) */
-figure.anim svg rect, figure.anim svg text { opacity: 0; transform: translateY(6px); transition: opacity .45s ease, transform .45s ease; transition-delay: calc(var(--i, 0) * 45ms); }
-figure.anim.in svg rect, figure.anim.in svg text { opacity: 1; transform: none; }
-figure.anim svg path[marker-end]:not([stroke-dasharray]) { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .7s ease .5s; }
-figure.anim.in svg path[marker-end]:not([stroke-dasharray]) { stroke-dashoffset: 0; }
-figure.anim.in svg path[stroke-dasharray] { animation: flow 4.2s linear infinite; }
+figure.flow.anim svg rect, figure.flow.anim svg text { opacity: 0; transform: translateY(6px); transition: opacity .45s ease, transform .45s ease; transition-delay: calc(var(--i, 0) * 45ms); }
+figure.flow.anim.in svg rect, figure.flow.anim.in svg text { opacity: 1; transform: none; }
+figure.flow.anim svg path[marker-end]:not([stroke-dasharray]) { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .7s ease .5s; }
+figure.flow.anim.in svg path[marker-end]:not([stroke-dasharray]) { stroke-dashoffset: 0; }
+figure.flow.anim.in svg path[stroke-dasharray] { animation: flow 4.2s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -63; } }
 figure.chart svg { padding: 6px 4px; }
 
@@ -170,3 +170,9 @@ figure.chart svg { padding: 6px 4px; }
 .card.linked:hover .goto { background: var(--accent); border-color: var(--accent); color: #fff; transform: translate(2px, -2px); }
 .card.linked:hover h3 a { color: var(--accent); }
 .card.linked { cursor: pointer; }
+
+/* charts: the data lines draw themselves, the marks and labels fade in */
+figure.chart.anim svg text, figure.chart.anim svg circle, figure.chart.anim svg rect { opacity: 0; transition: opacity .45s ease; transition-delay: calc(.35s + var(--i, 0) * 35ms); }
+figure.chart.anim.in svg text, figure.chart.anim.in svg circle, figure.chart.anim.in svg rect { opacity: 1; }
+figure.chart.anim svg path.draw { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.1s ease; }
+figure.chart.anim.in svg path.draw { stroke-dashoffset: 0; }

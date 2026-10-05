@@ -14,7 +14,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="../assets/style.css?v=9">
+<link rel="stylesheet" href="../assets/style.css?v=11">
 </head>
 <body>
 <main class="article">
@@ -93,7 +93,8 @@
     <figcaption>A job calculates the features each night. The drivers at the top of the list get a call from the operations team, and the next group gets an incentive in the application. The information from the calls goes back to the product team and to the model.</figcaption>
   </figure>
   <ol class="steps">
-    <li><b>Two models, one score</b><p><strong>XGBoost</strong> (gradient-boosted decision trees) is the better of the two models. It finds combinations, for example many hours online and a decrease of the acceptance rate. The <strong>random forest</strong> (scikit-learn) is weaker, but it makes different errors. The final score is the average of the two probabilities, with a calibration that makes the score equal to a true probability. The average was <strong>more stable from month to month</strong> than each model alone. For a list that the operations team uses each day, this stability is more important than a small increase of the AUC.</p></li>
+    <li><b>Two models, one score</b><p><strong>XGBoost</strong> (gradient-boosted decision trees) is the better of the two models. It finds combinations, for example many hours online and a decrease of the acceptance rate. The <strong>random forest</strong> (scikit-learn) is weaker, but it makes different errors. </p>
+  <p>The final score is the average of the two probabilities, with a calibration that makes the score equal to a true probability. The average was <strong>more stable from month to month</strong> than each model alone. For a list that the operations team uses each day, this stability is more important than a small increase of the AUC.</p></li>
     <li><b>Split by time, never at random</b><p>The training data contains the first months and the validation data contains a later month. Churn changes with the incentive programmes and with the season. A random split is not correct, because rows of the same driver go to the training set and to the test set. The training occurred each month on a moving window, when the labels of the month became available.</p></li>
     <li><b>Decision rule sized to capacity</b><p>The drivers at the top of the list, approximately <strong>100 drivers each day</strong>, get a call from the operations team. The next group gets an incentive in coins in the application. The limits agree with the capacity of the teams and not with a probability threshold. A nightly Airflow job writes the list to a shared sheet, and the product team and the customer success team use this sheet.</p></li>
     <li><b>Close the loop</b><p>The operations team records the reason that each driver gives during the call. These categories go to the product team. A feature that shows a recent call also goes back to the model.</p></li>
@@ -146,6 +147,6 @@
   <div class="pager"><a href="../#work">← All projects</a><a href="driver-safety-enforcement.html">Next: Driver safety enforcement →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
 </main>
-<script src="../assets/anim.js?v=9"></script>
+<script src="../assets/anim.js?v=11"></script>
 </body>
 </html>
