@@ -57,7 +57,7 @@
       <div class="body">
         <h3><a href="projects/adaptive-gateway-router.html">Adaptive payment-gateway router</a></h3>
         <p class="cardmeta">Razorpay · 2026</p>
-        <dl class="psi"><dt>Problem</dt><dd>A gateway can start to fail at any time. Static rules continue to send the traffic to it until a person sees the problem, and this can take hours.</dd><dt>Solution</dt><dd>A UCB bandit with drift detection selects a gateway for each transaction and learns from each result. A safety floor stops all traffic to a gateway that fails.</dd><dt class="imp">Impact</dt><dd>In a simulation with 10 million transactions, the success rate was about 2.2 times the success rate of a threshold router. After a shadow test, the live traffic ran above the control.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>A gateway can start failing at any moment, and static rules keep feeding it traffic until someone notices, which can take hours.</dd><dt>Solution</dt><dd>A UCB bandit with drift detection picks a gateway per transaction and learns from every outcome, with a safety floor that cuts off any gateway that is clearly failing.</dd><dt class="imp">Impact</dt><dd>In a 10-million-transaction simulation it reached about 2.2 times the success rate of a threshold router. After a shadow test, live traffic ran above the control.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">Gymnasium</span><span class="tag">Stable-Baselines3</span><span class="tag">UCB bandit</span><span class="tag">Online learning</span></div>
       </div>
     </div>
@@ -71,7 +71,7 @@
       <div class="body">
         <h3><a href="projects/driver-churn.html">Driver churn prediction</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
-        <dl class="psi"><dt>Problem</dt><dd>Approximately 42% of the active drivers stopped to drive. The operations team found them only after one week with no activity, and many had already left.</dd><dt>Solution</dt><dd>A daily score for approximately 150,000 drivers, from an average of XGBoost and a random forest on 36 features. The operations team calls the drivers with the highest risk.</dd><dt class="imp">Impact</dt><dd>Against a randomised holdout, the drivers who got a call churned 30 percentage points less. Monthly churn for all drivers decreased from 42% to 30% in three months.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>About 42% of active drivers were churning. Ops only spotted them after a week of inactivity, by which point many had already gone.</dd><dt>Solution</dt><dd>A daily score for roughly 150,000 drivers, averaging XGBoost and a random forest over 36 features. Ops call the highest-risk names on the list.</dd><dt class="imp">Impact</dt><dd>Against a randomised holdout, drivers who got a call churned 30 percentage points less. Monthly churn across all drivers fell from 42% to 30% in three months.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">XGBoost</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-airflow"/></svg>Airflow</span><span class="tag">Probability calibration</span></div>
       </div>
     </div>
@@ -86,7 +86,7 @@
       <div class="body">
         <h3><a href="projects/driver-safety-enforcement.html">Driver safety enforcement</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
-        <dl class="psi"><dt>Problem</dt><dd>Complaints about unsafe drivers arrive in three languages and are a small part of thousands of comments about fares and routes. Serious cases became visible some days late.</dd><dt>Solution</dt><dd>The Sarvam API translates the text, and a classifier gives one of five severity groups. A small problem decreases the priority of the driver, and a serious problem goes to a person who can block the driver.</dd><dt class="imp">Impact</dt><dd>Safety complaints decreased by approximately 50%, and the average rider rating moved from 4.6 to 4.8. The system gave a lower priority to approximately 12,000 drivers and blocked approximately 550 drivers.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>Complaints about unsafe drivers arrive in three languages, buried in thousands of comments about fares and routes, and serious cases surfaced days late.</dd><dt>Solution</dt><dd>The Sarvam API translates the text and a classifier sorts it into five severity groups. Minor cases drop the driver's matching priority; serious ones go to a person who can block them.</dd><dt class="imp">Impact</dt><dd>Safety complaints fell by about half and the average rider rating moved from 4.6 to 4.8. Around 12,000 drivers were deprioritised and about 550 blocked.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Sarvam API</span><span class="tag">TF-IDF</span><span class="tag">Text classification</span></div>
       </div>
     </div>
@@ -102,7 +102,7 @@
       <div class="body">
         <h3><a href="projects/text-to-sql-analyst.html">Slack-native AI analyst</a></h3>
         <p class="cardmeta">Razorpay · 2025–2026</p>
-        <dl class="psi"><dt>Problem</dt><dd>A team of 127 persons asked the same data questions every day, and each question became a ticket for a small data team. The answers existed in more than 2,000 documents that nobody could find.</dd><dt>Solution</dt><dd>The documents became one approved data wiki. A model-agnostic Slack agent reads the index, opens the necessary pages, asks a question if the request is ambiguous, and runs read-only SQL.</dd><dt class="imp">Impact</dt><dd>96% of the answers got a positive rating. Approximately 40% of the team asked a question every day, and the median answer needed approximately 2 minutes.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>A 127-person team asked the same data questions daily, and each one became a ticket for a small data team. The answers already existed across 2,000 documents nobody could search.</dd><dt>Solution</dt><dd>Those documents became a single approved wiki. A model-agnostic Slack agent reads the index, opens only what it needs, asks a clarifying question when the request is vague, and runs read-only SQL.</dd><dt class="imp">Impact</dt><dd>96% of answers earned a thumbs-up. About 40% of the team asked something every day, and the median answer took around two minutes.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-postgresql"/></svg>SQL</span><span class="tag">LLM agents</span><span class="tag">Text-to-SQL</span></div>
       </div>
     </div>
@@ -118,7 +118,7 @@
       <div class="body">
         <h3>Real-time payment fraud detection</h3>
         <p class="cardmeta">Razorpay · 2025–2026</p>
-        <dl class="psi"><dt>Problem</dt><dd>Suspect payments waited in a manual review queue. A person examined each one, and a decision took up to four days. The money moved during that time.</dd><dt>Solution</dt><dd>A model scores each transaction as it occurs. The clearest cases are blocked automatically and the payment is reversed. The other cases go to a person, who now has a much smaller queue.</dd><dt class="imp">Impact</dt><dd>The review turnaround decreased from approximately four days to hours.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>Suspect payments sat in a manual review queue. A person examined each one and a decision could take four days, while the money moved.</dd><dt>Solution</dt><dd>A model scores every transaction as it happens. The clearest cases are blocked and reversed automatically; the rest go to a person, now with a far shorter queue.</dd><dt class="imp">Impact</dt><dd>Review turnaround fell from about four days to hours.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Real-time scoring</span><span class="tag">Binary classification</span></div>
       </div>
     </div>
@@ -133,7 +133,7 @@
       <div class="body">
         <h3><a href="projects/voice-ai-support-agent.html">Voice AI support agent</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
-        <dl class="psi"><dt>Problem</dt><dd>Drivers waited for a support agent for the same problems every day.</dd><dt>Solution</dt><dd>A voice agent on Gemini Live answers in less than one second and speaks more than one language. If it cannot solve the problem, it sends the call to a person.</dd><dt class="imp">Impact</dt><dd>The resolution time decreased by 75%. The driver NPS (Net Promoter Score) increased by 18 points.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>Drivers queued for a support agent to answer the same handful of problems every day.</dd><dt>Solution</dt><dd>A voice agent on Gemini Live replies in under a second and speaks more than one language. When it cannot solve the problem, it hands the call to a person.</dd><dt class="imp">Impact</dt><dd>Resolution time fell 75% and driver NPS (Net Promoter Score) rose 18 points.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-googlegemini"/></svg>Gemini Live</span><span class="tag">Speech to speech</span><span class="tag">Natural language processing</span></div>
       </div>
     </div>
@@ -147,14 +147,14 @@
       <div class="body">
         <h3>Offer-propensity ranking</h3>
         <p class="cardmeta">Uber · 2024</p>
-        <dl class="psi"><dt>Problem</dt><dd>The ads and promotions business had to select which offer to show to each customer, and when to show it.</dd><dt>Solution</dt><dd>A ranking model scores the probability that a customer uses an offer. It examines the type of the offer, the time, and the product.</dd><dt class="imp">Impact</dt><dd>The net revenue for each outlet increased 3 times.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>The ads and promotions business had to choose which offer to show each customer, and when.</dd><dt>Solution</dt><dd>A ranking model scores how likely a customer is to take an offer, weighing the type of offer, the timing and the product.</dd><dt class="imp">Impact</dt><dd>Net revenue per outlet tripled.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">Ranking models</span><span class="tag">Propensity modelling</span></div>
       </div>
     </div>
   </div>
 
   <h2 id="personal">Personal pursuits</h2>
-  <p>Coursework and programs that I wrote because I was interested. All of them have a link to the code.</p>
+  <p>Coursework and things I built because I wanted to. All of them link to their code.</p>
   <div class="cards">
     <div class="card linked"><span class="goto" aria-hidden="true">More <b>↗</b></span>
       <div class="cover"><svg viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -165,7 +165,7 @@
       <div class="body">
         <h3><a href="projects/fpl-player-models.html">Fantasy Premier League player-performance models</a></h3>
         <p class="cardmeta">Personal · 2026</p>
-        <p>These models predict the points of each Fantasy Premier League player in the next gameweek. They use 79 features that are available before the deadline. A walk forward backtest of 75 gameweeks measures the quality. The best team gets about 10% more points than a simple baseline. The tests also found two problems in the data: one column contains information from after the match, and the availability feature did not improve the results.</p>
+        <p>Predicting Fantasy Premier League points for the coming gameweek from 79 pre-deadline features, tested with a 75-gameweek walk-forward backtest. The best picks score about 10% more than a simple baseline. Two data problems turned up along the way: a column carrying post-match information, and an availability feature that turned out not to help.</p>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-pandas"/></svg>pandas</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Gradient boosting</span><span class="tag">Walk-forward backtest</span><a class="tag code" href="https://github.com/lagnis337/fpl-player-models"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code <b class="arr">↗</b></a></div>
       </div>
     </div>
@@ -179,7 +179,7 @@
       <div class="body">
         <h3><a href="foundations.html">Linear Algebra for Machine Learning (UC San Diego Extended Studies)</a></h3>
         <p class="cardmeta">UC San Diego Extended Studies · Summer 2026</p>
-        <p>This course gives the linear algebra that machine learning uses. I got the grade A+, with 100% in all the quizzes and in the final examination. In the first assignment, I compressed images of faces with principal component analysis. In the second assignment, I compared gradient descent with the normal equation. The code is on GitHub.</p>
+        <p>The linear algebra that machine learning runs on. Grade A+, with 100% across the quizzes and the final. The first assignment compresses face images with principal component analysis; the second compares gradient descent against the normal equation. Code on GitHub.</p>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-numpy"/></svg>NumPy</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">PCA &amp; SVD</span><span class="tag">Octave</span><a class="tag code" href="https://github.com/lagnis337/linear-algebra-for-ml-coursework"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code <b class="arr">↗</b></a></div>
       </div>
     </div>
@@ -193,7 +193,7 @@
       <div class="body">
         <h3>Log Ingestor</h3>
         <p class="cardmeta">Personal build</p>
-        <p>This service receives log records in JSON format and writes them to a PostgreSQL database. You can search the records with 11 different filters.</p>
+        <p>A service that takes log records in JSON, writes them into PostgreSQL, and lets you search them across 11 filters.</p>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-nodedotjs"/></svg>Node.js</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-postgresql"/></svg>PostgreSQL</span><span class="tag">REST API</span><a class="tag code" href="https://github.com/lagnis337/logs_ingestor"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code <b class="arr">↗</b></a></div>
       </div>
     </div>
@@ -207,7 +207,7 @@
       <div class="body">
         <h3>Lift Simulator</h3>
         <p class="cardmeta">Personal build</p>
-        <p>This program simulates the lifts in a building. You can select one of two dispatch rules: the nearest lift that is free, or the first lift that is free. You can start random traffic and then see the wait times.</p>
+        <p>A browser simulation of the lifts in a building. Pick between two dispatch rules, nearest free lift or first free lift, turn on random traffic, and watch the wait times.</p>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-javascript"/></svg>JavaScript</span><span class="tag">DOM</span><span class="tag">Discrete-event simulation</span><a class="tag code" href="https://github.com/lagnis337/Lift_Simulator"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code <b class="arr">↗</b></a><a class="tag demo" href="https://lagnis337.github.io/Lift_Simulator/">Live demo <b class="arr">↗</b></a></div>
       </div>
     </div>

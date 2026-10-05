@@ -26,9 +26,9 @@
   </nav>
 
   <h1>Voice AI support agent</h1>
-  <p class="plain">Answer the driver support calls that repeat every day, in the language the driver speaks. Send the rest to a person.</p>
+  <p class="plain">Answer the driver support calls that repeat every day, in whichever language the driver speaks, and pass the rest to a person.</p>
   <p class="meta">Namma Yatri · Central data team · 2024–2025 · Owner, end to end</p>
-  <p class="notice">This is an industry project. The code and the data are proprietary, thus this page shows only the method.</p>
+  <p class="notice">Industry project. The code and data are proprietary, so this page describes the method only.</p>
 
   <div class="glance">
     <div><b>15–20 min</b><span>of a support agent, for each call, before the agent</span></div>
@@ -38,15 +38,15 @@
   </div>
 
   <h2>Problem</h2>
-  <p>Drivers called support with the same problems every day. Each call used 15 to 20 minutes of a support agent. The problems repeated, thus the agents gave the same answers again and again. This is not a good use of a support team, and the drivers waited.</p>
+  <p>Drivers called support with the same handful of problems every day, and each call took 15 to 20 minutes of an agent's time. The agents gave the same answers over and over. That is a poor use of a support team, and drivers waited in a queue for it.</p>
 
   <h2>Approach</h2>
-  <p>Two models do two different jobs, because neither model is sufficient alone.</p>
+  <p>Two models doing two different jobs, because neither is enough on its own.</p>
   <div class="two">
-    <div><h4>How to speak</h4><p>Gemini Live holds the conversation. It answers in less than one second and it sounds like a person. Latency is important here, because a driver stops a call that pauses.</p></div>
-    <div><h4>What to say</h4><p>The Sarvam models are trained on Indian regional languages. They are stronger than a general model on the words that a driver uses, in Hindi and in Kannada as well as in English.</p></div>
+    <div><h4>How to speak</h4><p>Gemini Live holds the conversation. It replies in under a second and it sounds like a person. Latency matters more than it sounds: a driver hangs up on a call that pauses.</p></div>
+    <div><h4>What to say</h4><p>The Sarvam models are trained on Indian regional languages, and they beat a general model on the words a driver actually uses, in Hindi and Kannada as much as in English.</p></div>
   </div>
-  <p>The agent works in Hindi, English and Kannada. If the agent cannot solve the problem, it sends the call to a person.</p>
+  <p>The agent works in Hindi, English and Kannada. When it cannot solve the problem, it hands the call to a person.</p>
 
   <figure class="flow">
     <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
@@ -80,16 +80,16 @@
         <path d="M532 126H546Q560 126 560 110V88"/><path d="M532 126H546Q560 126 560 142V164"/>
       </g>
     </svg>
-    <figcaption>Two models with two jobs. Gemini Live holds the conversation, and the Sarvam models read the request in the language the driver speaks. The speech recognition in front of them was the weak link.</figcaption>
+    <figcaption>Two models with two jobs. Gemini Live holds the conversation; the Sarvam models read the request in the language the driver speaks. The speech recognition in front of both was the weak link.</figcaption>
   </figure>
 
   <h2>How one call works</h2>
   <ol class="steps">
-    <li><b>The driver speaks, and the agent listens while the driver speaks</b><p>The audio streams to the model. The agent does not wait for the end of the sentence, because a pause of more than one second makes a driver stop the call.</p></li>
-    <li><b>Speech becomes words</b><p>The recognition layer writes the audio as text, in Hindi, English, or Kannada. This step is the weakest part of the chain and the source of most of the failures (see below).</p></li>
-    <li><b>The words become an intent</b><p>The repeated support problems are a written catalogue of intents. The agent matches the request to one intent in the catalogue. The Sarvam models do this work, because they know the words that a driver uses in an Indian language.</p></li>
-    <li><b>The agent answers, or it stops</b><p>If the request matches an intent, the agent gives the answer for that intent and Gemini Live speaks it. If the request does not match, or the driver asks again for a person, the agent stops and sends the call to the human queue.</p></li>
-    <li><b>A person receives the call with the context</b><p>The support agent gets the call and the history of the conversation. The driver does not repeat the problem to a second listener.</p></li>
+    <li><b>The driver speaks, and the agent listens while the driver speaks</b><p>Audio streams to the model as the driver talks. The agent does not wait for the end of the sentence, because a pause longer than a second loses the call.</p></li>
+    <li><b>Speech becomes words</b><p>The recognition layer turns the audio into text, in Hindi, English or Kannada. It is the weakest link in the chain and where most failures begin (see below).</p></li>
+    <li><b>The words become an intent</b><p>The repeated problems live in a written catalogue of intents, and the agent matches each request to one of them. The Sarvam models do that matching, because they know the vocabulary a driver uses in an Indian language.</p></li>
+    <li><b>The agent answers, or it stops</b><p>On a match, the agent gives that intent's answer and Gemini Live speaks it. On no match, or if the driver asks again for a person, it stops and routes the call to the human queue.</p></li>
+    <li><b>A person receives the call with the context</b><p>The support agent picks up with the conversation so far in front of them, so the driver does not explain the problem twice.</p></li>
   </ol>
 
   <figure class="flow">
@@ -121,11 +121,11 @@
         <text x="586" y="164">A person answers the call</text><text x="586" y="182" fill="#666" font-size="11">with the conversation so far</text>
       </g>
     </svg>
-    <figcaption>The catalogue is the boundary of the agent. A new type of problem is a new entry in the catalogue, not a change to the models.</figcaption>
+    <figcaption>The catalogue is the agent's boundary. A new kind of problem is a new entry in it, not a change to the models.</figcaption>
   </figure>
 
   <h2>Results</h2>
-  <p>The resolution time decreased by approximately 75%. This compares the period after the agent with the period before it, when support agents handled these tickets. The driver NPS (Net Promoter Score) increased by 18 points over the same period.</p>
+  <p>Resolution time fell by about 75%, comparing the period with the agent against the period before it, when support agents handled the same tickets. Driver NPS (Net Promoter Score) rose 18 points over the same span.</p>
   <div class="table-wrap">
   <table>
     <thead><tr><th>Metric</th><th>Value</th><th>How measured</th></tr></thead>
@@ -137,7 +137,7 @@
     </tbody>
   </table>
   </div>
-  <p class="stat-row">This is a before-and-after comparison and not a controlled test. The 18 points thus contain the other changes of the period as well as the effect of the agent.</p>
+  <p class="stat-row">This is a before-and-after comparison, not a controlled test, so those 18 points carry everything else that changed in the period alongside the effect of the agent.</p>
 
   <div class="insight">
     <strong>Key insight</strong>
@@ -145,19 +145,19 @@
   </div>
 
   <h2>What went wrong</h2>
-  <p>The hardest part was not the part that looks hardest. Gemini Live and the Sarvam models were both strong. The recognition of the speech was not. The models that recognise Indian regional speech were weaker than the rest of the pipeline, and most of the failures started there. If the agent hears the wrong words, then every step after it is wrong, and the driver repeats the sentence to a machine that does not understand.</p>
+  <p>The hard part was not the part that looks hard. Gemini Live and the Sarvam models were both strong. Speech recognition was not. The models that handle Indian regional speech lagged the rest of the pipeline, and most failures started there. Hear the wrong words and everything downstream is wrong, while the driver repeats a sentence to a machine that cannot follow it.</p>
 
   <h2>What I'd do differently</h2>
   <div class="cards small">
-    <div class="card"><h3>Improve the recognition layer</h3><p>The speech recognition is the weakest part of the pipeline and the source of most of the failures. A model that is trained on these speech patterns, or a model that is tuned on the calls, would remove more errors than any change to the generative layers.</p></div>
-    <div class="card"><h3>A controlled test</h3><p>Give the agent to a random part of the drivers and keep the others on the human queue. This separates the effect of the agent from the other changes of the period, for the NPS as well as for the resolution time.</p></div>
+    <div class="card"><h3>Improve the recognition layer</h3><p>Speech recognition is the weakest link and the source of most failures. A model trained on these speech patterns, or one tuned on the calls themselves, would remove more errors than any change to the generative layers.</p></div>
+    <div class="card"><h3>A controlled test</h3><p>Give the agent to a random share of drivers and keep the rest on the human queue. That separates the agent's effect from everything else that moved in the period, for NPS as well as resolution time.</p></div>
   </div>
 
   <h2>Related work</h2>
-  <p>The conversation layer uses the <a href="https://ai.google.dev/gemini-api/docs/live">Gemini Live API</a>, which Google made for speech-to-speech conversations with a low latency. The language layer uses the models of <a href="https://www.sarvam.ai/">Sarvam AI</a>, which are trained on Indian languages. The design of this project is a division of labour between the two.</p>
+  <p>The conversation layer uses the <a href="https://ai.google.dev/gemini-api/docs/live">Gemini Live API</a>, which Google built for low-latency speech-to-speech. The language layer uses models from <a href="https://www.sarvam.ai/">Sarvam AI</a>, trained on Indian languages. The design is a division of labour between the two.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p>The code is proprietary to Namma Yatri. Stack: the Gemini Live API for the conversation and the speech, the Sarvam models for the Indian languages, intent definitions for the repeated support problems, and a handoff to the human support queue.</p>
+  <p>Proprietary to Namma Yatri. Stack: the Gemini Live API for conversation and speech, the Sarvam models for Indian languages, intent definitions covering the repeated support problems, and a handoff into the human support queue.</p>
 
   <div class="pager"><a href="../#work">← All projects</a><a href="fpl-player-models.html">Next: FPL player models →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>
