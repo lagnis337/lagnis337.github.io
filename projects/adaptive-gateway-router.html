@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adaptive payment-gateway router · Chirag Singal</title>
-<meta name="description" content="An online-learning router that shifts payment traffic away from degrading gateways: UCB exploration with drift detection, benchmarked in a turbulence simulator and deployed.">
+<meta name="description" content="An online-learning router that shifts payment traffic away from degrading gateways, running about 30% above its control on live traffic: UCB exploration with drift detection, benchmarked in a turbulence simulator and deployed.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Adaptive payment-gateway router · Chirag Singal">
-<meta property="og:description" content="An online-learning router that shifts payment traffic away from degrading gateways: UCB exploration with drift detection, benchmarked in a turbulence simulator and deployed.">
+<meta property="og:description" content="An online-learning router that shifts payment traffic away from degrading gateways, running about 30% above its control on live traffic: UCB exploration with drift detection, benchmarked in a turbulence simulator and deployed.">
 <meta property="og:url" content="https://lagnis337.github.io/projects/adaptive-gateway-router.html">
 <meta property="og:image" content="https://lagnis337.github.io/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -28,13 +28,13 @@
   <h1>Adaptive payment-gateway router</h1>
   <p class="plain">The router spots payment gateways that are starting to fail and moves traffic to healthier ones. It learns from the outcome of every transaction.</p>
   <p class="meta">Razorpay · 2026 · Owner: framing, simulator, agent, benchmark, shadow-mode and rollout measurement; platform engineering owned production integration</p>
-  <p class="notice">Industry project at a payments company. The code and data are proprietary, so this page describes the method only. Every number here comes from the synthetic benchmark.</p>
+  <p class="notice">Industry project at a payments company. The code and data are proprietary, so this page describes the method only. The benchmark figures come from the synthetic simulator, and the live result is given as a relative difference against the control.</p>
 
   <div class="glance">
     <div><b>Observe → act</b><span>learn to respond to failures, not predict them</span></div>
     <div><b>UCB + drift</b><span>upper-confidence-bound bandit with drift detection over observed outcomes</span></div>
     <div><b>2.2×</b><span>the success rate of threshold routing, in a 10-million-transaction simulation</span></div>
-    <div><b>Deployed</b><span>shadow mode, then live traffic behind guardrails</span></div>
+    <div><b>+30%</b><span>payment success on live traffic, against the control</span></div>
   </div>
 
   <h2>Problem</h2>
@@ -145,8 +145,8 @@
   <h2>Deployment</h2>
   <dl class="dl">
     <dt>Shadow mode</dt><dd>The router ran alongside production, logging the gateway it would have chosen for each transaction without executing the decision.</dd>
-    <dt>Rollout</dt><dd>Then live traffic, behind guardrails that roll back automatically if success rate or latency regresses against the control. Success rate on the routed traffic came in above the control.</dd>
-    <dt>Measurement</dt><dd>The benchmark above was the basis for the rollout decision. Live performance is tracked against a control group on the same success-rate metric.</dd>
+    <dt>Rollout</dt><dd>Then live traffic, behind guardrails that roll back automatically if success rate or latency regresses against the control. On live traffic the routed group's payment success rate ran about 30% above the control, which is the number that matters more than anything the simulator produced.</dd>
+    <dt>Measurement</dt><dd>The benchmark above was the basis for the rollout decision, and the control group is what measures the system now. Both are reported as relative differences: the absolute success rates are Razorpay's.</dd>
   </dl>
 
   <h2>What I'd do differently</h2>

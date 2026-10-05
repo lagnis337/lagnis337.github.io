@@ -57,7 +57,7 @@
       <div class="body">
         <h3><a href="projects/adaptive-gateway-router.html">Adaptive payment-gateway router</a></h3>
         <p class="cardmeta">Razorpay · 2026</p>
-        <dl class="psi"><dt>Problem</dt><dd>A gateway can start failing at any moment, and static rules keep feeding it traffic until someone notices, which can take hours.</dd><dt>Solution</dt><dd>A UCB bandit with drift detection picks a gateway per transaction and learns from every outcome, with a safety floor that cuts off any gateway that is clearly failing.</dd><dt class="imp">Impact</dt><dd>In a 10-million-transaction simulation it reached about 2.2 times the success rate of a threshold router. After a shadow test, live traffic ran above the control.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>A gateway can start failing at any moment, and static rules keep feeding it traffic until someone notices, which can take hours.</dd><dt>Solution</dt><dd>A UCB bandit with drift detection picks a gateway per transaction and learns from every outcome, with a safety floor that cuts off any gateway that is clearly failing.</dd><dt class="imp">Impact</dt><dd>On live traffic, payment success ran about 30% above the control after a shadow test. In the 10-million-transaction simulation that preceded it, the router reached about 2.2 times the success rate of a threshold router.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">Gymnasium</span><span class="tag">Stable-Baselines3</span><span class="tag">UCB bandit</span><span class="tag">Online learning</span></div>
       </div>
     </div>
