@@ -38,7 +38,7 @@
   </div>
 
   <h2>Problem</h2>
-  <p>Riders leave feedback after every ride, a rating with an optional comment, and raise support tickets in the app or through the call centre. Most of it concerns fares, routes and cancellations. A small share describes something unsafe: dangerous driving, harassment, alcohol, threats. On a platform whose main promise is <strong>that a rider gets home safely</strong>, that small share carries most of the weight.</p>
+  <p>Riders leave feedback after every ride, a rating with an optional comment, raise support tickets in the app or through the call centre, and press the SOS button mid-ride, which produces a call that is transcribed. Most of it concerns fares, routes and cancellations. A small share describes something unsafe: dangerous driving, harassment, alcohol, threats. On a platform whose main promise is <strong>that a rider gets home safely</strong>, that small share carries most of the weight.</p>
   <div class="two">
     <div><h4>Before</h4><p>Support agents read tickets one at a time and escalated the alarming ones. Nobody could see a driver's full history, so a pattern of complaints looked like a series of unrelated events, and serious cases surfaced days late.</p></div>
     <div><h4>Goal</h4><p>Read all the feedback the same day, rank the safety complaints by severity, and give the driver a consequence that fits and that is the same for everyone. Minor cases automatic, serious ones decided by a person.</p></div>
@@ -47,7 +47,7 @@
 
   <h2>Data</h2>
   <dl class="dl">
-    <dt>Unit</dt><dd>One piece of feedback, either a rating comment or a support ticket, tied to a ride, a driver and a rider.</dd>
+    <dt>Unit</dt><dd>One piece of feedback: a rating comment, a support ticket, or the transcript of an SOS call, tied to a ride, a driver and a rider.</dd>
     <dt>Languages</dt><dd>Kannada, Hindi, English and romanised mixtures. The <strong>Sarvam AI</strong> translation API, built for Indian languages, converts each item to English before classification, so the classifier only ever learns English patterns.</dd>
     <dt>Labels</dt><dd>Five severity groups plus a bucket for everything that is not a safety complaint. The support team labelled the first set against a written guide, and after launch every case ops reviewed became a new labelled example.</dd>
     <dt>Imbalance</dt><dd>Safety items are a small share of all feedback and the severest groups are rarer still, which drives the modelling and threshold choices below.</dd>
@@ -131,7 +131,7 @@
   <p class="stat-row">Complaints, tagged rides and rating are all before-and-after comparisons, so they carry everything else that changed in the period. And most drivers with one complaint never get a second under any policy, so part of that result would have happened anyway. The 12,000 figure counts drivers who went through the lighter lever; it is not a measured change in behaviour.</p>
   <div class="insight">
     <strong>Key insight</strong>
-    Most drivers with a complaint are not dangerous. They had a bad day, or they had a habit that nobody told them about. A system with only a warning and a block is too weak for these cases, or too strong. The priority in the ride matching gives a third option. The cost agrees with the problem, the driver feels it immediately in the earnings, and good behaviour removes it. Most of the approximately 12,000 drivers in this group got no new complaint, and a person examined the evidence before each of the approximately 550 blocks.
+    Most drivers who pick up a complaint are not dangerous. They had a bad day, or a habit nobody had ever called out. A system with only a warning and a block either lets that slide or overreacts to it. Ride priority gives you a third setting: a cost that fits the offence, lands immediately in earnings, and lifts when the behaviour does. Around 12,000 drivers went through it and never came back; the 550 who were removed had a person look at the evidence first.
   </div>
 
   <h2>What went wrong, and what changed</h2>
@@ -152,7 +152,7 @@
   <p>Graded consequences are standard practice in marketplace trust-and-safety teams, and the <a href="https://santaclaraprinciples.org/">Santa Clara Principles</a> set the usual expectations for notice and appeal. Two things here are less common. The consequence runs through the matching service's own priority tiers, and a translation step takes the multilingual problem off the model, which keeps the classifier simple. The models from <a href="https://www.sarvam.ai/">Sarvam AI</a> are built for Indic languages, which is what made that translation reliable enough to build on.</p>
 
   <h2>Code &amp; artifacts</h2>
-  <p>Proprietary to Namma Yatri. Stack: Python with scikit-learn (TF-IDF and a linear classifier) and pandas, the Sarvam AI translation API, SQL over ride and feedback data, a daily scheduled job, and the block queue and priority controls exposed by the matching service.</p>
+  <p>Proprietary to Namma Yatri. Stack: Python with scikit-learn (TF-IDF and a linear classifier) and pandas, the Sarvam AI translation API, SQL over ride, feedback and SOS-transcript data, a daily scheduled job, and the block queue and priority controls exposed by the matching service.</p>
 
   <div class="pager"><a href="../#work">← All projects</a><a href="text-to-sql-analyst.html">Next: Slack-native AI analyst →</a></div>
   <footer>chiragsingal337@gmail.com · <a href="https://github.com/lagnis337">GitHub</a> · <a href="https://www.linkedin.com/in/chiragsingal">LinkedIn</a></footer>

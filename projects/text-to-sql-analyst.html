@@ -45,7 +45,7 @@
   </div>
   <div class="insight">
     <strong>Key insight</strong>
-    This system is not retrieval-augmented generation (RAG), which collects parts of documents for a language model at each question. A person compiled the documents one time into a permanent wiki, and a person approves each page. The agent then navigates the wiki like an analyst. It reads the index, opens the necessary pages, asks a question if the request is ambiguous, and then writes and executes the SQL (Structured Query Language) query. Each correction makes the wiki better, and the models below it can change.
+    This is not retrieval-augmented generation (RAG), fetching snippets from a document pile on every question. The documents were compiled once into a persistent wiki that a person approves page by page, and the agent works through it the way an analyst would: read the index, open the pages that matter, ask one clarifying question when the request is vague, then write and run the SQL (Structured Query Language). Every correction makes the wiki better, and the models underneath it can be swapped out.
   </div>
 
   <h2>The wiki</h2>

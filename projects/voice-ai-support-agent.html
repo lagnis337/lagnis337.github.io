@@ -31,7 +31,7 @@
   <p class="notice">Industry project. The code and data are proprietary, so this page describes the method only.</p>
 
   <div class="glance">
-    <div><b>15–20 min</b><span>of a support agent, for each call, before the agent</span></div>
+    <div><b>~100</b><span>driver calls a day through the agent</span></div>
     <div><b>3</b><span>languages: Hindi, English and Kannada</span></div>
     <div><b>−75%</b><span>resolution time against the period with human agents</span></div>
     <div><b>+18 pts</b><span>driver NPS over the same period</span></div>
@@ -87,8 +87,9 @@
   <ol class="steps">
     <li><b>The driver speaks, and the agent listens while the driver speaks</b><p>Audio streams to the model as the driver talks. The agent does not wait for the end of the sentence, because a pause longer than a second loses the call.</p></li>
     <li><b>Speech becomes words</b><p>The recognition layer turns the audio into text, in Hindi, English or Kannada. It is the weakest link in the chain and where most failures begin (see below).</p></li>
-    <li><b>The words become an intent</b><p>The repeated problems live in a written catalogue of intents, and the agent matches each request to one of them. The Sarvam models do that matching, because they know the vocabulary a driver uses in an Indian language.</p></li>
-    <li><b>The agent answers, or it stops</b><p>On a match, the agent gives that intent's answer and Gemini Live speaks it. On no match, or if the driver asks again for a person, it stops and routes the call to the human queue.</p></li>
+    <li><b>The agent looks up that driver</b><p>It has read access to the data about whoever is calling, so it answers from that driver's actual state rather than from a generic script. The scope of that access is deliberately narrow. We looked at which fields the answers really turned on and gave the agent those, because fetching everything costs time, and time is the one thing a voice call cannot spend.</p></li>
+  <li><b>The words become an intent</b><p>The repeated problems live in a written catalogue of intents, and the agent matches each request to one of them. The Sarvam models do that matching, because they know the vocabulary a driver uses in an Indian language.</p></li>
+    <li><b>The agent answers, or it stops</b><p>On a match, the agent gives that intent's answer and Gemini Live speaks it. It stops and routes the call to the human queue on no match, when the driver asks for a person, when the recognition layer is unsure of what it heard, when the same question fails twice, and on anything touching an accident or a safety complaint.</p></li>
     <li><b>A person receives the call with the context</b><p>The support agent picks up with the conversation so far in front of them, so the driver does not explain the problem twice.</p></li>
   </ol>
 
@@ -124,6 +125,10 @@
     <figcaption>The catalogue is the agent's boundary. A new kind of problem is a new entry in it, not a change to the models.</figcaption>
   </figure>
 
+  <h2>How we knew it was working</h2>
+  <p>Resolution time and NPS are outcome numbers. Neither tells you whether the agent gave the right answer, so quality was checked by hand. The customer success team and I picked calls every day and listened to them, which is how most of the speech-recognition failures surfaced.</p>
+  <p>The second source was the drivers. Namma Yatri runs an open house every Wednesday, where any driver can come in and talk to the team. Complaints about the agent came up there, in a setting where a driver will say what a survey never captures.</p>
+
   <h2>Results</h2>
   <p>Resolution time fell by about 75%, comparing the period with the agent against the period before it, when support agents handled the same tickets. Driver NPS (Net Promoter Score) rose 18 points over the same span.</p>
   <div class="table-wrap">
@@ -141,7 +146,7 @@
 
   <div class="insight">
     <strong>Key insight</strong>
-    The generative models were not the difficult part. Gemini Live and the Sarvam models were both strong, and the speech recognition in front of them was not. A voice agent is a chain, and the chain is only as good as its first step. If the agent hears the wrong words, each step after it is wrong, and the driver repeats the sentence to a machine that does not understand.
+    The generative models were not the hard part. Gemini Live and the Sarvam models both held up; the speech recognition in front of them did not. A voice agent is a chain, and it is worth no more than its first link. Hear the wrong words and everything after is wrong, while the driver repeats a sentence to a machine that cannot follow it.
   </div>
 
   <h2>What went wrong</h2>
@@ -150,7 +155,7 @@
   <h2>What I'd do differently</h2>
   <div class="cards small">
     <div class="card"><h3>Improve the recognition layer</h3><p>Speech recognition is the weakest link and the source of most failures. A model trained on these speech patterns, or one tuned on the calls themselves, would remove more errors than any change to the generative layers.</p></div>
-    <div class="card"><h3>A controlled test</h3><p>Give the agent to a random share of drivers and keep the rest on the human queue. That separates the agent's effect from everything else that moved in the period, for NPS as well as resolution time.</p></div>
+    <div class="card"><h3>A controlled test</h3><p>Give the agent to a random share of drivers and keep the rest on the human queue. That separates the agent's effect from everything else that moved in the period, for NPS as well as resolution time. The daily call reviews caught failures, but they could not tell us what the same drivers would have done without the agent.</p></div>
   </div>
 
   <h2>Related work</h2>

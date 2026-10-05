@@ -71,7 +71,7 @@
       <div class="body">
         <h3><a href="projects/driver-churn.html">Driver churn prediction</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
-        <dl class="psi"><dt>Problem</dt><dd>About 42% of active drivers were churning. Ops only spotted them after a week of inactivity, by which point many had already gone.</dd><dt>Solution</dt><dd>A daily score for roughly 150,000 drivers, averaging XGBoost and a random forest over 36 features. Ops call the highest-risk names on the list.</dd><dt class="imp">Impact</dt><dd>Monthly driver churn fell from 42% to 30% over three months. A randomised holdout of high-risk drivers received no call, and the called group churned less than that holdout.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>About 42% of active drivers were churning. Ops only spotted them after a week of inactivity, by which point many had already gone.</dd><dt>Solution</dt><dd>A daily score for roughly 150,000 drivers, averaging XGBoost and a random forest over 36 features. Ops call the highest-risk names on the list.</dd><dt class="imp">Impact</dt><dd>Measured against a randomised holdout, the drivers the team called churned at 30% against 42% in the holdout, over three months in production.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">XGBoost</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-airflow"/></svg>Airflow</span><span class="tag">Probability calibration</span></div>
       </div>
     </div>
@@ -133,7 +133,7 @@
       <div class="body">
         <h3><a href="projects/voice-ai-support-agent.html">Voice AI support agent</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
-        <dl class="psi"><dt>Problem</dt><dd>Drivers queued for a support agent to answer the same handful of problems every day.</dd><dt>Solution</dt><dd>A voice agent on Gemini Live replies in under a second and speaks more than one language. When it cannot solve the problem, it hands the call to a person.</dd><dt class="imp">Impact</dt><dd>Resolution time fell 75% and driver NPS (Net Promoter Score) rose 18 points.</dd></dl>
+        <dl class="psi"><dt>Problem</dt><dd>Drivers queued for a support agent to answer the same handful of problems every day.</dd><dt>Solution</dt><dd>A voice agent on Gemini Live takes about 100 calls a day, replies in under a second, and speaks Hindi, English and Kannada. It reads that driver's own data to answer, and hands the call to a person when it is unsure or the topic is serious.</dd><dt class="imp">Impact</dt><dd>Resolution time fell 75% and driver NPS (Net Promoter Score) rose 18 points.</dd></dl>
         <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-googlegemini"/></svg>Gemini Live</span><span class="tag">Speech to speech</span><span class="tag">Natural language processing</span></div>
       </div>
     </div>

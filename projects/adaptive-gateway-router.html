@@ -45,7 +45,7 @@
   </div>
   <div class="insight">
     <strong>Key insight</strong>
-    It is almost impossible to predict a gateway failure, but it is possible to react quickly. The correct model is a non-stationary <em>multi-armed bandit</em>. In this type of problem, each decision shows only its own result, and the best option changes with time. The router must explore sufficiently to see that a gateway is good again. It must also exploit sufficiently to prevent a loss of transactions on a bad gateway. With this model, the router does not need a forecast of the future.
+    Gateway failures are close to unpredictable, but reacting to them fast is not. Framed as a non-stationary <em>multi-armed bandit</em>, where each choice reveals only its own outcome and the best choice keeps moving, the problem stops needing a model of the future. Explore enough to notice a gateway has recovered, exploit enough not to burn transactions on one that has not, and the forecast becomes unnecessary.
   </div>
 
   <h2>Observations, actions, environment</h2>
