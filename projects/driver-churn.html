@@ -34,7 +34,7 @@
     <div><b>~150k</b><span>drivers scored every morning</span></div>
     <div><b>XGB + RF</b><span>XGBoost and random forest, averaged &amp; calibrated, 36 features</span></div>
     <div><b>AUC ~0.80</b><span>ranks a driver who will churn above one who won't about 80% of the time (held-out month)</span></div>
-    <div><b>−30 pp</b><span>churn among called drivers against a randomised holdout</span></div>
+    <div><b>42% → 30%</b><span>monthly churn, three months in production</span></div>
   </div>
 
   <h2>Problem</h2>
@@ -113,7 +113,7 @@
     </tbody>
   </table>
   </div>
-  <p class="stat-row">A randomised holdout measured the calls: about 20% of high-risk drivers were held back and received none. Among those high-risk drivers, the ones who got a call churned 30 percentage points less than the holdout. The 42% to 30% figure is a different measurement on a wider group. It compares two periods across all drivers, and it carries the product changes described below, since those reached the holdout too.</p>
+  <p class="stat-row">A randomised holdout measured the calls: about 20% of high-risk drivers were held back and received none. The called group churned less than that holdout, which is the one part of the result the calls can be credited with. The 42% to 30% figure is a wider measurement. It compares two periods across all drivers and carries the product changes described below, since those reached the holdout too.</p>
 
   <figure class="chart">
     <svg role="img" viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
