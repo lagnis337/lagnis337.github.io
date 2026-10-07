@@ -33,7 +33,7 @@
   <div class="glance">
     <div><b>Observe → act</b><span>learn to respond to failures, not predict them</span></div>
     <div><b>UCB + drift</b><span>upper-confidence-bound bandit with drift detection over observed outcomes</span></div>
-    <div><b>2.2×</b><span>the success rate of threshold routing, in a 10-million-transaction simulation</span></div>
+    <div><b>42.7% → 96.0%</b><span>success rate against a threshold router, in a 10-million-transaction simulation</span></div>
     <div><b>+30%</b><span>payment success on live traffic, against the control</span></div>
   </div>
 
@@ -124,14 +124,14 @@
 
   <h2>Benchmark</h2>
   <p>The benchmark pits two routers against each other in the turbulence simulator, at three scales. Both see only the outcomes of their own transactions.</p>
-  <p>The rule-based router stands in for conventional threshold routing. It stays on a gateway until the observed success rate over a short window falls below a fixed threshold, then switches and waits out a cooldown. Every figure below comes from the synthetic environment and is reported relative to that baseline.</p>
+  <p>The rule-based router stands in for conventional threshold routing. It stays on a gateway until the observed success rate over a short window falls below a fixed threshold, then switches and waits out a cooldown. Every figure below comes from the synthetic environment, so these success rates are the simulator's rather than production's and are given in full.</p>
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Scale (transactions)</th><th>Degradation events</th><th>Adaptive vs. rule-based success rate</th><th>Gateway switches (rule-based → adaptive)</th></tr></thead>
+    <thead><tr><th>Scale (transactions)</th><th>Degradation events</th><th>Rule-based success rate</th><th>Adaptive success rate</th><th>Gateway switches (rule-based → adaptive)</th></tr></thead>
     <tbody>
-      <tr><td>100K</td><td>hundreds</td><td>within a few points of each other</td><td>dozens → tens of thousands</td></tr>
-      <tr><td>1M</td><td>thousands</td><td>adaptive ≈ 2.7× rule-based</td><td>dozens → hundreds of thousands</td></tr>
-      <tr><td><strong>10M</strong></td><td>tens of thousands</td><td><strong>adaptive ≈ 2.2× rule-based (+53 percentage points)</strong></td><td>dozens → ~1.5 million</td></tr>
+      <tr><td>100K</td><td>hundreds</td><td>93.3%</td><td>95.7%</td><td>dozens → tens of thousands</td></tr>
+      <tr><td>1M</td><td>thousands</td><td>35.9%</td><td>95.6%</td><td>dozens → hundreds of thousands</td></tr>
+      <tr><td><strong>10M</strong></td><td>tens of thousands</td><td><strong>42.7%</strong></td><td><strong>96.0%</strong></td><td>dozens → ~1.5 million</td></tr>
     </tbody>
   </table>
   </div>
@@ -139,7 +139,7 @@
   <p><strong>Why the gap is so large.</strong> The rule-based router switched fewer than a hundred times in ten million transactions. A slow degradation never trips its threshold until most of the damage is done, and with no exploration it never learns that a gateway has recovered, so it sits on a degraded one for long stretches.</p>
   <p>The adaptive router's 1.5 million switches are not churn. They are the mechanism that keeps traffic on whichever gateway is healthiest at that moment. A large share of the gap is therefore the baseline's missing re-enable rule, and a threshold router that re-checks a gateway after a cooldown would claw some of it back. The multiplier describes this baseline, not threshold routing in general, which is why a fairer baseline is the first item below.</p>
   <p><strong>Why scale matters.</strong> At 100 thousand transactions the rule-based router looked fine, because a few hundred degradations are not enough to expose it. The failure only shows up at a million and beyond, so a small benchmark would have shipped the wrong conclusion.</p>
-  <p>The multiplier also moves between runs, from 2.7 times at 1 million to 2.2 times at 10 million. That is the rule-based router talking: its result depends on which gateway it starts on and when the degradations land. The adaptive router's success rate stayed within a point of itself across all three scales.</p>
+  <p>The gap also moves between runs: 35.9% against 95.6% at 1 million, 42.7% against 96.0% at 10 million. That is the rule-based router talking: its result depends on which gateway it starts on and when the degradations land. The adaptive router's success rate stayed within a point of itself across all three scales.</p>
   <p><strong>What this benchmark does not show.</strong> Only two routers were compared. A random baseline, a greedy baseline, a frozen PPO agent and an oracle that always picks the true best gateway would separate reacting at all from reacting well, and would show the ceiling. It is the first thing I would add (see below).</p>
 
   <h2>Deployment</h2>
