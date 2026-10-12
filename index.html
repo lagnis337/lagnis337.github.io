@@ -58,7 +58,7 @@
         <h3><a href="projects/adaptive-gateway-router.html">Adaptive payment-gateway router</a></h3>
         <p class="cardmeta">Razorpay · 2026</p>
         <dl class="psi"><dt>Problem</dt><dd>A gateway can start failing at any moment, and static rules keep feeding it traffic until someone notices, which can take hours.</dd><dt>Solution</dt><dd>A UCB bandit with drift detection picks a gateway per transaction and learns from every outcome, with a safety floor that cuts off any gateway that is clearly failing.</dd><dt class="imp">Impact</dt><dd>On live traffic, payment success ran about 30% above the control after a shadow test. In the 10-million-transaction simulation that preceded it, the router held 96.0% against a threshold router's 42.7%.</dd></dl>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">Gymnasium</span><span class="tag">Stable-Baselines3</span><span class="tag">UCB bandit</span><span class="tag">Online learning</span><span class="tag">Drift detection</span><span class="tag">PPO</span></div>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">Gymnasium</span><span class="tag">UCB bandit</span><span class="tag">Online learning</span><span class="tag">Drift detection</span><span class="tag">PPO</span></div>
       </div>
     </div>
     <div class="card linked"><span class="goto" aria-hidden="true">More <b>↗</b></span>
@@ -72,7 +72,7 @@
         <h3><a href="projects/driver-churn.html">Driver churn prediction</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
         <dl class="psi"><dt>Problem</dt><dd>About 42% of active drivers were churning. Ops only spotted them after a week of inactivity, by which point many had already gone.</dd><dt>Solution</dt><dd>A daily score for roughly 150,000 drivers, averaging XGBoost and a random forest over 36 features. Ops call the highest-risk names on the list.</dd><dt class="imp">Impact</dt><dd>Measured against a randomised holdout, the drivers the team called churned at 30% against 42% in the holdout, over three months in production.</dd></dl>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">XGBoost</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-airflow"/></svg>Airflow</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-postgresql"/></svg>SQL</span><span class="tag">Probability calibration</span><span class="tag">Randomised holdout</span></div>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">XGBoost</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-airflow"/></svg>Airflow</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-postgresql"/></svg>SQL</span><span class="tag">Calibration</span><span class="tag">Randomised holdout</span></div>
       </div>
     </div>
     <div class="card linked"><span class="goto" aria-hidden="true">More <b>↗</b></span>
@@ -87,7 +87,7 @@
         <h3><a href="projects/driver-safety-enforcement.html">Driver safety enforcement</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
         <dl class="psi"><dt>Problem</dt><dd>Complaints about unsafe drivers arrive in three languages, buried in thousands of comments about fares and routes, and serious cases surfaced days late.</dd><dt>Solution</dt><dd>The Sarvam API translates the text and a classifier sorts it into five severity groups. Minor cases drop the driver's matching priority; serious ones go to a person who can block them.</dd><dt class="imp">Impact</dt><dd>Safety complaints fell by about half and the average rider rating moved from 4.6 to 4.8. Around 12,000 drivers were deprioritised and about 550 blocked.</dd></dl>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Sarvam API</span><span class="tag">TF-IDF</span><span class="tag">Text classification</span><span class="tag">Multilingual NLP</span></div>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Sarvam API</span><span class="tag">TF-IDF</span><span class="tag">Multilingual NLP</span></div>
       </div>
     </div>
     <div class="card linked"><span class="goto" aria-hidden="true">More <b>↗</b></span>
@@ -119,7 +119,7 @@
         <h3>Real-time payment fraud detection</h3>
         <p class="cardmeta">Razorpay · 2025–2026</p>
         <dl class="psi"><dt>Problem</dt><dd>Suspect payments sat in a manual review queue. A person examined each one and a decision could take four days, while the money moved.</dd><dt>Solution</dt><dd>A model scores every transaction as it happens. The clearest cases are blocked and reversed automatically; the rest go to a person, now with a far shorter queue.</dd><dt class="imp">Impact</dt><dd>Review turnaround fell from about four days to hours.</dd></dl>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Real-time scoring</span><span class="tag">Binary classification</span><span class="tag">Imbalanced classification</span></div>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Real-time scoring</span><span class="tag">Imbalanced classification</span></div>
       </div>
     </div>
     <div class="card linked"><span class="goto" aria-hidden="true">More <b>↗</b></span>
@@ -134,7 +134,7 @@
         <h3><a href="projects/voice-ai-support-agent.html">Voice AI support agent</a></h3>
         <p class="cardmeta">Namma Yatri · 2024–2025</p>
         <dl class="psi"><dt>Problem</dt><dd>Drivers queued for a support agent to answer the same handful of problems every day.</dd><dt>Solution</dt><dd>A voice agent on Gemini Live takes about 100 calls a day, replies in under a second, and speaks Hindi, English and Kannada. It reads that driver's own data to answer, and hands the call to a person when it is unsure or the topic is serious.</dd><dt class="imp">Impact</dt><dd>Resolution time fell 75% and driver NPS (Net Promoter Score) rose 18 points.</dd></dl>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-googlegemini"/></svg>Gemini Live</span><span class="tag">Speech to speech</span><span class="tag">Speech recognition</span><span class="tag">Sarvam API</span><span class="tag">Natural language processing</span></div>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-googlegemini"/></svg>Gemini Live</span><span class="tag">Speech recognition</span><span class="tag">Sarvam API</span><span class="tag">Intent classification</span></div>
       </div>
     </div>
     <div class="card">
@@ -166,7 +166,7 @@
         <h3><a href="projects/fpl-player-models.html">Fantasy Premier League player-performance models</a></h3>
         <p class="cardmeta">Personal · 2026</p>
         <p>Predicting Fantasy Premier League points for the coming gameweek from 79 pre-deadline features, tested with a 75-gameweek walk-forward backtest. The best picks score about 10% more than a simple baseline. Two data problems turned up along the way: a column carrying post-match information, and an availability feature that turned out not to help.</p>
-        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-pandas"/></svg>pandas</span><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-scikitlearn"/></svg>scikit-learn</span><span class="tag">Gradient boosting</span><span class="tag">Walk-forward backtest</span><span class="tag">Leakage detection</span><a class="tag code" href="https://github.com/lagnis337/fpl-player-models"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code <b class="arr">↗</b></a></div>
+        <div class="tags"><span class="tag"><svg aria-hidden="true"><use href="assets/icons.svg#i-python"/></svg>Python</span><span class="tag">Gradient boosting</span><span class="tag">Walk-forward backtest</span><span class="tag">Leakage detection</span><a class="tag code" href="https://github.com/lagnis337/fpl-player-models"><svg aria-hidden="true"><use href="assets/icons.svg#i-github"/></svg>Code <b class="arr">↗</b></a></div>
       </div>
     </div>
     <div class="card linked"><span class="goto" aria-hidden="true">More <b>↗</b></span>
