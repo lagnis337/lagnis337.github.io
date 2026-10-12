@@ -145,7 +145,7 @@
   <div class="cards small">
     <div class="card"><h3>Measure the lever</h3><p>Randomise the length of the lower priority for group-5 drivers, so the data shows how much cost actually changes behaviour instead of the window being someone's judgement call.</p></div>
     <div class="card"><h3>Rider credibility</h3><p>Use the rider's own complaint history as a feature. A first complaint from a frequent rider and a fifth from a rider in a fare dispute are not the same evidence.</p></div>
-    <div class="card"><h3>Held-out evaluation</h3><p>Build a fixed labelled set to track precision and recall per group over time, and record how often a person overturns a block in the queue. That overturn rate is a quality signal the system already produces daily.</p></div>
+    <div class="card"><h3>An evaluation set that ages well</h3><p>A fixed labelled set would track precision and recall per group over time, but a fixed set ages badly here: the vocabulary moves whenever fares or incentives change. The version worth building refreshes from the review queue, where every confirmed and overturned block is already a labelled example, and uses the overturn rate as a running quality signal.</p></div>
   </div>
 
   <h2>Related work</h2>

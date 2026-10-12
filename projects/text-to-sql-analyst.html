@@ -138,8 +138,7 @@
     <div class="card"><h3>A real evaluation set</h3><p>Build a fixed set of questions with reference SQL and results on a frozen snapshot. That gives execution accuracy no polite thumbs-up can flatter, and it allows ablations: with and without playbooks, with and without the clarifying question.</p></div>
     <div class="card"><h3>Categorise failures</h3><p>Incomplete context is one bucket. Time-grain confusion, missing filters and wrong joins are probably hiding inside it, and each needs a different fix.</p></div>
     <div class="card"><h3>Compile metric variations</h3><p>Playbooks cover exact matches. A metric-request compiler, turning metric plus filters plus grain into SQL, would extend the same guarantee to variations of known metrics.</p></div>
-    <div class="card"><h3>Cache from the cost data</h3><p>The footnote already shows which pages are read most and cost most. Caching the index and those hot pages would pull the median below two minutes without losing the audit trail.</p></div>
-  </div>
+      </div>
 
   <h2>Related work</h2>
   <p><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">LLM Wiki</a> (Karpathy) describes a language model that compiles and maintains a persistent markdown wiki, with <code>index.md</code>, <code>log.md</code>, a schema file and answers filed back, instead of re-reading raw sources on every query.</p>

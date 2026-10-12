@@ -134,9 +134,8 @@
   <div class="cards small">
     <div class="card"><h3>Measure the product changes</h3><p>The holdout isolates the calls, but the product changes those calls prompted reached every driver, the holdout included. A staggered release by city would measure <em>Go Home</em> and the pricing changes on their own.</p></div>
     <div class="card"><h3>Uplift, not risk</h3><p>Uplift modelling predicts who <em>changes behaviour</em> when contacted rather than who is at risk, so the hundred daily calls would go to the drivers a call can actually keep.</p></div>
-    <div class="card"><h3>Time-to-churn</h3><p>A survival model predicts <em>when</em> an event happens, using the moment a driver stops rather than only whether they crossed a 30-day line.</p></div>
-    <div class="card"><h3>Drift monitoring</h3><p>Check the top features weekly, so a change to an incentive scheme shows up in the model's metrics the week it lands.</p></div>
-  </div>
+    <div class="card"><h3>Time-to-churn</h3><p>A survival model predicts <em>when</em> a driver stops rather than whether they crossed a 30-day line. That matters operationally: ops can only call about a hundred drivers a day, so the useful question is not who is at risk but who is at risk <em>this week</em>, which a binary label at a fixed horizon cannot answer.</p></div>
+      </div>
 
   <h2>Related work</h2>
   <p>The framing comes from <a href="https://medium.com/@ttah.hongtran/customer-churn-prediction-and-analysis-for-uber-ride-hailing-service-fbf1dc75a848">Tran (2021)</a>, which applies RFM to non-contractual churn among <em>riders</em> on a public Uber dataset of about 1,400 users (<a href="https://link.springer.com/chapter/10.1007/978-3-030-97610-1_24">ICABDE 2021</a>). This project moves the same frame to the supply side, where a driver leaving removes capacity, and runs it in production over about 150,000 drivers a day with an action loop attached.</p>
