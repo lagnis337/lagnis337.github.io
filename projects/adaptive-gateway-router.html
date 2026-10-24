@@ -40,7 +40,7 @@
   <h2>Problem</h2>
   <p>A payments platform sends each transaction to one of several gateways. Gateways degrade suddenly, partially and temporarily. Static rules keep sending traffic to a degraded gateway until someone notices and reweights by hand, which can take hours. Every hour of misrouted traffic is failed payments and lost revenue.</p>
   <div class="two">
-    <div><h4>Rejected: predict</h4><p>Forecast each gateway's success rate, then route to whichever looks best. This fails exactly when it matters. Gateway failures are non-stationary and rare in the training data, and by the time a forecast updates, the damage is done.</p></div>
+    <div><h4>Tried first: predict</h4><p>I first built a gradient-boosted model to forecast outages from each gateway's error rates and latency. It caught only about 30% of them. Failures are rare, non-stationary and come in distinct shapes, from bank downtime to rate limits, and a single model likely blurred them together. By the time a forecast updates, the damage is done.</p></div>
     <div><h4>Chosen: respond</h4><p>An agent sees only the outcomes of the transactions it routes: success, failure, latency. The moment a gateway's observed health drops, it shifts traffic away. Nothing is forecast. What the agent learns is how to <em>adapt</em>.</p></div>
   </div>
   <div class="insight">
